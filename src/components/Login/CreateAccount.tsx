@@ -1,5 +1,14 @@
+import React, { useState } from 'react';
+
 const CreateAccount = () => {
-    return <p>The Login page</p>;
+    const [username,setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [email, SetEmail] = useState('');
+
+    const handleSubmit = (event) => {
+
+        event.preventDefault();
+    };
   };
   
   export default CreateAccount;
