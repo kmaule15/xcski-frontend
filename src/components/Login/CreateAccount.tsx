@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 
 const CreateAccount = () => {
+
+    //make constants to hold form data
     const [username,setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [email, SetEmail] = useState('');
 
+    //POSTs the form data to the backend
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        //TODO: figure out how to post all this shit to the backend
     };
 
     return (
