@@ -12,6 +12,12 @@ const CreateAccount = () => {
         event.preventDefault();
 
         //TODO: figure out how to post all this shit to the backend
+
+        const formData = {
+            username,
+            password,
+            email
+        };
     };
 
     return (
