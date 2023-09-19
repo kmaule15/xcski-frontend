@@ -1,0 +1,32 @@
+.sign-in-box {
+  background-color: #fff;
+  padding: 50px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  margin: 50px;
+}
+
+/* Adjust Logo */
+.brand-logo {
+  width: 150px; /* Adjust the width as needed */
+  position: center;
+  top: 10px;
+  right: 10px;
+}
+
+/* Add margin to the form elements */
+.form-group {
+  margin-bottom: 20px;
+}
+
+/* Add margin to the Sign In button */
+.btn-primary {
+  margin-top: 20px;
+}
+
+/* Add margin to the input fields */
+.form-control {
+  margin-bottom: 10px;
+}
+

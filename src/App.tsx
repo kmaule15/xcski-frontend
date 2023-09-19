@@ -1,7 +1,7 @@
 import React from "react";
-import logo from "./logo.svg";
+//import logo from "./logo.svg";
 import "./App.css";
-import NavBar from "./components/NavBar/NavBar";
+//import NavBar from "./components/NavBar/NavBar";
 import { Route, Routes } from "react-router-dom";
 import Layout from "./Layout";
 import MyTrails from "./components/Trail/MyTrails/MyTrails";
