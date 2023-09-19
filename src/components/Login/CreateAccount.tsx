@@ -8,7 +8,7 @@ const CreateAccount = () => {
     const [email, SetEmail] = useState('');
 
     //POSTs the form data to the backend
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         //TODO: figure out how to post all this shit to the backend
@@ -18,6 +18,24 @@ const CreateAccount = () => {
             password,
             email
         };
+
+        try {
+            const response = await fetch('/api/create-account', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+    
+            if (response.ok) {
+                console.log('Success');
+            } else {
+                console.error('Fail');
+            }
+        } catch (error) {
+            console.error(error);
+        }
     };
 
     return (
