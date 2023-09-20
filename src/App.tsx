@@ -10,7 +10,7 @@ import Login from "./components/Login/Login";
 import CreateAccount from "./components/Login/CreateAccount";
 import Home from "./components/Home/Home";
 import TrailSearch from "./components/Trail/SearchTrails/TrailSearch";
-import CreateAccount from "./components/Login/CreateAccount";
+
 
 function App() {
   return (
@@ -22,8 +22,7 @@ function App() {
         <Route path="community" element={<Community />} />
         <Route path="login" element={<Login />} />
         <Route path="createaccount" element={<CreateAccount />} />
-
-       // <Route path="signup" element={<CreateAccount />} />
+        <Route path="signup" element={<CreateAccount />} />
 
       </Route>
     </Routes>
