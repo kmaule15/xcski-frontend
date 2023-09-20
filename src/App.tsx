@@ -9,6 +9,7 @@ import Community from "./components/Community/Community";
 import Login from "./components/Login/Login";
 import Home from "./components/Home/Home";
 import TrailSearch from "./components/Trail/SearchTrails/TrailSearch";
+import CreateAccount from "./components/Login/CreateAccount";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="mytrails" element={<MyTrails />} />
         <Route path="community" element={<Community />} />
         <Route path="login" element={<Login />} />
+        <Route path="createaccount" element={<CreateAccount />} />
       </Route>
     </Routes>
   );

@@ -19,6 +19,7 @@ const NavBar = () => {
     <Nav.Link href="mytrails">My Trails</Nav.Link>
     <Nav.Link href="community">Community</Nav.Link>
     <Nav.Link href="login"> Login</Nav.Link>
+    <Nav.Link href='createaccount'>Create Account</Nav.Link>
   </Nav>
 </Navbar.Collapse>
 </Navbar>
