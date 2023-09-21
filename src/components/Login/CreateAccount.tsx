@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import "./Login.css"
+import "./createAccount.css"
 import './BackgroundSquares.css';
 
 const CreateAccount = () => {
@@ -75,6 +75,7 @@ const CreateAccount = () => {
 
             <br />
             <button type="submit">Create Account</button>
+            <div className="squares-background"></div> 
         </form>
     );
 }
