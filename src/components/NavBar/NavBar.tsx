@@ -1,5 +1,5 @@
-//import { Link } from "react-router-dom";
-import { Navbar, Nav } from 'react-bootstrap';
+import React from 'react';
+import { Navbar, Nav, Button } from 'react-bootstrap';
 
 const NavBar = () => {
   return (
@@ -18,9 +18,11 @@ const NavBar = () => {
     <Nav.Link href="trailsearch">Find a Trail</Nav.Link>
     <Nav.Link href="mytrails">My Trails</Nav.Link>
     <Nav.Link href="community">Community</Nav.Link>
-    <Nav.Link href="login"> Login</Nav.Link>
-    <Nav.Link href='createaccount'>Create Account</Nav.Link>
   </Nav>
+  <div className="ms-auto">
+  <Button variant="outline-light" className=" me-3" href="login">Log in</Button>
+  <Button variant="danger" className="me-3" href='createaccount'>Create Account</Button>
+  </div>
 </Navbar.Collapse>
 </Navbar>
   );
