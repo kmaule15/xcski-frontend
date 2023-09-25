@@ -17,7 +17,7 @@ const Login = () => {
 
     try {
       
-      const response = await fetch('http://localhost:3000/users', {
+      const response = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ const Login = () => {
           <Form.Control
             type="text"
             name="email"
-            placeholder="Enter email or username"
+            placeholder="Enter Username"
             style={{ maxWidth: '300px' }}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -62,7 +62,7 @@ const Login = () => {
 
         <Form.Group controlId="formBasicPassword">
           <Form.Control
-            type="password"
+            type="text"
             name="password"
             placeholder="Password"
             style={{ maxWidth: '300px' }}
@@ -75,7 +75,7 @@ const Login = () => {
         </Button>
       </Form>
       <div className="text-center mt-3">
-        <a href="#">Forgot Password?</a>
+        <a href="./">Forgot Password?</a>
       </div>
       <div className="text-center mt-3">
         <span>Don't have an account?</span>{' '}
