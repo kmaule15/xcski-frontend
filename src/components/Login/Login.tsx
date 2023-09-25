@@ -2,19 +2,31 @@
 import "./Login.css"
 import './BackgroundSquares.css';
 import { Container, Form, Button, Image } from 'react-bootstrap';
+import axios from "axios";
 
 const Login = () => {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); // Prevent the default form submission behavior
 
     
     const formData = new FormData(event.currentTarget as HTMLFormElement);
-    const email = formData.get('email');
-    const password = formData.get('password');
+    const username = formData.get('username') as string;
+    const password = formData.get('password') as string;
 
-    // More to add
-    console.log('Email:', email);
-    console.log('Password:', password);
+    const payload = {
+      username: username,
+      password: password,
+    }
+
+    try {
+      const response = await axios.post('http://localhost:3000/auth/login', payload)
+
+      console.log('Response: ', response.data)
+    } catch (error) {
+      console.error('An error occurred while logging in:', error)
+    }
+
+
   };
 
   return (
@@ -29,11 +41,11 @@ const Login = () => {
         <h2>Sign In</h2>
       </div>
       <Form onSubmit={handleSubmit} className="mt-4">
-        <Form.Group controlId="formBasicEmail">
+        <Form.Group controlId="formUsername">
           <Form.Control
-            type="email"
-            name="email" 
-            placeholder="Enter email"
+            type="text"
+            name="username" 
+            placeholder="Enter username"
             style={{ maxWidth: '300px' }}
           />
         </Form.Group>
