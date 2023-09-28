@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Container, Form, Button } from 'react-bootstrap'; // Add this line
 import "./createAccount.css"
 import './BackgroundSquares.css';
 
@@ -41,42 +42,49 @@ const CreateAccount = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <label>
-                Username:
-                <input
-                    type="text"
-                    value={username}
-                    onChange={(event) => setUsername(event.target.value)}
-                />
-            </label>
+        <Container className="vh-100 d-flex justify-content-center align-items-center">
+            <div className="sign-in-box">
+                <div className="text-center mb-4">
+                    <h2>Create Account</h2>
+                </div>
+                <Form onSubmit={handleSubmit} className="mt-4">
+                    <Form.Group controlId="formBasicUsername">
+                        <Form.Control
+                            type="text"
+                            value={username}
+                            onChange={(event) => setUsername(event.target.value)}
+                            placeholder="Username"
+                            style={{ maxWidth: '300px' }}
+                        />
+                    </Form.Group>
 
-            <br />
+                    <Form.Group controlId="formBasicPassword">
+                        <Form.Control
+                            type="password"
+                            value={password}
+                            onChange={(event) => setPassword(event.target.value)}
+                            placeholder="Password"
+                            style={{ maxWidth: '300px' }}
+                        />
+                    </Form.Group>
 
-            <label>
-                Password:
-                <input
-                    type="password"
-                    value={password}
-                    onChange={(event) => setPassword(event.target.value)}
-                    />
-            </label>
+                    <Form.Group controlId="formBasicEmail">
+                        <Form.Control
+                            type="email"
+                            value={email}
+                            onChange={(event) => SetEmail(event.target.value)}
+                            placeholder="Email"
+                            style={{ maxWidth: '300px' }}
+                        />
+                    </Form.Group>
 
-            <br />
-            
-            <label>
-                Email:
-                <input
-                    type="email"
-                    value={email}
-                    onChange={(event) => SetEmail(event.target.value)}
-                />
-            </label>
-
-            <br />
-            <button type="submit">Create Account</button>
+                    <Button variant="primary" type="submit">
+                        Create Account
+                    </Button>
+                </Form>
+            </div>
             <div className="squares-background"></div> 
-        </form>
+        </Container>
     );
 }
 
