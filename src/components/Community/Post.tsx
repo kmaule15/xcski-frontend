@@ -11,7 +11,9 @@ const Post = (pp: PostProps) : JSX.Element => {
     <h1>{pp.title}</h1>
     <h3>By {checkAnon(pp.creatorName)} on {pp.postTime.toLocaleDateString()+pp.postTime.toLocaleTimeString()}</h3>
     <p>{pp.text}</p>
-    {pp.comments.map(c => c)}
+    {pp.comments.map(c => <div>
+        <p> By {c.creatorName}</p>
+        <p>{c.commentText}</p> </div>)}
     </>);
 };
   
