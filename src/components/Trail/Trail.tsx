@@ -1,30 +1,43 @@
 import { GoogleMap, Marker } from '@react-google-maps/api';
-
-const Trail = () => {
-  return <p>A trail</p>;
-};
+import loadGoogleMapsApi from 'load-google-maps-api';
 
 function MapComponent() {
   const mapContainerStyle = {
     width: '100%',
     height: '100vh',
   };
-  
+
   const center = {
-    lat: 37.7749,
-    lng: -122.4194,
+    lat: 44.5,
+    lng: -89.5,
   };
-  
+
+  // Load the Google Maps API
+  loadGoogleMapsApi({ key: 'YOUR_API_KEY' }).then(function (googleMaps) {
+    const mapElement = document.querySelector('.map') as HTMLElement;
+    if (mapElement) {
+      new googleMaps.Map(mapElement, {
+        center: center,
+        zoom: 12
+      });
+    }
+  }).catch(function (error) {
+    console.error(error);
+  });
+
   return (
     <GoogleMap
       mapContainerStyle={mapContainerStyle}
       center={center}
       zoom={12}
     >
-        <Marker position={center} />
+      <Marker position={center} />
     </GoogleMap>
   );
 }
-  
+
+const Trail = () => {
+  return <MapComponent />;
+};
 
 export default Trail;
