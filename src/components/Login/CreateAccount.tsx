@@ -13,7 +13,7 @@ const CreateAccount = () => {
     //POSTs the form data to the backend
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
+    
         //TODO: figure out how to post all this shit to the backend
 
         const formData = {
@@ -23,7 +23,7 @@ const CreateAccount = () => {
         };
 
         try {
-            const response = await fetch('/api/create-account', {
+            const response = await fetch('http://localhost:3000/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
