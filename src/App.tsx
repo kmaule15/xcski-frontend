@@ -11,9 +11,11 @@ import CreateAccount from "./components/Login/CreateAccount";
 import Home from "./components/Home/Home";
 import TrailSearch from "./components/Trail/SearchTrails/TrailSearch";
 import CreateTrail from "./components/Trail/CreateTrails/CreateTrail";
+import { AuthProvider } from './AuthContext';
 
 function App() {
   return (
+    <AuthProvider>
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
@@ -26,6 +28,7 @@ function App() {
         <Route path="signup" element={<CreateAccount />} />
       </Route>
     </Routes>
+    </AuthProvider>
   );
 }
 
