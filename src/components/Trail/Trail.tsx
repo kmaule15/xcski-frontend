@@ -1,28 +1,38 @@
-import { GoogleMap, Marker } from '@react-google-maps/api';
+import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 
-const Trail = () => {
-  return <p>A trail</p>;
-};
+const MapComponent = () => {
 
-function MapComponent() {
+  const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('API key is missing. Please check your .env file.');
+  }
+
   const mapContainerStyle = {
     width: '100%',
-    height: '400px',
+    height: '100vh',
   };
 
   const center = {
-    lat: 37.7749,
-    lng: -122.4194,
+    lat: 44.5,
+    lng: -89.5,
   };
 
   return (
-    <GoogleMap
-      mapContainerStyle={mapContainerStyle}
-      center={center}
-      zoom={12}
-    >
-      <Marker position={center} />
-    </GoogleMap>
+    <LoadScript googleMapsApiKey={apiKey}>
+      <GoogleMap
+        mapContainerStyle={mapContainerStyle}
+        center={center}
+        zoom={7}
+      >
+        <Marker position={center} />
+      </GoogleMap>
+    </LoadScript>
   );
-}
+};
+
+const Trail = () => {
+  return <MapComponent />;
+};
+
 export default Trail;
