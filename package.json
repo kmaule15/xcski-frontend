@@ -16,6 +16,7 @@
     "load-google-maps-api": "^2.0.2",
     "react": "^18.2.0",
     "react-bootstrap-validation": "^0.1.11",
+    "react-datepicker": "^4.18.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.16.0",
     "react-scripts": "5.0.1",
@@ -49,6 +50,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/google.maps": "^3.54.1",
-    "@types/load-google-maps-api": "^2.0.3"
+    "@types/load-google-maps-api": "^2.0.3",
+    "@types/react-datepicker": "^4.15.1"
   }
 }
