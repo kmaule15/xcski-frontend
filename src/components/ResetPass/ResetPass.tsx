@@ -1,35 +1,29 @@
 import React, { useState } from 'react';
-import "./Login.css"
-import './BackgroundSquares.css';
-import {useAuth} from '../../AuthContext'
-import { Container, Form, Button, Image, Alert } from 'react-bootstrap';
+import "./ResetPass.css"
+import '../Login/BackgroundSquares.css';
+import { Container, Form, Button, Image } from 'react-bootstrap';
 
 
 const Login = () => {
 
-  const { AuthLogin } = useAuth();
-  
-  const [username, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState(false); 
+  const [email, setEmail] = useState('');
 
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault(); 
 
     const data = {
-      username,
-      password
+      email,
     };
 
     
       
-      await fetch('http://localhost:3000/auth/login', {
+      await fetch('http://localhost:3000/users/email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({email})
       }).then(response => {
         if (response.status === 401) {
           // Handle the 401 Unauthorized error here
@@ -41,14 +35,18 @@ const Login = () => {
         } 
       })
          .then(data => {
-          const accessToken = data.access_token;
-        
-          AuthLogin(username, accessToken);
-          setLoginError(false);
+            // if(data) 
+            //     sendResetPasswordEmail(email, resetLink);
 
-          window.location.href = './';
+          
+            console.log(data);
+
+
+         // window.location.href = './';
       }).catch(error => {
-        setLoginError(true);
+
+
+        
       });     
 
 
@@ -65,14 +63,11 @@ const Login = () => {
           alt="Brand Logo"
           className="brand-logo"
         />
-        <h2>Sign In</h2>
+        <h2>Password Reset</h2>
       </div>
-      {loginError && ( 
-          <Alert variant="danger">
-            Wrong username or Password
-          </Alert>
-        )}
+      
       <Form onSubmit={handleSubmit} className="mt-4">
+
         <Form.Group controlId="formBasicEmail">
           <Form.Control
           
@@ -85,27 +80,11 @@ const Login = () => {
           />
         </Form.Group>
 
-        <Form.Group controlId="formBasicPassword">
-          <Form.Control
-            type="password"
-            name="password"
-            placeholder="Password"
-            style={{ maxWidth: '300px' }}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </Form.Group>
-
         <Button variant="primary" type="submit">
-          Log In
+          Submit
         </Button>
       </Form>
-      <div className="text-center mt-3">
-        <a href="./resetpass">Forgot Password?</a>
-      </div>
-      <div className="text-center mt-3">
-        <span>Don't have an account?</span>{' '}
-        <a href="./signup">Sign Up</a>
-      </div>
+    
     </div>
     <div className="squares-background"></div> 
   </Container>

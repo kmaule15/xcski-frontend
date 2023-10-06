@@ -11,6 +11,7 @@ import CreateAccount from "./components/Login/CreateAccount";
 import Home from "./components/Home/Home";
 import TrailSearch from "./components/Trail/SearchTrails/TrailSearch";
 import CreateTrail from "./components/Trail/CreateTrails/CreateTrail";
+import ResetPass from "./components/ResetPass/ResetPass"
 import { AuthProvider } from './AuthContext';
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route path="login" element={<Login />} />
         <Route path="createaccount" element={<CreateAccount />} />
         <Route path="signup" element={<CreateAccount />} />
+        <Route path="resetpass" element={<ResetPass />} />
       </Route>
     </Routes>
     </AuthProvider>
