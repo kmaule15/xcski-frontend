@@ -11,6 +11,8 @@ const CreateTrailUpdate = () => {
   const [trailOpenPercentage, setTrailOpenPercentage] = useState<number | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
+  const trail = React.useRef(null);
+//use references to get trail name from component, add required keyword to inputs i require
   const clearForm = () => {
     setTrailName("");
     setStartDate(new Date());
@@ -51,38 +53,45 @@ const CreateTrailUpdate = () => {
 
   return (
     <>
-      <h1 className="text-center mb-4">Create a Trail</h1>
+      <h1 className="text-center mb-4">Create a Trail Update</h1>
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-md-6">
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label className="form-label">Trail Name</label>
-                <SearchBarComponent ></SearchBarComponent>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={trailName}
-                  onChange={(e) => setTrailName(e.target.value)}
-                />
+                <SearchBarComponent></SearchBarComponent> 
               </div>
 
               <div className="mb-3">
                 <label className="form-label">Date</label>
-                <DatePicker selected={startDate} onChange={(date) => date && setStartDate(date)} showTimeSelect/>
+                <br/>
+                <DatePicker className="form-control" selected={startDate} onChange={(date) => date && setStartDate(date)} dateFormat="MM/dd/yyyy h:mm aa" showTimeSelect maxDate={startDate}/>
               </div>
 
               <div className="mb-3">
-                <label className="form-label">
-                  Estimation of Open Trails (Percentage)
-                </label>
+                <label className="form-label"> Percent of Trails Open (estimated) </label>
+                <input 
+                  type="number" 
+                  min="0" 
+                  step="1"
+                  max="100" 
+                  className="form-control"
+                  value={trailOpenPercentage?? ""}
+                  onChange={(e) => setTrailOpenPercentage(Number(e.target.value))}
+                  />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label"> Description (any additional comments)</label>
                 <input
                   type="text"
                   className="form-control"
-                  value={trailOpenPercentage ?? ""}
-                  onChange={(e) => setTrailOpenPercentage(Number(e.target.value))}
-                />
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />              
               </div>
+
               {isSuccess && (
                 <div className="alert alert-success">
                   Trail successfully created!
@@ -92,6 +101,7 @@ const CreateTrailUpdate = () => {
                 Create Trail Update
               </button>
             </form>
+            <br/>
           </div>
         </div>
       </div>
