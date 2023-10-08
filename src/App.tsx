@@ -12,6 +12,7 @@ import Home from "./components/Home/Home";
 import TrailSearch from "./components/Trail/SearchTrails/TrailSearch";
 import CreateTrail from "./components/Trail/CreateTrails/CreateTrail";
 import { AuthProvider } from './AuthContext';
+import CreateTrailUpdate from "./components/Trail/CreateTrailUpdate/CreateTrailUpdate";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path="trailsearch" element={<TrailSearch />} />
         <Route path="createtrail" element={<CreateTrail />} />
+        <Route path="createtrailupdate" element={<CreateTrailUpdate />} />
         <Route path="mytrails" element={<MyTrails />} />
         <Route path="community" element={<Community />} />
         <Route path="login" element={<Login />} />
