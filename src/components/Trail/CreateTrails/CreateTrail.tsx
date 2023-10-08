@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { Container, Form, Button } from "react-bootstrap";
+import "./CreateTrail.css";
+import "../../Login/BackgroundSquares.css";
 
 const CreateTrail = () => {
   const [name, setName] = useState<string>("");
@@ -72,116 +75,101 @@ const CreateTrail = () => {
   };
 
   return (
-    <>
-      <h1 className="text-center mb-4">Create a Trail</h1>
-      <div className="container">
-        <div className="row justify-content-center">
-          <div className="col-md-6">
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <label className="form-label">Name</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Description</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Location</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Difficulty</label>
-                <select
-                  className="form-select"
-                  value={difficulty}
-                  onChange={(e) => setDifficulty(e.target.value)}
-                >
-                  <option value="">--Select--</option>
-                  <option value="Easy">Easy</option>
-                  <option value="Medium">Medium</option>
-                  <option value="Difficult">Difficult</option>
-                </select>
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">Length (in miles)</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={length ?? ""}
-                  onChange={(e) => setLength(Number(e.target.value))}
-                />
-              </div>
-
-              <div className="mb-3">
-                <label className="form-label">
-                  Estimated Time (in minutes)
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={estimatedTime ?? ""}
-                  onChange={(e) => setEstimatedTime(Number(e.target.value))}
-                />
-              </div>
-
-              <p>Types of Skiing Allowed</p>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  value="Classic"
-                  onChange={handleTypesAllowedChange}
-                  id="classicCheck"
-                />
-                <label className="form-check-label" htmlFor="classicCheck">
-                  Classic
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  value="Skate"
-                  onChange={handleTypesAllowedChange}
-                  id="skateCheck"
-                />
-                <label className="form-check-label" htmlFor="skateCheck">
-                  Skate
-                </label>
-              </div>
-              {isSuccess && (
-                <div className="alert alert-success">
-                  Trail successfully created!
-                </div>
-              )}
-              <button type="submit" className="btn btn-primary mt-3">
-                Create Trail
-              </button>
-            </form>
-          </div>
+    <Container className="vh-100 d-flex justify-content-center align-items-center">
+      <div className="form">
+        <div className="text-center mb-4">
+          <h1>Create a Trail</h1>
         </div>
+        <Form onSubmit={handleSubmit} className="mt-4">
+          <Form.Group controlId="formName">
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group controlId="formDescription">
+            <Form.Label>Description</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={2}
+              maxLength={300}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Location</Form.Label>
+            <Form.Control
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Difficulty</Form.Label>
+            <Form.Control
+              as="select"
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+            >
+              <option value="">--Select--</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Difficult">Difficult</option>
+            </Form.Control>
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Length (in miles)</Form.Label>
+            <Form.Control
+              type="text"
+              value={length ?? ""}
+              onChange={(e) => setLength(Number(e.target.value))}
+            />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Estimated Time (in minutes)</Form.Label>
+            <Form.Control
+              type="text"
+              value={estimatedTime ?? ""}
+              onChange={(e) => setEstimatedTime(Number(e.target.value))}
+            />
+          </Form.Group>
+
+          <p>Types of Skiing Allowed</p>
+
+          <Form.Group>
+            <Form.Check
+              type="checkbox"
+              label="Classic"
+              value="Classic"
+              onChange={handleTypesAllowedChange}
+            />
+            <Form.Check
+              type="checkbox"
+              label="Skate"
+              value="Skate"
+              onChange={handleTypesAllowedChange}
+            />
+          </Form.Group>
+          {isSuccess && (
+            <div className="alert alert-success">
+              Trail successfully created!
+            </div>
+          )}
+          <Button variant="primary" type="submit">
+            Create Trail
+          </Button>
+        </Form>
       </div>
-    </>
+      <div className="squares-background"></div>
+    </Container>
   );
 };
 
