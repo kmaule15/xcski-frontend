@@ -4,7 +4,7 @@ import '../Login/BackgroundSquares.css';
 import { Container, Form, Button, Image } from 'react-bootstrap';
 
 
-const Login = () => {
+const ResetPass = () => {
 
   const [email, setEmail] = useState('');
 
@@ -16,41 +16,13 @@ const Login = () => {
       email,
     };
 
-    
-      
-      await fetch('http://localhost:3000/users/email', {
+      await fetch('http://localhost:3000/auth/email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({email})
-      }).then(response => {
-        if (response.status === 401) {
-          // Handle the 401 Unauthorized error here
-          throw new Error('Unauthorized access. Please log in.');
-        }
-        
-        if (response.ok) {
-          return response.json(); 
-        } 
-      })
-         .then(data => {
-            // if(data) 
-            //     sendResetPasswordEmail(email, resetLink);
-
-          
-            console.log(data);
-
-
-         // window.location.href = './';
-      }).catch(error => {
-
-
-        
-      });     
-
-
-    
+        body: JSON.stringify(data)
+      })    
   };
 
    
@@ -58,11 +30,7 @@ const Login = () => {
     <Container className="vh-100 d-flex justify-content-center align-items-center">
     <div className="sign-in-box">
       <div className="text-center mb-4">
-        <Image
-          src="./XCS.png" 
-          alt="Brand Logo"
-          className="brand-logo"
-        />
+        <Image src="./XCS.png" alt="Brand Logo" className="brand-logo"/>
         <h2>Password Reset</h2>
       </div>
       
@@ -70,7 +38,6 @@ const Login = () => {
 
         <Form.Group controlId="formBasicEmail">
           <Form.Control
-          
             type="text"
             name="email"
             placeholder="Enter Username"
@@ -91,4 +58,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ResetPass;
