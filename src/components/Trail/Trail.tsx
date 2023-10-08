@@ -25,9 +25,9 @@ const MapComponent = () => {
     lng: -89.5,
   };
 
-  // Fetch trail data from the database
+  // Fetch trail data from your API endpoint
   useEffect(() => {
-    fetch('/api/trails') // Replace with our API endpoint
+    fetch('http://localhost:3000/api/trails')
       .then(response => response.json())
       .then(data => setTrails(data));
   }, []);
