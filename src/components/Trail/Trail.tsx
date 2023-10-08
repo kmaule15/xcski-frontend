@@ -1,9 +1,14 @@
 import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
+import { useRef } from 'react';
 import TrailSearch from './SearchTrails/TrailSearch';
 import SearchBarComponent from '../SearchBar/SearchBarComponent';
 
 const MapComponent = () => {
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
+  const searchBox = useRef(null);
+  const onPlacesChanged = () => {
+    // Handle place changes here
+  };
 
   if (!apiKey) {
     throw new Error('API key is missing. Please check your .env file.');
