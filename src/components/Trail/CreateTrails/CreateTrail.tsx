@@ -7,6 +7,8 @@ const CreateTrail = () => {
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [location, setLocation] = useState<string>("");
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
   const [difficulty, setDifficulty] = useState<string>("");
   const [length, setLength] = useState<number | null>(null);
   const [estimatedTime, setEstimatedTime] = useState<number | null>(null);
@@ -18,21 +20,28 @@ const CreateTrail = () => {
 
   useEffect(() => {
     if (!window.google) {
-      console.error("Google Mpas API isn't loaded");
+      console.error("Google Maps API isn't loaded");
       return;
     }
 
     if (autocompleteInputRef.current) {
       const autocomplete = new window.google.maps.places.Autocomplete(
         autocompleteInputRef.current,
-        {
-          types: ["address"],
-        }
+        { types: ["address"] }
       );
 
       autocomplete.addListener("place_changed", () => {
         const selectedPlace = autocomplete.getPlace();
-        console.log(selectedPlace);
+        if (selectedPlace.formatted_address) {
+          setLocation(selectedPlace.formatted_address);
+        }
+
+        if (selectedPlace.geometry?.location) {
+          setLatitude(selectedPlace.geometry.location.lat());
+          setLongitude(selectedPlace.geometry.location.lng());
+        } else {
+          console.error("No geometry data available for the selected address");
+        }
       });
 
       return () => {
@@ -74,12 +83,15 @@ const CreateTrail = () => {
       name,
       description,
       location,
+      latitude,
+      longitude,
       difficulty,
       length,
       estimatedTime,
       typesAllowed,
     };
 
+    console.log(formData);
     try {
       const response = await fetch("http://localhost:3000/trails", {
         method: "POST",
