@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import "./CreateTrail.css";
 import "../../Login/BackgroundSquares.css";
@@ -12,6 +12,34 @@ const CreateTrail = () => {
   const [estimatedTime, setEstimatedTime] = useState<number | null>(null);
   const [typesAllowed, setTypesAllowed] = useState<string[]>([]);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+
+  //Google AutoComplete code
+  const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (!window.google) {
+      console.error("Google Mpas API isn't loaded");
+      return;
+    }
+
+    if (autocompleteInputRef.current) {
+      const autocomplete = new window.google.maps.places.Autocomplete(
+        autocompleteInputRef.current,
+        {
+          types: ["address"],
+        }
+      );
+
+      autocomplete.addListener("place_changed", () => {
+        const selectedPlace = autocomplete.getPlace();
+        console.log(selectedPlace);
+      });
+
+      return () => {
+        window.google.maps.event.clearInstanceListeners(autocomplete);
+      };
+    }
+  }, []);
 
   const clearForm = () => {
     setName("");
@@ -104,6 +132,7 @@ const CreateTrail = () => {
           <Form.Group>
             <Form.Label>Location</Form.Label>
             <Form.Control
+              ref={autocompleteInputRef}
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
