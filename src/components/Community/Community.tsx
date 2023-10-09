@@ -1,5 +1,8 @@
+import PostComments from "./PostComments";
+
+
 const Community = () => {
-  return <p>The community page</p>;
+  return <PostComments postId={1}/>;
 };
 
 export default Community;
