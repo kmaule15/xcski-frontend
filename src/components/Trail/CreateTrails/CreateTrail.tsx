@@ -13,7 +13,7 @@ const CreateTrail = () => {
   const [length, setLength] = useState<number | null>(null);
   const [estimatedTime, setEstimatedTime] = useState<number | null>(null);
   const [typesAllowed, setTypesAllowed] = useState<string[]>([]);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [formMessage, setFormMessage] = useState<string>("");
 
   //Google AutoComplete code
   const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
@@ -91,7 +91,6 @@ const CreateTrail = () => {
       typesAllowed,
     };
 
-    console.log(formData);
     try {
       const response = await fetch("http://localhost:3000/trails", {
         method: "POST",
@@ -100,14 +99,14 @@ const CreateTrail = () => {
         },
         body: JSON.stringify(formData),
       });
+      const data = await response.json();
 
       if (response.ok) {
-        console.log("Trail successfully created!");
-        setIsSuccess(true);
+        setFormMessage("Trail successfully created!");
         clearForm();
-        setTimeout(() => setIsSuccess(false), 4000);
       } else {
         console.error("Trail creation failed.");
+        setFormMessage(data.message);
       }
     } catch (error) {
       console.error("An error occured:", error);
@@ -129,7 +128,6 @@ const CreateTrail = () => {
               onChange={(e) => setName(e.target.value)}
             />
           </Form.Group>
-
           <Form.Group controlId="formDescription">
             <Form.Label>Description</Form.Label>
             <Form.Control
@@ -140,7 +138,6 @@ const CreateTrail = () => {
               onChange={(e) => setDescription(e.target.value)}
             />
           </Form.Group>
-
           <Form.Group>
             <Form.Label>Location</Form.Label>
             <Form.Control
@@ -150,7 +147,6 @@ const CreateTrail = () => {
               onChange={(e) => setLocation(e.target.value)}
             />
           </Form.Group>
-
           <Form.Group>
             <Form.Label>Difficulty</Form.Label>
             <Form.Control
@@ -164,7 +160,6 @@ const CreateTrail = () => {
               <option value="Difficult">Difficult</option>
             </Form.Control>
           </Form.Group>
-
           <Form.Group>
             <Form.Label>Length (in miles)</Form.Label>
             <Form.Control
@@ -173,7 +168,6 @@ const CreateTrail = () => {
               onChange={(e) => setLength(Number(e.target.value))}
             />
           </Form.Group>
-
           <Form.Group>
             <Form.Label>Estimated Time (in minutes)</Form.Label>
             <Form.Control
@@ -182,9 +176,7 @@ const CreateTrail = () => {
               onChange={(e) => setEstimatedTime(Number(e.target.value))}
             />
           </Form.Group>
-
           <p>Types of Skiing Allowed</p>
-
           <Form.Group>
             <Form.Check
               type="checkbox"
@@ -201,11 +193,8 @@ const CreateTrail = () => {
               onChange={handleTypesAllowedChange}
             />
           </Form.Group>
-          {isSuccess && (
-            <div className="alert alert-success">
-              Trail successfully created!
-            </div>
-          )}
+          <br></br>
+          <div className="message">{formMessage}</div>
           <Button variant="primary" type="submit">
             Create Trail
           </Button>

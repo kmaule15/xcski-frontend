@@ -10,3 +10,8 @@
 .form-control {
   text-align: center;
 }
+
+.message {
+  font-weight: bold;
+  font-style: italic;
+}
