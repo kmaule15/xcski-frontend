@@ -34,7 +34,7 @@ const PWU = () => {
         });
   
         if (response.ok) {
-          setMessage(true);
+          setMessage(false);
           window.location.href = '/login';
         } 
       } catch (error) {
