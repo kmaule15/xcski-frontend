@@ -168,7 +168,7 @@ const CreateTrail = () => {
           <Form.Group>
             <Form.Label>Length (in miles)</Form.Label>
             <Form.Control
-              type="text"
+              type="number"
               value={length ?? ""}
               onChange={(e) => setLength(Number(e.target.value))}
             />
@@ -177,7 +177,7 @@ const CreateTrail = () => {
           <Form.Group>
             <Form.Label>Estimated Time (in minutes)</Form.Label>
             <Form.Control
-              type="text"
+              type="number"
               value={estimatedTime ?? ""}
               onChange={(e) => setEstimatedTime(Number(e.target.value))}
             />
@@ -190,12 +190,14 @@ const CreateTrail = () => {
               type="checkbox"
               label="Classic"
               value="Classic"
+              checked={typesAllowed.includes("Classic")}
               onChange={handleTypesAllowedChange}
             />
             <Form.Check
               type="checkbox"
               label="Skate"
               value="Skate"
+              checked={typesAllowed.includes("Skate")}
               onChange={handleTypesAllowedChange}
             />
           </Form.Group>
