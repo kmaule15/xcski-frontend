@@ -24,7 +24,7 @@ const Login = () => {
 
     
       
-      const response = await fetch('http://localhost:3000/auth/login', {
+      await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ const Login = () => {
         </Button>
       </Form>
       <div className="text-center mt-3">
-        <a href="./">Forgot Password?</a>
+        <a href="./resetpass">Forgot Password?</a>
       </div>
       <div className="text-center mt-3">
         <span>Don't have an account?</span>{' '}
