@@ -40,7 +40,7 @@ const ResetPass = () => {
           <Form.Control
             type="text"
             name="email"
-            placeholder="Enter Username"
+            placeholder="Enter Email"
             style={{ maxWidth: '300px' }}
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="username"
