@@ -27,7 +27,7 @@ const MapComponent = () => {
 
   // Fetch trail data from your API endpoint
   useEffect(() => {
-    fetch('http://localhost:3000/api/trails')
+    fetch('http://localhost:3000/trails')
       .then(response => response.json())
       .then(data => setTrails(data));
   }, []);
