@@ -2,8 +2,8 @@ import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
 import { useEffect, useState } from 'react';
 
 interface Trail {
-  lat: number;
-  lng: number;
+  latitude: number;
+  longitude: number;
 }
 
 const MapComponent = () => {
@@ -29,7 +29,10 @@ const MapComponent = () => {
   useEffect(() => {
     fetch('http://localhost:3000/trails')
       .then(response => response.json())
-      .then(data => setTrails(data));
+      .then(data => {
+        console.log(data); // Log data to console
+        setTrails(data);
+      });
   }, []);
 
   return (
@@ -40,7 +43,7 @@ const MapComponent = () => {
         zoom={7}
       >
         {trails.map((trail, index) => (
-          <Marker key={index} position={trail} />
+          <Marker key={index} position={{ lat: trail.latitude, lng: trail.longitude }} />
         ))}
       </GoogleMap>
     </LoadScript>
