@@ -9,7 +9,7 @@ interface Trail {
 const useTrails = () => {
   const [trails, setTrails] = useState<Trail[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
