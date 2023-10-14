@@ -6,8 +6,30 @@ interface Trail {
   longitude: number;
 }
 
-const MapComponent = () => {
+const useTrails = () => {
   const [trails, setTrails] = useState<Trail[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetch('http://localhost:3000/trails')
+      .then(response => response.json())
+      .then(data => {
+        setTrails(data);
+        setIsLoading(false);
+      })
+      .catch(error => {
+        setError(error);
+        setIsLoading(false);
+      });
+  }, []);
+
+  return { trails, isLoading, error };
+};
+
+const MapComponent = () => {
+  const { trails, isLoading, error } = useTrails();
 
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
 
@@ -25,15 +47,13 @@ const MapComponent = () => {
     lng: -89.5,
   };
 
-  // Fetch trail data from your API endpoint
-  useEffect(() => {
-    fetch('http://localhost:3000/trails')
-      .then(response => response.json())
-      .then(data => {
-        console.log(data); // Log data to console
-        setTrails(data);
-      });
-  }, []);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
     <LoadScript googleMapsApiKey={apiKey}>
