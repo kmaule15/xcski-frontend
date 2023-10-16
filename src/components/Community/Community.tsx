@@ -1,8 +1,13 @@
-import PostComments from "./PostComments";
-
+import React from "react";
+import PostsList from "./Posts/PostList";
 
 const Community = () => {
-  return <PostComments postId={1}/>;
+  return (
+    <div>
+      <PostsList />
+      
+    </div>
+  )
 };
 
 export default Community;

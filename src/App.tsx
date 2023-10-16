@@ -15,6 +15,7 @@ import ResetPass from "./components/ResetPass/ResetPass"
 import PWU from "./components/ResetPass/PWU"
 import { AuthProvider } from './AuthContext';
 import CreateTrailUpdate from "./components/Trail/CreateTrailUpdate/CreateTrailUpdate";
+import PostDetails from "./components/Community/Posts/PostDetails";
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="signup" element={<CreateAccount />} />
         <Route path="resetpass" element={<ResetPass />} />
         <Route path="PWU/:token" element={<PWU />} />
+        <Route path="/posts/:postId" element={<PostDetails />} />
       </Route>
     </Routes>
     </AuthProvider>
