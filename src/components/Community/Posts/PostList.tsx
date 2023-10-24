@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import CreatePostModal from "./Create Post Modal/CreatePostModal";
 
 interface Post {
   id: number;
@@ -18,20 +19,28 @@ function PostsList() {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
-    async function fecthPosts() {
-      try {
-        const response = await axios.get(`http://localhost:3000/posts`);
-        setPosts(response.data);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
-    }
-
-    fecthPosts();
+    fetchPosts();
   }, []);
+
+  async function fetchPosts() {
+    try {
+      const response = await axios.get(`http://localhost:3000/posts`);
+      setPosts(response.data);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  }
+
+  function handlePostCreated() {
+    // Refresh the posts list when a new post is created
+    fetchPosts();
+  }
+
+  
 
   return (
     <div>
+      <CreatePostModal onPostCreated={handlePostCreated} />  
       {posts.map((post) => (
         <div key={post.id}>
           <Link to={`/posts/${post.id}`}>

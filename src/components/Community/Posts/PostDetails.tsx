@@ -23,7 +23,6 @@ function PostDetails() {
         async function fetchPost() {
            try {
             const response = await axios.get(`http://localhost:3000/posts/${postId.postId}`) //This is due to how the postId is passed into the function. the intial post Id is an object
-            console.log(response.data)
             setPost(response.data)
            } catch (error) {
             console.error("Error fetching post:", error);
