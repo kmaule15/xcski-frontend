@@ -3,15 +3,62 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 import SearchBarComponent from "../../SearchBar/SearchBarComponent";
+import SearchBar from "../../SearchBar/SearchBar";
+function formatDateTime(date: any): string{
+  var fin = "2023-03-28T03:19:22.335Z";
 
+  return fin;
+}
 const CreateTrailUpdate = () => {
   const [trailName, setTrailName] = useState<string>("");
   const [startDate, setStartDate] = useState(new Date());
   const [description, setDescription] = useState<string>("");
   const [trailOpenPercentage, setTrailOpenPercentage] = useState<number | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [trailId, setTrailId] = useState<number>(-1);
+  //from searchbar
+  const [results, setResults] = useState<{ name: string; location: string; id: number }[]>();
+ const [trails, setTrails] = useState<{ name: string; location: string; id: number }[]>();
+ const [selectedTrail, setSelectedTrail] = useState<{
+    name: string;
+    location: string;
+    id: number;
+  }>();
+  const onLoad = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/trails", {
+        method: "Get",
+      }).then(response => response.json())
+      .then(data => setTrails(data));
 
-  const trail = React.useRef(null);
+    } catch (error) {
+      console.error("An error occured:", error);
+    }
+    return [
+      { name: "Governor Dodge State Park", location: "4175 WI-23, Dodgeville, WI 53533" },
+      { name: "Hixon Forest", location: "La Crosse, WI 54601" },
+      { name: "Justin Trails Resort", location: "7452 Kathryn Ave, Sparta, WI 54656" },
+    ];
+  };
+  onLoad();
+  type changeHandler = React.ChangeEventHandler<HTMLInputElement>;
+  const handleChange: changeHandler = (e) => {
+    const { target } = e;
+    if (!target.value.trim()) return setResults([]);
+    //improve filtering later
+    var targetValue = target.value.toLowerCase()
+    const filteredValue = trails && trails.filter((trail: { name: string; location: string; id: number;}) =>
+      trail.name.toLowerCase().includes(targetValue) || trail.location.toLowerCase().includes(targetValue)
+    );
+    setResults(filteredValue);
+    if(filteredValue!==undefined && filteredValue[0]!==undefined){
+      setTrailName(filteredValue[0].name);
+      setTrailId(filteredValue[0].id);
+      setSelectedTrail(filteredValue[0]);
+    }
+  };
+  //end searchbar stuff
+
 //use references to get trail name from component, add required keyword to inputs i require
   const clearForm = () => {
     setTrailName("");
@@ -20,16 +67,27 @@ const CreateTrailUpdate = () => {
     setTrailOpenPercentage(null);
   };
 
+  function formatDateTime(date: any): string{
+    var fin = "2023-03-28T03:19:22.335Z";
 
+    return fin;
+  }
+
+//add date time checking
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
     const formData = {
       trailName,
-      startDate,
       description,
+      startDate,
+      trailId,
       trailOpenPercentage
     };
+    console.log(formData.trailName);
+    console.log(formData.trailId);
+    console.log(formData.startDate);
+    console.log(formData.trailOpenPercentage);
+    console.log(formData.description);
     try {
       const response = await fetch("http://localhost:3000/trailupdates", {
         method: "POST",
@@ -60,7 +118,18 @@ const CreateTrailUpdate = () => {
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label className="form-label">Trail Name</label>
-                <SearchBarComponent></SearchBarComponent> 
+                <SearchBar
+                results={results}
+                value={selectedTrail?.name}
+                renderItem={(trail: any) => 
+                    <div>
+                        <p>{trail.name}</p>
+                        <p>{trail.location}</p>
+                   </div>
+                }
+                onChange={handleChange}
+                onSelect={(trail: any) => setSelectedTrail(trail)}
+               />
               </div>
 
               <div className="mb-3">
