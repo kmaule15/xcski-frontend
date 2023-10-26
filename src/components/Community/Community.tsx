@@ -1,5 +1,13 @@
+import React from "react";
+import PostsList from "./Posts/PostList";
+
 const Community = () => {
-  return <p>The community page</p>;
+  return (
+    <div>
+      <PostsList />
+      
+    </div>
+  )
 };
 
 export default Community;

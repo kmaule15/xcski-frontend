@@ -1,5 +1,4 @@
-// Importing necessary modules and hooks from react and react-google-maps/api
-import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
+import { GoogleMap, Marker, InfoWindow, useLoadScript } from '@react-google-maps/api';
 import { useEffect, useState } from 'react';
 
 // Defining an interface for the Trail object
@@ -10,12 +9,10 @@ interface Trail {
 
 // Custom hook to fetch trails data from the server
 const useTrails = () => {
-  // State variables for storing the trails data, loading status, and any error that occurs
   const [trails, setTrails] = useState<Trail[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  // useEffect hook to fetch the trails data when the component mounts
   useEffect(() => {
     setIsLoading(true);
     fetch('http://localhost:3000/trails')
@@ -33,56 +30,67 @@ const useTrails = () => {
   return { trails, isLoading, error };
 };
 
-// Main MapComponent that uses the Google Maps API
 const MapComponent = () => {
-  // Using the custom hook to get the trails data
   const { trails, isLoading, error } = useTrails();
-
-  // Getting the API key from environment variables
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
+  const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
 
-  // Checking if the API key is available
   if (!apiKey) {
     throw new Error('API key is missing. Please check your .env file.');
   }
 
-  // Defining the style for the map container
   const mapContainerStyle = {
     width: '100%',
     height: '100vh',
   };
 
-  // Defining the center coordinates for the map
   const center = {
     lat: 44.5,
     lng: -89.5,
   };
 
-  // If data is still loading, display a loading message
-  if (isLoading) {
+  const { isLoaded, loadError } = useLoadScript({
+    googleMapsApiKey: apiKey,
+  });
+
+  if (loadError) {
+    return <div>Error loading maps: {loadError.message}</div>;
+  }
+
+  if (isLoading || !isLoaded) {
     return <div>Loading...</div>;
   }
 
-  // If there was an error in fetching data, display an error message
   if (error) {
     return <div>Error: {error.message}</div>;
   }
 
-  // Render the Google Map with markers at each trail location
   return (
-    <LoadScript googleMapsApiKey={apiKey}>
-      <GoogleMap
-        mapContainerStyle={mapContainerStyle}
-        center={center}
-        zoom={7}
-      >
-        {trails.map((trail, index) => (
-          <Marker key={index} position={{ lat: trail.latitude, lng: trail.longitude }} />
-        ))}
-      </GoogleMap>
-    </LoadScript>
+    <GoogleMap mapContainerStyle={mapContainerStyle} center={center} zoom={7}>
+      <Marker position={{ lat: 44.5, lng: -89.5 }} />
+      {trails.map((trail, index) => (
+        <Marker 
+          key={index} 
+          position={{ lat: trail.latitude, lng: trail.longitude }}
+          onClick={() => setSelectedTrail(trail)}
+        />
+      ))}
+      <Marker position={{ lat: 43.0750, lng: -87.8829 }} label="UWM" />
+
+      {selectedTrail && (
+        <InfoWindow 
+          position={{ lat: selectedTrail.latitude, lng: selectedTrail.longitude }}
+          onCloseClick={() => setSelectedTrail(null)}
+        >
+          <div>
+            <h2>Trail Information</h2>
+            <p>Latitude: {selectedTrail.latitude}</p>
+            <p>Longitude: {selectedTrail.longitude}</p>
+          </div>
+        </InfoWindow>
+      )}
+    </GoogleMap>
   );
 };
 
-// Exporting the MapComponent as default export
 export default MapComponent;
