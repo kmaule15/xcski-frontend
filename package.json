@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@mapbox/search-js-react": "^1.0.0-beta.18",
     "@react-google-maps/api": "^2.19.2",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -12,12 +13,14 @@
     "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "@types/react-router-dom": "^5.3.3",
+    "axios": "^1.5.1",
     "bootstrap": "^5.3.2",
     "load-google-maps-api": "^2.0.2",
-    "pg-promise": "^11.5.4",
     "react": "^18.2.0",
     "react-bootstrap-validation": "^0.1.11",
+    "react-datepicker": "^4.18.0",
     "react-dom": "^18.2.0",
+    "react-modal": "^3.16.1",
     "react-router-dom": "^6.16.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5",
@@ -50,6 +53,8 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/google.maps": "^3.54.1",
-    "@types/load-google-maps-api": "^2.0.3"
+    "@types/load-google-maps-api": "^2.0.3",
+    "@types/react-datepicker": "^4.15.1",
+    "@types/react-modal": "^3.16.2"
   }
 }
