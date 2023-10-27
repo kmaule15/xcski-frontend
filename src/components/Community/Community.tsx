@@ -1,12 +1,11 @@
-import PostComments from "./PostComments";
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React from "react";
+import PostsList from "./Posts/PostList";
 import './Community.css';
 
 
 const Community = () => {
-  return ( 
-    <div className="container">
+  return (
+   <div className="container">
     <div className="row">
       <div className="col-sm-2 rounded-left">
         {/* Left Column */}
@@ -14,7 +13,10 @@ const Community = () => {
       </div>
       <div className="col-md-7 rounded-middle">
         {/* Middle Rectangle */}
-        <p>Middle Rectangle</p>
+        <div>
+      <PostsList />
+      
+    </div>
       </div>
       <div className="col-sm-2 rounded-right right-column">
         {/* Right Column */}
@@ -22,7 +24,8 @@ const Community = () => {
       </div>
     </div>
   </div>
-  );
+  )
+
 };
 
 export default Community;
