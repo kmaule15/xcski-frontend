@@ -9,7 +9,7 @@ interface Post {
   content: string;
   createdAt: string;
   updatedAt: string;
-  user: {
+  author: {
     id: number;
     username: string;
   };
@@ -47,7 +47,7 @@ function PostsList() {
             <h3>{post.title}</h3>
           </Link>
           <p>
-            Posted by {post.user.username} on{" "}
+            Posted by {post.author.username} on{" "}
             {new Date(post.createdAt).toLocaleString()}
           </p>
         </div>
