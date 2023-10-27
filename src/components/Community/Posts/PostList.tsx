@@ -47,11 +47,7 @@ function PostsList() {
             <h3>{post.title}</h3>
           </Link>
           <p>
-<<<<<<< HEAD
-            Posted by {post.user?.username} on{" "}
-=======
             Posted by {post.author.username} on{" "}
->>>>>>> c4c26b3c4411e06fb1946b2d1c6a1293f323450d
             {new Date(post.createdAt).toLocaleString()}
           </p>
         </div>
