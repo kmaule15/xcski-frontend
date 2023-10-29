@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SearchBarComponent from "../../SearchBar/SearchBarComponent";
 import SearchBar from "../../SearchBar/SearchBar";
+import { start } from "repl";
 function formatDateTime(date: any): string{
   var fin = "2023-03-28T03:19:22.335Z";
 
@@ -34,11 +35,6 @@ const CreateTrailUpdate = () => {
     } catch (error) {
       console.error("An error occured:", error);
     }
-    return [
-      { name: "Governor Dodge State Park", location: "4175 WI-23, Dodgeville, WI 53533" },
-      { name: "Hixon Forest", location: "La Crosse, WI 54601" },
-      { name: "Justin Trails Resort", location: "7452 Kathryn Ave, Sparta, WI 54656" },
-    ];
   };
   onLoad();
   type changeHandler = React.ChangeEventHandler<HTMLInputElement>;
@@ -62,30 +58,31 @@ const CreateTrailUpdate = () => {
 //use references to get trail name from component, add required keyword to inputs i require
   const clearForm = () => {
     setTrailName("");
+    setSelectedTrail(undefined);
+    setResults(undefined);
+    setTrailId(-1);
     setStartDate(new Date());
     setDescription("");
     setTrailOpenPercentage(null);
   };
 
-  function formatDateTime(date: any): string{
-    var fin = "2023-03-28T03:19:22.335Z";
-
-    return fin;
-  }
-
 //add date time checking
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    //format date like so: 2023-10-29 17:21:06.384
+    var date = startDate;
+    var startDateTime = date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" +("0" + date.getDate()).slice(-2) + " " +("0" + date.getHours() ).slice(-2) + ":" +("0" + date.getMinutes()).slice(-2) + ":" +("0" + date.getSeconds()).slice(-2);
     const formData = {
       trailName,
       description,
-      startDate,
+      startDateTime,
       trailId,
       trailOpenPercentage
     };
     console.log(formData.trailName);
     console.log(formData.trailId);
-    console.log(formData.startDate);
+    console.log(startDate);
+    console.log(formData.startDateTime);
     console.log(formData.trailOpenPercentage);
     console.log(formData.description);
     try {
