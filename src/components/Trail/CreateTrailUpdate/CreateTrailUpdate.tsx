@@ -1,15 +1,8 @@
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
-import SearchBarComponent from "../../SearchBar/SearchBarComponent";
 import SearchBar from "../../SearchBar/SearchBar";
-import { start } from "repl";
-function formatDateTime(date: any): string{
-  var fin = "2023-03-28T03:19:22.335Z";
 
-  return fin;
-}
 const CreateTrailUpdate = () => {
   const [trailName, setTrailName] = useState<string>("");
   const [startDate, setStartDate] = useState(new Date());
@@ -47,11 +40,12 @@ const CreateTrailUpdate = () => {
       trail.name.toLowerCase().includes(targetValue) || trail.location.toLowerCase().includes(targetValue)
     );
     setResults(filteredValue);
-    if(filteredValue!==undefined && filteredValue[0]!==undefined){
-      setTrailName(filteredValue[0].name);
-      setTrailId(filteredValue[0].id);
-      setSelectedTrail(filteredValue[0]);
-    }
+  };
+
+  const handleSelect = (trail: any) => {
+    setSelectedTrail(trail);
+    setTrailName(trail?.name);
+    setTrailId(trail?.id);
   };
   //end searchbar stuff
 
@@ -64,6 +58,7 @@ const CreateTrailUpdate = () => {
     setStartDate(new Date());
     setDescription("");
     setTrailOpenPercentage(null);
+    (document.getElementById("searchbar") as HTMLInputElement).value = "";//not working
   };
 
 //add date time checking
@@ -81,10 +76,6 @@ const CreateTrailUpdate = () => {
     };
     console.log(formData.trailName);
     console.log(formData.trailId);
-    console.log(startDate);
-    console.log(formData.startDateTime);
-    console.log(formData.trailOpenPercentage);
-    console.log(formData.description);
     try {
       const response = await fetch("http://localhost:3000/trailupdates", {
         method: "POST",
@@ -125,7 +116,7 @@ const CreateTrailUpdate = () => {
                    </div>
                 }
                 onChange={handleChange}
-                onSelect={(trail: any) => setSelectedTrail(trail)}
+                onSelect={handleSelect}
                />
               </div>
 
