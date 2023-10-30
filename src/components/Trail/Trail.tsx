@@ -1,5 +1,5 @@
-import { GoogleMap, Marker, InfoWindow, useLoadScript } from '@react-google-maps/api';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Loader } from '@googlemaps/js-api-loader';
 
 // Defining an interface for the Trail object
 interface Trail {
@@ -36,7 +36,7 @@ const MapComponent = () => {
   const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
 
   if (!apiKey) {
-    throw new Error('API key is missing. Please check your .env file.');
+    throw new Error('API key is missing. Please check your .env file. (or send Chase your IP address)');
   }
 
   const mapContainerStyle = {
@@ -49,15 +49,41 @@ const MapComponent = () => {
     lng: -89.5,
   };
 
-  const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: apiKey,
-  });
+  useEffect(() => {
+    const loader = new Loader({
+      apiKey,
+      version: 'weekly',
+      libraries: ['places']
+    });
 
-  if (loadError) {
-    return <div>Error loading maps: {loadError.message}</div>;
-  }
+    loader.load().then((google) => {
+      const mapElement = document.getElementById('map');
 
-  if (isLoading || !isLoaded) {
+      if (mapElement) {
+        const map = new google.maps.Map(mapElement, {
+          center,
+          zoom: 7
+        });
+
+        trails.forEach((trail) => {
+          const marker = new google.maps.Marker({
+            position: { lat: trail.latitude, lng: trail.longitude },
+            map,
+          });
+
+          marker.addListener('click', () => {
+            setSelectedTrail(trail);
+          });
+        });
+      } else {
+        console.error('Could not find element with id "map"');
+      }
+    }).catch(e => {
+      // handle error
+    });
+  }, [trails]);
+
+  if (isLoading) {
     return <div>Loading...</div>;
   }
 
@@ -66,30 +92,9 @@ const MapComponent = () => {
   }
 
   return (
-    <GoogleMap mapContainerStyle={mapContainerStyle} center={center} zoom={7}>
-      <Marker position={{ lat: 44.5, lng: -89.5 }} />
-      {trails.map((trail, index) => (
-        <Marker 
-          key={index} 
-          position={{ lat: trail.latitude, lng: trail.longitude }}
-          onClick={() => setSelectedTrail(trail)}
-        />
-      ))}
-      <Marker position={{ lat: 43.0750, lng: -87.8829 }} label="UWM" />
-
-      {selectedTrail && (
-        <InfoWindow 
-          position={{ lat: selectedTrail.latitude, lng: selectedTrail.longitude }}
-          onCloseClick={() => setSelectedTrail(null)}
-        >
-          <div>
-            <h2>Trail Information</h2>
-            <p>Latitude: {selectedTrail.latitude}</p>
-            <p>Longitude: {selectedTrail.longitude}</p>
-          </div>
-        </InfoWindow>
-      )}
-    </GoogleMap>
+    <div id="map" style={mapContainerStyle}>
+      {/* Your other components here */}
+    </div>
   );
 };
 
