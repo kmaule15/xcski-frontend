@@ -1,4 +1,5 @@
 import { GoogleMap, Marker, LoadScript } from '@react-google-maps/api';
+import WeatherWidget from './WeatherWidget/WeatherWidget'
 
 const MapComponent = () => {
 
@@ -18,7 +19,19 @@ const MapComponent = () => {
     lng: -89.5,
   };
 
+
+
+  const weatherData = {
+    latitude:41.8781,
+    longitude:  -87.6298,
+   
+  };
+
+
+
   return (
+    <div>
+     <WeatherWidget {...weatherData} />
     <LoadScript googleMapsApiKey={apiKey}>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
@@ -28,6 +41,7 @@ const MapComponent = () => {
         <Marker position={center} />
       </GoogleMap>
     </LoadScript>
+    </div>
   );
 };
 

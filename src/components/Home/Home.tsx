@@ -5,7 +5,6 @@ const Home = () => {
     <div>
        <BackgroundSlideshow />
     <div className="container d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-      <SearchBarComponent></SearchBarComponent>
     </div>
     </div>
   );
