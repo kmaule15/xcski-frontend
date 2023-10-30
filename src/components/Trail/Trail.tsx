@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 
 // Defining an interface for the Trail object
@@ -34,6 +34,10 @@ const MapComponent = () => {
   const { trails, isLoading, error } = useTrails();
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
   const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
+  console.log('Rendering MapComponent');
+
+  // Create a ref for the div
+  const mapRef = useRef<HTMLDivElement | null>(null);
 
   if (!apiKey) {
     throw new Error('API key is missing. Please check your .env file. (or send Chase your IP address)');
@@ -57,10 +61,9 @@ const MapComponent = () => {
     });
 
     loader.load().then((google) => {
-      const mapElement = document.getElementById('map');
-
-      if (mapElement) {
-        const map = new google.maps.Map(mapElement, {
+      // Check if mapRef.current is not null
+      if (mapRef.current) {
+        const map = new google.maps.Map(mapRef.current, {
           center,
           zoom: 7
         });
@@ -76,7 +79,7 @@ const MapComponent = () => {
           });
         });
       } else {
-        console.error('Could not find element with id "map"');
+        console.error('Could not find element with ref "mapRef"');
       }
     }).catch(e => {
       // handle error
@@ -91,8 +94,9 @@ const MapComponent = () => {
     return <div>Error: {error.message}</div>;
   }
 
+  // Attach the ref to the div
   return (
-    <div id="map" style={mapContainerStyle}>
+    <div ref={mapRef} style={mapContainerStyle}>
       {/* Your other components here */}
     </div>
   );
