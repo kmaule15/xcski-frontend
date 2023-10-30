@@ -110,14 +110,14 @@ const CreateEvent = () => {
               onChange={(e) => setLocation(e.target.value)}
             />
           </Form.Group>
-          <Form.Group>
+          {/* <Form.Group>
             <Form.Label>Invite Users</Form.Label>
             <Form.Control
               as="select"
               value={invitees}
               onChange={(e) => setInvitees(e.target.value)}
             />
-          </Form.Group>
+          </Form.Group> */}
           <br></br>
           <div className="message">{formMessage}</div>
           <Button variant="primary" type="submit">
