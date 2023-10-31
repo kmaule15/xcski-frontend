@@ -1,0 +1,5 @@
+/* autocomplete is rendered in container with this class name */
+/* ensures autocomplete is on top of Modal */
+.pac-container {
+  z-index: 1060 !important;
+}

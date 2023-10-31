@@ -2,6 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { Container, Form, Button, Modal } from "react-bootstrap";
 import { UserInterface } from "../../../Interfaces/user.types";
 import { useAuth } from "../../../AuthContext";
+import { Loader } from "@googlemaps/js-api-loader";
+import "./CreateEventModal.css";
+import DatePicker from "react-datepicker";
 
 const CreateEventModal = () => {
   const { isLoggedIn } = useAuth();
@@ -9,14 +12,16 @@ const CreateEventModal = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
-  const [date, setDate] = useState<Date>();
+  const [date, setDate] = useState(new Date());
   const [location, setLocation] = useState<string>("");
   // const[trail, setTrail] = useState<>();
   const [isPublic, setIsPublic] = useState<boolean>(false);
   const [invitees, setInvitees] = useState<UserInterface[]>([]);
   // const[participants, setParticipants] = useState<>();
   const [formMessage, setFormMessage] = useState<string>("");
-  const totalSteps = 3;
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
 
   const handleClose = () => {
     setIsOpen(false);
@@ -25,11 +30,11 @@ const CreateEventModal = () => {
   };
 
   const handleNext = () => {
-    setCurrentStep((currStep) => currStep++);
+    setCurrentStep((currStep) => currStep + 1);
   };
 
   const handleBack = () => {
-    setCurrentStep((currStep) => currStep--);
+    setCurrentStep((currStep) => currStep - 1);
   };
 
   // useEffect(() => {
@@ -46,32 +51,51 @@ const CreateEventModal = () => {
   //Google AutoComplete code
   const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    if (!window.google) {
-      console.error("Google Maps API isn't loaded");
-      return;
-    }
+  if (!apiKey) {
+    throw new Error(
+      "API key is missing. Please check your .env file. (or send Chase your IP address)"
+    );
+  }
 
-    if (autocompleteInputRef.current) {
-      const autocomplete = new window.google.maps.places.Autocomplete(
-        autocompleteInputRef.current,
-        { types: ["address"] }
-      );
+  const handleAutocomplete = () => {
+    const loader = new Loader({
+      apiKey,
+      version: "weekly",
+      libraries: ["places"],
+    });
 
-      autocomplete.addListener("place_changed", () => {
-        const selectedPlace = autocomplete.getPlace();
-        if (selectedPlace.formatted_address) {
-          setLocation(selectedPlace.formatted_address);
-        } else {
-          console.error("No geometry data available for the selected address");
-        }
-      });
+    loader.load().then(() => {
+      console.log("in loader");
+      if (autocompleteInputRef.current) {
+        const autocomplete = new window.google.maps.places.Autocomplete(
+          autocompleteInputRef.current,
+          { types: ["address"] }
+        );
 
-      return () => {
-        window.google.maps.event.clearInstanceListeners(autocomplete);
-      };
-    }
-  }, []);
+        autocomplete.addListener("place_changed", () => {
+          const selectedPlace = autocomplete.getPlace();
+          console.log(selectedPlace);
+
+          if (selectedPlace.formatted_address) {
+            setLocation(selectedPlace.formatted_address);
+          }
+
+          if (selectedPlace.geometry?.location) {
+            setLatitude(selectedPlace.geometry.location.lat());
+            setLongitude(selectedPlace.geometry.location.lng());
+          } else {
+            console.error(
+              "No geometry data available for the selected address"
+            );
+          }
+        });
+
+        return () => {
+          window.google.maps.event.clearInstanceListeners(autocomplete);
+        };
+      }
+    });
+  };
 
   const clearForm = () => {
     // setTitle("");
@@ -84,15 +108,14 @@ const CreateEventModal = () => {
     // setParticipants();
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
     const formData = {};
 
     try {
     } catch (error) {
       console.error("An error occured:", error);
     }
+    handleClose();
   };
 
   return (
@@ -102,10 +125,8 @@ const CreateEventModal = () => {
       ) : (
         <p>Users must be logged in to create events</p>
       )}
-      <Modal show={isOpen} onHide={handleClose}>
-        <Modal.Header>
-          Step {currentStep} of {totalSteps}
-        </Modal.Header>
+      <Modal show={isOpen} onHide={handleClose} onEntered={handleAutocomplete}>
+        <Modal.Header>Step {currentStep} of 3</Modal.Header>
         <Modal.Body>
           {currentStep === 1 && (
             <div>
@@ -128,6 +149,14 @@ const CreateEventModal = () => {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </Form.Group>
+              <Form.Group controlId="formDate">
+                <Form.Label>Date</Form.Label>
+                <DatePicker
+                  selected={date}
+                  onChange={(date: Date) => setDate(date)}
+                  customInput={<Form.Control as="input" />}
+                />
+              </Form.Group>
               <Form.Group>
                 <Form.Label>Location</Form.Label>
                 <Form.Control
@@ -139,8 +168,17 @@ const CreateEventModal = () => {
               </Form.Group>
             </div>
           )}
+
+          {currentStep === 2 && <p>Second Page</p>}
         </Modal.Body>
-        <Modal.Footer></Modal.Footer>
+        <Modal.Footer>
+          {currentStep > 1 && <Button onClick={handleBack}>Back</Button>}
+          {currentStep < 3 ? (
+            <Button onClick={handleNext}>Next</Button>
+          ) : (
+            <Button onClick={handleSubmit}>Submit</Button>
+          )}
+        </Modal.Footer>
       </Modal>
     </div>
   );

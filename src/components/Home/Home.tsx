@@ -1,4 +1,3 @@
-import CreateEvent from "../Community/CreateEvent";
 import SearchBarComponent from "../SearchBar/SearchBarComponent";
 import BackgroundSlideshow from "./BGSlideshow";
 const Home = () => {
