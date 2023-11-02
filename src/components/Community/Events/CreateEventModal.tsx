@@ -13,6 +13,8 @@ const CreateEventModal = () => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState(new Date());
+  const [startTime, setStartTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(new Date());
   const [location, setLocation] = useState<string>("");
   // const[trail, setTrail] = useState<>();
   const [isPublic, setIsPublic] = useState<boolean>(false);
@@ -157,7 +159,36 @@ const CreateEventModal = () => {
                   customInput={<Form.Control as="input" />}
                 />
               </Form.Group>
-              <Form.Group>
+              <Form.Group controlId="formStartTime">
+                <Form.Label>Start Time</Form.Label>
+                <DatePicker
+                  selected={startTime}
+                  onChange={(startTime: Date) => setStartTime(startTime)}
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={15}
+                  dateFormat="h:mm aa"
+                  customInput={<Form.Control as="input" />}
+                />
+              </Form.Group>
+              <Form.Group controlId="formEndTime">
+                <Form.Label>End Time</Form.Label>
+                <DatePicker
+                  selected={endTime}
+                  onChange={(endTime: Date) => setEndTime(startTime)}
+                  showTimeSelect
+                  showTimeSelectOnly
+                  timeIntervals={15}
+                  dateFormat="h:mm aa"
+                  customInput={<Form.Control as="input" />}
+                />
+              </Form.Group>
+            </div>
+          )}
+
+          {currentStep === 2 && (
+            <div>
+              <Form.Group controlId="formLocation">
                 <Form.Label>Location</Form.Label>
                 <Form.Control
                   ref={autocompleteInputRef}
@@ -168,8 +199,6 @@ const CreateEventModal = () => {
               </Form.Group>
             </div>
           )}
-
-          {currentStep === 2 && <p>Second Page</p>}
         </Modal.Body>
         <Modal.Footer>
           {currentStep > 1 && <Button onClick={handleBack}>Back</Button>}
