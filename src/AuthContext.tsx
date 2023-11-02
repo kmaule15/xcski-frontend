@@ -23,6 +23,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const AuthLogin = (user : string, accesstoken :string) => {
     localStorage.setItem('isLoggedIn', 'true');
     localStorage.setItem('AuthUsername', user);
+    localStorage.setItem('accesstoken', accesstoken);
     setUsername(user);
     setIsLoggedIn(true);
   };
@@ -30,6 +31,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const logout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('AuthUsername');
+    localStorage.removeItem('accesstoken');
     setUsername('');
     setIsLoggedIn(false);
   };

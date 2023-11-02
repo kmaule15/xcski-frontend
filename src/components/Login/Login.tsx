@@ -3,6 +3,8 @@ import "./Login.css"
 import './BackgroundSquares.css';
 import {useAuth} from '../../AuthContext'
 import { Container, Form, Button, Image, Alert } from 'react-bootstrap';
+import { GoogleLogin } from '@react-oauth/google';
+
 
 
 const Login = () => {
@@ -24,7 +26,7 @@ const Login = () => {
 
     
       
-      const response = await fetch('http://localhost:3000/auth/login', {
+      await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,6 +56,31 @@ const Login = () => {
 
     
   };
+
+  const responseMessage = async (response: any) => {
+    console.log(response);
+  await fetch('http://localhost:3000/auth/google', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({response})
+      }).then(response => {
+        if (response.ok) {
+          return response.json(); 
+        } 
+      })
+         .then(data => {
+
+          const accessToken = data.Atoken.access_token;
+          AuthLogin(data.username, accessToken);
+          window.location.href = './';
+
+      }).catch(error => {
+        setLoginError(true);
+      });
+};
+
 
    
   return (
@@ -100,12 +127,18 @@ const Login = () => {
         </Button>
       </Form>
       <div className="text-center mt-3">
-        <a href="./">Forgot Password?</a>
+        <a href="./resetpass">Forgot Password?</a>
       </div>
       <div className="text-center mt-3">
         <span>Don't have an account?</span>{' '}
         <a href="./signup">Sign Up</a>
       </div>
+      <GoogleLogin
+           onSuccess={responseMessage}
+           type = "icon"/>
+
+
+
     </div>
     <div className="squares-background"></div> 
   </Container>
