@@ -17,10 +17,9 @@ interface WeatherWidgetProps {
 
 const WeatherWidget: React.FC<WeatherWidgetProps> = ({ lat, lng }) => {
   const [weatherData, setWeatherData] = useState<any>(null);
-  const apiKey = process.env.REACT_APP_OPENWEATHER_API_KEY;
 
   useEffect(() => {
-    
+    const apiKey = process.env.REACT_APP_OPENWEATHER_API_KEY;
     const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`;
 
     axios.get(apiUrl)
