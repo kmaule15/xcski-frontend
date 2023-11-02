@@ -1,0 +1,45 @@
+/* styles.css */
+
+.postCommentsContainer {
+  font-family: Arial, sans-serif;
+}
+
+.postCommentsComment {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #e1e1e1;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.postCommentsNewCommentContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.postCommentsTextarea {
+  width: 50%;
+  padding: 10px;
+  border: 1px solid #e1e1e1;
+  border-radius: 5px;
+  font-size: 14px;
+  resize: vertical;
+}
+
+.postCommentsButton {
+  width: 25%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.postCommentsButton:hover {
+  background-color: #45a049;
+}
