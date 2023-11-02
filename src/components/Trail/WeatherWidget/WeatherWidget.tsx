@@ -11,17 +11,16 @@ import {
 } from "mdb-react-ui-kit";
 
 interface WeatherWidgetProps {
-  latitude: number;
-  longitude: number;
+  lat: number;
+  lng: number;
 }
 
-const WeatherWidget: React.FC<WeatherWidgetProps> = ({ latitude, longitude }) => {
+const WeatherWidget: React.FC<WeatherWidgetProps> = ({ lat, lng }) => {
   const [weatherData, setWeatherData] = useState<any>(null);
 
   useEffect(() => {
-    // Replace 'YOUR_API_KEY' with your OpenWeatherMap API key
     const apiKey = "13c07798f4baa75c470d7625ff792273";
-    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
+    const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&appid=${apiKey}&units=metric`;
 
     axios.get(apiUrl)
       .then((response) => {
@@ -30,7 +29,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ latitude, longitude }) =>
       .catch((error) => {
         console.error("Error fetching weather data:", error);
       });
-  }, [latitude, longitude]);
+  }, [lat, lng]);
 
   return (
     <MDBContainer>
