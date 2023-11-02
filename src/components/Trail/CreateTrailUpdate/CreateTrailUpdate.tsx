@@ -108,7 +108,7 @@ const CreateTrailUpdate = () => {
                 <label className="form-label">Trail Name</label>
                 <SearchBar
                 results={results}
-                value={selectedTrail?.name}
+                value={trailName}//change to trailname maybe
                 renderItem={(trail: any) => 
                     <div>
                         <p>{trail.name}</p>
