@@ -18,7 +18,7 @@ const SearchBarComponent : FC<Props> = (props): JSX.Element => {
       .then(data => setTrails(data));
 
     } catch (error) {
-      console.error("An error occured:", error);
+      console.error("An error occured:"+ error);
     }
     return [
       { name: "Governor Dodge State Park", location: "4175 WI-23, Dodgeville, WI 53533" },
@@ -38,6 +38,7 @@ const SearchBarComponent : FC<Props> = (props): JSX.Element => {
     );
     setResults(filteredValue);
   };
+
 
 return (
     <SearchBar

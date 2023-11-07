@@ -1,9 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Container, Form, Button } from "react-bootstrap";
+import { Loader } from "@googlemaps/js-api-loader";
 import "./CreateTrail.css";
 import "../../Login/BackgroundSquares.css";
 
 const CreateTrail = () => {
+  const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [location, setLocation] = useState<string>("");
@@ -18,36 +20,47 @@ const CreateTrail = () => {
   //Google AutoComplete code
   const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
+  if (!apiKey) {
+    throw new Error(
+      "API key is missing. Please check your .env file. (or send Chase your IP address)"
+    );
+  }
+
   useEffect(() => {
-    if (!window.google) {
-      console.error("Google Maps API isn't loaded");
-      return;
-    }
+    const loader = new Loader({
+      apiKey,
+      version: "weekly",
+      libraries: ["places"],
+    });
 
-    if (autocompleteInputRef.current) {
-      const autocomplete = new window.google.maps.places.Autocomplete(
-        autocompleteInputRef.current,
-        { types: ["address"] }
-      );
+    loader.load().then(() => {
+      if (autocompleteInputRef.current) {
+        const autocomplete = new window.google.maps.places.Autocomplete(
+          autocompleteInputRef.current,
+          { types: ["address"] }
+        );
 
-      autocomplete.addListener("place_changed", () => {
-        const selectedPlace = autocomplete.getPlace();
-        if (selectedPlace.formatted_address) {
-          setLocation(selectedPlace.formatted_address);
-        }
+        autocomplete.addListener("place_changed", () => {
+          const selectedPlace = autocomplete.getPlace();
+          if (selectedPlace.formatted_address) {
+            setLocation(selectedPlace.formatted_address);
+          }
 
-        if (selectedPlace.geometry?.location) {
-          setLatitude(selectedPlace.geometry.location.lat());
-          setLongitude(selectedPlace.geometry.location.lng());
-        } else {
-          console.error("No geometry data available for the selected address");
-        }
-      });
+          if (selectedPlace.geometry?.location) {
+            setLatitude(selectedPlace.geometry.location.lat());
+            setLongitude(selectedPlace.geometry.location.lng());
+          } else {
+            console.error(
+              "No geometry data available for the selected address"
+            );
+          }
+        });
 
-      return () => {
-        window.google.maps.event.clearInstanceListeners(autocomplete);
-      };
-    }
+        return () => {
+          window.google.maps.event.clearInstanceListeners(autocomplete);
+        };
+      }
+    });
   }, []);
 
   const clearForm = () => {

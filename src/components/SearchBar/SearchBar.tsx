@@ -89,6 +89,7 @@ return (
     >
       <input
         value={defaultValue}
+        id="searchbar"
         onChange={handleChange}
         type="search"
         className="input-group absolute mt-1 p-2 bg-white shadow-lg rounded-bl rounded-br"

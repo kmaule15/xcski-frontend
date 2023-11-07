@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import DatePicker from "react-datepicker";
-
 import "react-datepicker/dist/react-datepicker.css";
-import SearchBarComponent from "../../SearchBar/SearchBarComponent";
+import SearchBar from "../../SearchBar/SearchBar";
 
 const CreateTrailUpdate = () => {
   const [trailName, setTrailName] = useState<string>("");
@@ -10,26 +9,73 @@ const CreateTrailUpdate = () => {
   const [description, setDescription] = useState<string>("");
   const [trailOpenPercentage, setTrailOpenPercentage] = useState<number | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [trailId, setTrailId] = useState<number>(-1);
+  //from searchbar
+  const [results, setResults] = useState<{ name: string; location: string; id: number }[]>();
+ const [trails, setTrails] = useState<{ name: string; location: string; id: number }[]>();
+ const [selectedTrail, setSelectedTrail] = useState<{
+    name: string;
+    location: string;
+    id: number;
+  }>();
+  const onLoad = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/trails", {
+        method: "Get",
+      }).then(response => response.json())
+      .then(data => setTrails(data));
 
-  const trail = React.useRef(null);
+    } catch (error) {
+      console.error("An error occured:", error);
+    }
+  };
+  onLoad();
+  type changeHandler = React.ChangeEventHandler<HTMLInputElement>;
+  const handleChange: changeHandler = (e) => {
+    const { target } = e;
+    if (!target.value.trim()) return setResults([]);
+    //improve filtering later
+    var targetValue = target.value.toLowerCase()
+    const filteredValue = trails && trails.filter((trail: { name: string; location: string; id: number;}) =>
+      trail.name.toLowerCase().includes(targetValue) || trail.location.toLowerCase().includes(targetValue)
+    );
+    setResults(filteredValue);
+  };
+
+  const handleSelect = (trail: any) => {
+    setSelectedTrail(trail);
+    setTrailName(trail?.name);
+    setTrailId(trail?.id);
+  };
+  //end searchbar stuff
+
 //use references to get trail name from component, add required keyword to inputs i require
   const clearForm = () => {
     setTrailName("");
+    setSelectedTrail(undefined);
+    setResults(undefined);
+    setTrailId(-1);
     setStartDate(new Date());
     setDescription("");
     setTrailOpenPercentage(null);
+    (document.getElementById("searchbar") as HTMLInputElement).value = "";//not working
   };
 
-
+//add date time checking
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+    //format date like so: 2023-10-29 17:21:06.384
+    var date = startDate;
+    var startDateTime = date.getFullYear() + "-" + ("0" + (date.getMonth() + 1)).slice(-2) + "-" +("0" + date.getDate()).slice(-2) + " " +("0" + date.getHours() ).slice(-2) + ":" +("0" + date.getMinutes()).slice(-2) + ":" +("0" + date.getSeconds()).slice(-2);
     const formData = {
       trailName,
-      startDate,
       description,
+      startDateTime,
+      trailId,
       trailOpenPercentage
     };
+    console.log(formData.trailName);
+    console.log(formData.trailId);
     try {
       const response = await fetch("http://localhost:3000/trailupdates", {
         method: "POST",
@@ -60,7 +106,18 @@ const CreateTrailUpdate = () => {
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
                 <label className="form-label">Trail Name</label>
-                <SearchBarComponent></SearchBarComponent> 
+                <SearchBar
+                results={results}
+                value={trailName}//change to trailname maybe
+                renderItem={(trail: any) => 
+                    <div>
+                        <p>{trail.name}</p>
+                        <p>{trail.location}</p>
+                   </div>
+                }
+                onChange={handleChange}
+                onSelect={handleSelect}
+               />
               </div>
 
               <div className="mb-3">
