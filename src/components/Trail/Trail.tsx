@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
+import 'bootstrap/dist/css/bootstrap.css'; // trying to import Bootstrap CSS
 
 // Defining an interface for the Trail object
 interface Trail {
@@ -45,7 +46,7 @@ const MapComponent = () => {
 
   const mapContainerStyle = {
     width: '100%',
-    height: '100vh',
+    height: '80vh',
   };
 
   const center = {
@@ -96,8 +97,14 @@ const MapComponent = () => {
 
   // Attach the ref to the div
   return (
-    <div ref={mapRef} style={mapContainerStyle}>
-      {/* Your other components here */}
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col">
+          <div ref={mapRef} style={mapContainerStyle}>
+            {/* Your other components here */}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
