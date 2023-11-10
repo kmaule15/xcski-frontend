@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
+import { Container, Form, Button } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import SearchBar from "../../SearchBar/SearchBar";
 
@@ -9,7 +10,9 @@ const CreateTrailUpdate = () => {
   const [description, setDescription] = useState<string>("");
   const [trailOpenPercentage, setTrailOpenPercentage] = useState<number | null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [requestFailed, setRequestFailed] = useState<boolean>(false);
   const [trailId, setTrailId] = useState<number>(-1);
+  useEffect(()=>{onLoad();}, []);
   //from searchbar
   const [results, setResults] = useState<{ name: string; location: string; id: number }[]>();
  const [trails, setTrails] = useState<{ name: string; location: string; id: number }[]>();
@@ -19,6 +22,7 @@ const CreateTrailUpdate = () => {
     id: number;
   }>();
   const onLoad = async () => {
+    console.log("Trails queried!");
     try {
       const response = await fetch("http://localhost:3000/trails", {
         method: "Get",
@@ -26,10 +30,9 @@ const CreateTrailUpdate = () => {
       .then(data => setTrails(data));
 
     } catch (error) {
-      console.error("An error occured:", error);
+      //console.error("An error occured:", error);
     }
   };
-  onLoad();
   type changeHandler = React.ChangeEventHandler<HTMLInputElement>;
   const handleChange: changeHandler = (e) => {
     const { target } = e;
@@ -58,7 +61,11 @@ const CreateTrailUpdate = () => {
     setStartDate(new Date());
     setDescription("");
     setTrailOpenPercentage(null);
-    (document.getElementById("searchbar") as HTMLInputElement).value = "";//not working
+    const output = document.querySelector("input[name='login']") as HTMLInputElement;
+    const input = document.getElementById("searchbar") as HTMLInputElement;
+    input!.value = '';
+    output!.value = '';
+    console.log(input!.value)
   };
 
 //add date time checking
@@ -74,8 +81,8 @@ const CreateTrailUpdate = () => {
       trailId,
       trailOpenPercentage
     };
-    console.log(formData.trailName);
-    console.log(formData.trailId);
+    //console.log(formData.trailName);
+    //console.log(formData.trailId);
     try {
       const response = await fetch("http://localhost:3000/trailupdates", {
         method: "POST",
@@ -89,16 +96,14 @@ const CreateTrailUpdate = () => {
         setIsSuccess(true);
         clearForm();
         setTimeout(() => setIsSuccess(false), 4000);
-      } else {
-        console.error("Trail update creation failed.");
       }
     } catch (error) {
-      console.error("An error occured:", error);
     }
   };
 
   return (
     <>
+      <div className="form">
       <h1 className="text-center mb-4">Create a Trail Update</h1>
       <div className="container">
         <div className="row justify-content-center">
@@ -151,7 +156,7 @@ const CreateTrailUpdate = () => {
 
               {isSuccess && (
                 <div className="alert alert-success">
-                  Trail successfully created!
+                  Trail update successfully created!
                 </div>
               )}
               <button type="submit" className="btn btn-primary mt-3">
@@ -162,6 +167,8 @@ const CreateTrailUpdate = () => {
           </div>
         </div>
       </div>
+      </div>
+      <div className="squares-background"></div>
     </>
   );
 };
