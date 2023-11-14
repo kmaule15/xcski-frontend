@@ -2,6 +2,7 @@ import React from "react";
 import PostsList from "./Posts/PostList";
 import "./Community.css";
 import CreateEventModal from "./Events/CreateEventModal";
+import WeatherWidget from "../Trail/WeatherWidget/WeatherWidget";
 
 const Community = () => {
   return (
@@ -14,6 +15,7 @@ const Community = () => {
           {/* Middle Rectangle */}
           <div>
             <PostsList />
+            <WeatherWidget {...{ lat: 1, lng: 2 }}></WeatherWidget>
           </div>
         </div>
         <div className="col-sm-2 rounded-right right-column">
