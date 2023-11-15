@@ -7,19 +7,26 @@ const TrailSearch = () => {
   const { trails, isLoading, error } = useTrails();
   const [sortField, setSortField] = useState('name');
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [address, setAddress] = useState('');
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setUserLocation({
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      });
-    });
-  }, []);
+  const handleAddressChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAddress(event.target.value);
+  };
+
+  const handleAddressSubmit = () => {
+    // Use a geocoding service to convert the address to coordinates
+    // This is just a placeholder, replace it with actual geocoding logic
+    const geocodedLocation = geocodeAddress(address);
+    if (geocodedLocation) {
+      setUserLocation(geocodedLocation);
+    } else {
+      alert('Invalid address. Please try again.');
+    }
+  };
 
   const getDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
     const R = 6371; // Radius of the earth in km
@@ -65,6 +72,14 @@ const TrailSearch = () => {
           value={searchTerm}
           onChange={handleSearchChange}
         />
+        <FormControl
+          placeholder="Enter your address..."
+          aria-label="Enter your address"
+          aria-describedby="basic-addon2"
+          value={address}
+          onChange={handleAddressChange}
+        />
+        <Button onClick={handleAddressSubmit}>Submit</Button>
       </InputGroup>
       <ButtonGroup aria-label="Sort trails">
         <Button variant="secondary" onClick={() => setSortField('name')}>Sort by Name</Button>
@@ -85,14 +100,14 @@ const TrailSearch = () => {
                   <p>Length: {trail.length} miles</p>
                   <p>Estimated Time: {trail.estimatedTime} hours</p>
                   <p>Types Allowed: {trail.typesAllowed.join(', ')}</p>
-                  {userLocation && <p>Distance: {getDistance(userLocation.latitude, userLocation.longitude, trail.latitude, trail.longitude).toFixed(2)} miles</p>} {/* Display the distance to the trail */}
+                  {userLocation && <p>Distance: {getDistance(userLocation.latitude, userLocation.longitude, trail.latitude, trail.longitude)} miles</p>}
                 </Card.Text>
               </Card.Body>
             </Card>
           ))}
         </Col>
         <Col md={9}>
-          <MapComponent />
+          <MapComponent trails={sortedTrails} userLocation={userLocation} />
         </Col>
       </Row>
     </Container>
