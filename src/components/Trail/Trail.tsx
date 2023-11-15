@@ -4,12 +4,21 @@ import 'bootstrap/dist/css/bootstrap.css'; // trying to import Bootstrap CSS
 
 // Defining an interface for the Trail object
 interface Trail {
+  name: string;
+  description: string;
+  location: string;
   latitude: number;
   longitude: number;
+  difficulty: string;
+  length: number;
+  estimatedTime: number;
+  typesAllowed: string[];
+  [key: string]: any;
 }
 
+
 // Custom hook to fetch trails data from the server
-const useTrails = () => {
+export const useTrails = () => {
   const [trails, setTrails] = useState<Trail[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);

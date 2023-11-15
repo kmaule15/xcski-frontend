@@ -1,17 +1,33 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, InputGroup, FormControl } from 'react-bootstrap';
-import Trail from "../Trail";
+import { Container, Row, Col, InputGroup, FormControl, Card, ButtonGroup, Button } from 'react-bootstrap';
+import MapComponent, { useTrails } from "../Trail";
 
 const TrailSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { trails, isLoading, error } = useTrails();
+  const [sortField, setSortField] = useState('name');
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
   };
 
-  // This is a placeholder for the list of trails from the database.
-  // Replace this with the actual data.
-  const trails = ['Trail 1', 'Trail 2', 'Trail 3'];
+  const sortedTrails = [...trails].sort((a, b) => {
+    if (a[sortField] < b[sortField]) {
+      return -1;
+    }
+    if (a[sortField] > b[sortField]) {
+      return 1;
+    }
+    return 0;
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
     <Container fluid style={{ height: 'calc(100vh - 60px)', display: 'flex', flexDirection: 'column' }}>
@@ -24,14 +40,31 @@ const TrailSearch = () => {
           onChange={handleSearchChange}
         />
       </InputGroup>
+      <ButtonGroup aria-label="Sort trails">
+        <Button variant="secondary" onClick={() => setSortField('name')}>Sort by Name</Button>
+        <Button variant="secondary" onClick={() => setSortField('difficulty')}>Sort by Difficulty</Button>
+        <Button variant="secondary" onClick={() => setSortField('length')}>Sort by Length</Button>
+      </ButtonGroup>
       <Row style={{ flex: 1 }}>
-        <Col md={3} style={{ overflowY: 'auto' }}>
-          {trails.map((trail, index) => (
-            <p key={index}>{trail}</p>
+        <Col md={3} style={{ overflowY: 'auto', paddingRight: 0 }}> {/* Remove padding on the right side of the column */}
+          {sortedTrails.map((trail, index) => (
+            <Card key={index} style={{ width: '100%', marginBottom: '2px' }}> {/* Set the bottom margin to 2px */}
+              <Card.Body>
+                <Card.Title>{trail.name}</Card.Title>
+                <Card.Text>
+                  <p>{trail.description}</p>
+                  <p>Location: {trail.location}</p>
+                  <p>Difficulty: {trail.difficulty}</p>
+                  <p>Length: {trail.length} miles</p>
+                  <p>Estimated Time: {trail.estimatedTime} hours</p>
+                  <p>Types Allowed: {trail.typesAllowed.join(', ')}</p>
+                </Card.Text>
+              </Card.Body>
+            </Card>
           ))}
         </Col>
         <Col md={9}>
-          <Trail />
+          <MapComponent />
         </Col>
       </Row>
     </Container>
