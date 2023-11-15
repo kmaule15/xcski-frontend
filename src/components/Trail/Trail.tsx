@@ -41,7 +41,6 @@ const MapComponent = () => {
   const { trails, isLoading, error } = useTrails();
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
   const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const mapRef = useRef<HTMLDivElement | null>(null);
 
   if (!apiKey) {
@@ -59,15 +58,6 @@ const MapComponent = () => {
   };
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      setUserLocation({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-      });
-    });
-  }, []);
-
-  useEffect(() => {
     const loader = new Loader({
       apiKey,
       version: 'weekly',
@@ -77,19 +67,9 @@ const MapComponent = () => {
     loader.load().then((google) => {
       if (mapRef.current) {
         const map = new google.maps.Map(mapRef.current, {
-          center: userLocation || center,
+          center: center,
           zoom: 7
         });
-
-        if (userLocation) {
-          new google.maps.Marker({
-            position: userLocation,
-            map,
-            icon: {
-              url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
-            }
-          });
-        }
 
         trails.forEach((trail) => {
           const marker = new google.maps.Marker({
@@ -107,7 +87,7 @@ const MapComponent = () => {
     }).catch(e => {
       // handle error
     });
-  }, [trails, userLocation]);
+  }, [trails]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -122,7 +102,7 @@ const MapComponent = () => {
       <div className="row">
         <div className="col">
           <div ref={mapRef} style={mapContainerStyle}>
-            {/* Your other components here */}
+            {/* Other components here */}
           </div>
         </div>
       </div>
