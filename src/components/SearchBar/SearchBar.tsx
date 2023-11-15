@@ -63,7 +63,6 @@ const SearchBar = <T extends object>({
 
   useEffect(() => {
     if (!resultContainer.current) return;
-
     resultContainer.current.scrollIntoView({
       block: "center",
     });
@@ -80,7 +79,7 @@ const SearchBar = <T extends object>({
 
 
 return (
-  <div className="h-screen w-50 flex items-center justify-center">
+  <div className="h-screen flex items-center justify-center">
     <div
       tabIndex={1}
       onBlur={resetSearchComplete}
@@ -89,6 +88,7 @@ return (
     >
       <input
         value={defaultValue}
+        name="searchbar"
         id="searchbar"
         onChange={handleChange}
         type="search"
@@ -98,7 +98,7 @@ return (
 
       {/* Search Results Container */}
       {showResults && (
-        <div className="z-3 position-fixed w-50 mt-1 p-2 bg-white shadow-lg rounded-bl rounded-br max-h-56 overflow-y-auto">
+        <div className="z-1 position-relative mt-1 p-2 bg-white shadow-lg rounded-bl rounded-br max-h-56 overflow-y-auto">
           {results.map((item, index) => {
             return (
               <div
@@ -109,7 +109,7 @@ return (
                   backgroundColor:
                     index === focusedIndex ? "#e1ecff" : "",
                 }}
-                className="input-group cursor-pointer hover:bg-black hover:bg-opacity-10 p-"
+                className="text-left cursor-pointer hover:bg-black hover:bg-opacity-10 p-"
               >
                 {renderItem(item)}
               </div>
