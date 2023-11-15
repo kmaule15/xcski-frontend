@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
-import 'bootstrap/dist/css/bootstrap.css'; // trying to import Bootstrap CSS
+import 'bootstrap/dist/css/bootstrap.css';
 
-// Defining an interface for the Trail object
 interface Trail {
   name: string;
   description: string;
@@ -16,8 +15,6 @@ interface Trail {
   [key: string]: any;
 }
 
-
-// Custom hook to fetch trails data from the server
 export const useTrails = () => {
   const [trails, setTrails] = useState<Trail[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -44,9 +41,7 @@ const MapComponent = () => {
   const { trails, isLoading, error } = useTrails();
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
   const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
-  console.log('Rendering MapComponent');
-
-  // Create a ref for the div
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const mapRef = useRef<HTMLDivElement | null>(null);
 
   if (!apiKey) {
@@ -64,6 +59,15 @@ const MapComponent = () => {
   };
 
   useEffect(() => {
+    navigator.geolocation.getCurrentPosition((position) => {
+      setUserLocation({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+      });
+    });
+  }, []);
+
+  useEffect(() => {
     const loader = new Loader({
       apiKey,
       version: 'weekly',
@@ -71,12 +75,21 @@ const MapComponent = () => {
     });
 
     loader.load().then((google) => {
-      // Check if mapRef.current is not null
       if (mapRef.current) {
         const map = new google.maps.Map(mapRef.current, {
-          center,
+          center: userLocation || center,
           zoom: 7
         });
+
+        if (userLocation) {
+          new google.maps.Marker({
+            position: userLocation,
+            map,
+            icon: {
+              url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+            }
+          });
+        }
 
         trails.forEach((trail) => {
           const marker = new google.maps.Marker({
@@ -94,7 +107,7 @@ const MapComponent = () => {
     }).catch(e => {
       // handle error
     });
-  }, [trails]);
+  }, [trails, userLocation]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -104,7 +117,6 @@ const MapComponent = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  // Attach the ref to the div
   return (
     <div className="container-fluid">
       <div className="row">
