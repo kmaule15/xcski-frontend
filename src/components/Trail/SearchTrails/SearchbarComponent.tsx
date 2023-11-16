@@ -58,7 +58,7 @@ const SearchBar = ({ setCenter, setZoom }: { setCenter: (center: { lat: number, 
   }, []);
 
   return (
-    <input ref={autocompleteInputRef} type="text" placeholder="Search Places ..." />
+    <input ref={autocompleteInputRef} type="text" placeholder="Search For Cities (trails coming soon) ..." />
   );
 };
 

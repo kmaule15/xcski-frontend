@@ -57,7 +57,7 @@ const TrailSearch = () => {
                 </Card.Body>
               </Card>
             ))}
-          </div> {/* End of added div */}
+          </div>
         </Col>
         <Col md={9}>
           <MapComponent latitude={center.lat} longitude={center.lng} zoom={zoom} setSelectedTrail={setSelectedTrail} />
