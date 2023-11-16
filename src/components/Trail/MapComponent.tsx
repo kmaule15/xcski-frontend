@@ -37,11 +37,17 @@ export const useTrails = () => {
   return { trails, isLoading, error };
 };
 
-const MapComponent = () => {
+interface MapComponentProps {
+  latitude?: number;
+  longitude?: number;
+}
+
+const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude }) => {
   const { trails, isLoading, error } = useTrails();
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
   const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
   const mapRef = useRef<HTMLDivElement | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   if (!apiKey) {
     throw new Error('API key is missing. Please check your .env file. (or send Chase your IP address)');
@@ -53,11 +59,18 @@ const MapComponent = () => {
   };
 
   const center = {
-    lat: 44.5,
-    lng: -89.5,
+    lat: latitude || 44.5,
+    lng: longitude || -89.5,
   };
 
   useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     const loader = new Loader({
       apiKey,
       version: 'weekly',
@@ -68,7 +81,7 @@ const MapComponent = () => {
       if (mapRef.current) {
         const map = new google.maps.Map(mapRef.current, {
           center: center,
-          zoom: 7
+          zoom: 9
         });
 
         trails.forEach((trail) => {
@@ -87,7 +100,7 @@ const MapComponent = () => {
     }).catch(e => {
       // handle error
     });
-  }, [trails]);
+  }, [trails, latitude, longitude, isMounted, apiKey, center]);
 
   if (isLoading) {
     return <div>Loading...</div>;

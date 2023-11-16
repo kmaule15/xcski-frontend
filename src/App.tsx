@@ -16,7 +16,7 @@ import PWU from "./components/ResetPass/PWU"
 import { AuthProvider } from './AuthContext';
 import CreateTrailUpdate from "./components/Trail/CreateTrailUpdate/CreateTrailUpdate";
 import PostDetails from "./components/Community/Posts/PostDetails";
-import MapComponent from './components/Trail/Trail'
+import MapComponent from './components/Trail/MapComponent'
 
 
 function App() {

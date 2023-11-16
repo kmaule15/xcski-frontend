@@ -1,4 +1,4 @@
-import Trail from "../Trail";
+import Trail from "../MapComponent";
 
 const MyTrails = () => {
   return (

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Container, Row, Col, InputGroup, FormControl, Card, ButtonGroup, Button } from 'react-bootstrap';
-import MapComponent, { useTrails } from "../Trail";
+import { Container, Row, Col, Card, ButtonGroup, Button } from 'react-bootstrap';
+import MapComponent, { useTrails } from "../MapComponent";
+import SearchBarComponent from '../../SearchBar/SearchBarComponent';
 
 const TrailSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -25,15 +26,7 @@ const TrailSearch = () => {
 
   return (
     <Container fluid style={{ height: 'calc(100vh - 60px)', display: 'flex', flexDirection: 'column' }}>
-      <InputGroup className="mb-3">
-        <FormControl
-          placeholder="Search trails..."
-          aria-label="Search trails"
-          aria-describedby="basic-addon2"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-      </InputGroup>
+      <SearchBarComponent /> {/* Use the SearchBarComponent here */}
       <ButtonGroup aria-label="Sort trails">
         <Button variant="secondary" onClick={() => setSortField('name')}>Sort by Name</Button>
         <Button variant="secondary" onClick={() => setSortField('difficulty')}>Sort by Difficulty</Button>
