@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import 'bootstrap/dist/css/bootstrap.css';
 
-interface Trail {
+export type Trail = {
   name: string;
   description: string;
   location: string;
@@ -13,7 +13,7 @@ interface Trail {
   estimatedTime: number;
   typesAllowed: string[];
   [key: string]: any;
-}
+};
 
 export const useTrails = () => {
   const [trails, setTrails] = useState<Trail[]>([]);
@@ -41,12 +41,12 @@ interface MapComponentProps {
   latitude: number | undefined;
   longitude: number | undefined;
   zoom: number;
+  setSelectedTrail: (trail: Trail | null) => void;
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, zoom }) => {
+const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, zoom, setSelectedTrail }) => {
   const { trails, isLoading, error } = useTrails();
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
-  const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
   const mapRef = useRef<HTMLDivElement | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -92,6 +92,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, zoom }
           });
 
           marker.addListener('click', () => {
+            console.log(`Marker clicked: ${trail.name}`); // Log the name of the trail when a marker is clicked
             setSelectedTrail(trail);
           });
         });
@@ -101,7 +102,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, zoom }
     }).catch(e => {
       // handle error
     });
-  }, [trails, latitude, longitude, isMounted, apiKey, center, zoom]);
+  }, [trails, latitude, longitude, isMounted, apiKey, center, zoom, setSelectedTrail]);
 
   if (isLoading) {
     return <div>Loading...</div>;

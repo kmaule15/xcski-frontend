@@ -11,3 +11,7 @@
     max-height: 80vh;
     flex-grow: 1;
 }
+
+.trail-search-card.selected {
+    background-color: #d6eaff;
+  }

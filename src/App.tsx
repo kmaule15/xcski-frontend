@@ -16,7 +16,7 @@ import PWU from "./components/ResetPass/PWU"
 import { AuthProvider } from './AuthContext';
 import CreateTrailUpdate from "./components/Trail/CreateTrailUpdate/CreateTrailUpdate";
 import PostDetails from "./components/Community/Posts/PostDetails";
-import MapComponent from './components/Trail/MapComponent'
+import MapComponent, { Trail } from './components/Trail/MapComponent'
 
 
 function App() {
@@ -36,7 +36,9 @@ function App() {
         <Route path="resetpass" element={<ResetPass />} />
         <Route path="PWU/:token" element={<PWU />} />
         <Route path="/posts/:postId" element={<PostDetails />} />
-        <Route path="map" element={<MapComponent latitude={undefined} longitude={undefined} zoom={0} />} />
+        <Route path="map" element={<MapComponent latitude={undefined} longitude={undefined} zoom={0} setSelectedTrail={function (trail: Trail | null): void {
+            throw new Error("Function not implemented.");
+          } } />} />
       </Route>
     </Routes>
     </AuthProvider>
