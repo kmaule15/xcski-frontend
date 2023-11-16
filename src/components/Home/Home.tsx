@@ -5,9 +5,11 @@ const Home = () => {
   //start searchbar stuff
   const [trailName, setTrailName] = useState<string>("");
   const [trailId, setTrailId] = useState<number>(-1);
+  const [trailLongitude, setTrailLongitude] = useState<number>(-1);
+  const [trailLatitude, setTrailLatitude] = useState<number>(-1);
   useEffect(()=>{onLoad();}, []);
-  const [results, setResults] = useState<{ name: string; location: string; id: number }[]>();
- const [trails, setTrails] = useState<{ name: string; location: string; id: number }[]>();
+  const [results, setResults] = useState<{ name: string; location: string; id: number; longitude: number; latitude: number}[]>();
+ const [trails, setTrails] = useState<{ name: string; location: string; id: number; longitude: number; latitude: number}[]>();
  const [selectedTrail, setSelectedTrail] = useState<{
     name: string;
     location: string;
@@ -31,7 +33,7 @@ const Home = () => {
     if (!target.value.trim()) return setResults([]);
     //improve filtering later
     var targetValue = target.value.toLowerCase()
-    const filteredValue = trails && trails.filter((trail: { name: string; location: string; id: number;}) =>
+    const filteredValue = trails && trails.filter((trail: { name: string; location: string; id: number; longitude: number; latitude: number}) =>
       trail.name.toLowerCase().includes(targetValue) || trail.location.toLowerCase().includes(targetValue)
     );
     setResults(filteredValue);
@@ -41,6 +43,10 @@ const Home = () => {
     setSelectedTrail(trail);
     setTrailName(trail?.name);
     setTrailId(trail?.id);
+    setTrailLatitude(trail?.latitude);
+    setTrailLongitude(trail?.longitude);
+    console.log(trailLatitude); //to test, remove later
+    console.log(trailLongitude); //to test, remove later
   };
   //end searchbar stuff
 
