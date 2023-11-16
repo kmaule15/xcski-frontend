@@ -40,9 +40,10 @@ export const useTrails = () => {
 interface MapComponentProps {
   latitude: number | undefined;
   longitude: number | undefined;
+  zoom: number;
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude }) => {
+const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, zoom }) => {
   const { trails, isLoading, error } = useTrails();
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
   const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
@@ -63,8 +64,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude }) => {
     lng: longitude || -89.5,
   }), [latitude, longitude]);
 
-  const zoomLevel = latitude && longitude ? 9 : 7; // Set zoom level based on the presence of latitude and longitude
-
   useEffect(() => {
     setIsMounted(true);
     return () => setIsMounted(false);
@@ -83,7 +82,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude }) => {
       if (mapRef.current) {
         const map = new google.maps.Map(mapRef.current, {
           center: center,
-          zoom: zoomLevel, // Use the conditional zoom level
+          zoom: zoom, // Use the zoom prop here
         });
 
         trails.forEach((trail) => {
@@ -102,7 +101,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude }) => {
     }).catch(e => {
       // handle error
     });
-  }, [trails, latitude, longitude, isMounted, apiKey, center, zoomLevel]);
+  }, [trails, latitude, longitude, isMounted, apiKey, center, zoom]);
 
   if (isLoading) {
     return <div>Loading...</div>;

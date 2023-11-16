@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Container, Row, Col, Card, ButtonGroup, Button } from 'react-bootstrap';
 import MapComponent, { useTrails } from "../MapComponent";
-import SearchBarComponent from '../../SearchBar/SearchBarComponent';
+import SearchBar from './SearchbarComponent';
 
 type Trail = {
   name: string;
@@ -16,12 +16,13 @@ type Trail = {
   [key: string]: any;
 };
 
-
 const TrailSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { trails, isLoading, error } = useTrails();
   const [sortField, setSortField] = useState('name');
   const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
+  const [center, setCenter] = useState<{ lat: number, lng: number }>({ lat: 44.5, lng: -89.5 });
+  const [zoom, setZoom] = useState(7);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -41,7 +42,7 @@ const TrailSearch = () => {
 
   return (
     <Container fluid style={{ height: 'calc(100vh - 60px)', display: 'flex', flexDirection: 'column' }}>
-      <SearchBarComponent /> {/* Use the SearchBarComponent here */}
+      <SearchBar setCenter={setCenter} setZoom={setZoom} /> {/* Pass the setCenter and setZoom functions to the SearchBar */}
       <ButtonGroup aria-label="Sort trails">
         <Button variant="secondary" onClick={() => setSortField('name')}>Sort by Name</Button>
         <Button variant="secondary" onClick={() => setSortField('difficulty')}>Sort by Difficulty</Button>
@@ -50,7 +51,7 @@ const TrailSearch = () => {
       <Row style={{ flex: 1 }}>
         <Col md={3} style={{ overflowY: 'auto', paddingRight: 0 }}>
           {sortedTrails.map((trail, index) => (
-            <Card key={index} style={{ width: '100%', marginBottom: '2px' }} onClick={() => setSelectedTrail(trail)}>
+            <Card key={index} style={{ width: '100%', marginBottom: '2px', cursor: 'pointer' }} onClick={() => { setSelectedTrail(trail); setCenter({ lat: trail.latitude, lng: trail.longitude }); setZoom(12); }}>
               <Card.Body>
                 <Card.Title>{trail.name}</Card.Title>
                 <Card.Text>
@@ -64,7 +65,7 @@ const TrailSearch = () => {
           ))}
         </Col>
         <Col md={9}>
-          <MapComponent latitude={selectedTrail?.latitude} longitude={selectedTrail?.longitude} />
+          <MapComponent latitude={center.lat} longitude={center.lng} zoom={zoom} /> {/* Use the center and zoom states here */}
         </Col>
       </Row>
     </Container>
