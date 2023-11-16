@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -58,10 +58,12 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude }) => {
     height: '80vh',
   };
 
-  const center = {
+  const center = useMemo(() => ({
     lat: latitude || 44.5,
     lng: longitude || -89.5,
-  };
+  }), [latitude, longitude]);
+
+  const zoomLevel = latitude && longitude ? 9 : 7; // Set zoom level based on the presence of latitude and longitude
 
   useEffect(() => {
     setIsMounted(true);
@@ -81,7 +83,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude }) => {
       if (mapRef.current) {
         const map = new google.maps.Map(mapRef.current, {
           center: center,
-          zoom: 9
+          zoom: zoomLevel, // Use the conditional zoom level
         });
 
         trails.forEach((trail) => {
@@ -100,7 +102,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude }) => {
     }).catch(e => {
       // handle error
     });
-  }, [trails, latitude, longitude, isMounted, apiKey, center]);
+  }, [trails, latitude, longitude, isMounted, apiKey, center, zoomLevel]);
 
   if (isLoading) {
     return <div>Loading...</div>;
