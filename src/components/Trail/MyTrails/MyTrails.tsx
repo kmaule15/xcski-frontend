@@ -4,7 +4,7 @@ const MyTrails = () => {
   return (
     <>
       <p>A list of my trails</p>
-      <Trail />
+      <Trail latitude={undefined} longitude={undefined} />
     </>
   );
 };

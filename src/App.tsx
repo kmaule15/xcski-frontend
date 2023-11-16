@@ -36,7 +36,7 @@ function App() {
         <Route path="resetpass" element={<ResetPass />} />
         <Route path="PWU/:token" element={<PWU />} />
         <Route path="/posts/:postId" element={<PostDetails />} />
-        <Route path="map" element={<MapComponent />} />
+        <Route path="map" element={<MapComponent latitude={undefined} longitude={undefined} />} />
       </Route>
     </Routes>
     </AuthProvider>

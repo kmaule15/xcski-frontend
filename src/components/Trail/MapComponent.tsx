@@ -38,8 +38,8 @@ export const useTrails = () => {
 };
 
 interface MapComponentProps {
-  latitude?: number;
-  longitude?: number;
+  latitude: number | undefined;
+  longitude: number | undefined;
 }
 
 const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude }) => {

@@ -3,10 +3,25 @@ import { Container, Row, Col, Card, ButtonGroup, Button } from 'react-bootstrap'
 import MapComponent, { useTrails } from "../MapComponent";
 import SearchBarComponent from '../../SearchBar/SearchBarComponent';
 
+type Trail = {
+  name: string;
+  description: string;
+  location: string;
+  latitude: number;
+  longitude: number;
+  difficulty: string;
+  length: number;
+  estimatedTime: number;
+  typesAllowed: string[];
+  [key: string]: any;
+};
+
+
 const TrailSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { trails, isLoading, error } = useTrails();
   const [sortField, setSortField] = useState('name');
+  const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(event.target.value);
@@ -35,7 +50,7 @@ const TrailSearch = () => {
       <Row style={{ flex: 1 }}>
         <Col md={3} style={{ overflowY: 'auto', paddingRight: 0 }}>
           {sortedTrails.map((trail, index) => (
-            <Card key={index} style={{ width: '100%', marginBottom: '2px' }}>
+            <Card key={index} style={{ width: '100%', marginBottom: '2px' }} onClick={() => setSelectedTrail(trail)}>
               <Card.Body>
                 <Card.Title>{trail.name}</Card.Title>
                 <Card.Text>
@@ -49,7 +64,7 @@ const TrailSearch = () => {
           ))}
         </Col>
         <Col md={9}>
-          <MapComponent />
+          <MapComponent latitude={selectedTrail?.latitude} longitude={selectedTrail?.longitude} />
         </Col>
       </Row>
     </Container>
