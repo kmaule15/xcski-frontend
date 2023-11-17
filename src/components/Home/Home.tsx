@@ -5,8 +5,8 @@ const Home = () => {
   //start searchbar stuff
   const [trailName, setTrailName] = useState<string>("");
   const [trailId, setTrailId] = useState<number>(-1);
-  const [trailLongitude, setTrailLongitude] = useState<number>(-1);
-  const [trailLatitude, setTrailLatitude] = useState<number>(-1);
+  const [trailLongitude, setTrailLongitude] = useState<number|null>(null);
+  const [trailLatitude, setTrailLatitude] = useState<number|null>(null);
   useEffect(()=>{onLoad();}, []);
   const [results, setResults] = useState<{ name: string; location: string; id: number; longitude: number; latitude: number}[]>();
  const [trails, setTrails] = useState<{ name: string; location: string; id: number; longitude: number; latitude: number}[]>();
