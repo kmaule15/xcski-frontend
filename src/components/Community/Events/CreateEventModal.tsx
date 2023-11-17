@@ -23,6 +23,8 @@ const CreateEventModal = () => {
   const [formMessage, setFormMessage] = useState<string>("");
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
+  const [isNotAtTrail, setIsNotAtTrail] = useState<boolean>(false);
+  const [isAtTrail, setIsAtTrail] = useState<boolean>(false);
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
 
   const handleClose = () => {
@@ -59,7 +61,7 @@ const CreateEventModal = () => {
     );
   }
 
-  const handleAutocomplete = () => {
+  useEffect(() => {
     const loader = new Loader({
       apiKey,
       version: "weekly",
@@ -67,7 +69,6 @@ const CreateEventModal = () => {
     });
 
     loader.load().then(() => {
-      console.log("in loader");
       if (autocompleteInputRef.current) {
         const autocomplete = new window.google.maps.places.Autocomplete(
           autocompleteInputRef.current,
@@ -97,7 +98,7 @@ const CreateEventModal = () => {
         };
       }
     });
-  };
+  }, [isOpen, isNotAtTrail, apiKey]);
 
   const clearForm = () => {
     // setTitle("");
@@ -127,7 +128,7 @@ const CreateEventModal = () => {
       ) : (
         <p>Users must be logged in to create events</p>
       )}
-      <Modal show={isOpen} onHide={handleClose} onEntered={handleAutocomplete}>
+      <Modal show={isOpen} onHide={handleClose}>
         <Modal.Header>Step {currentStep} of 3</Modal.Header>
         <Modal.Body>
           {currentStep === 1 && (
@@ -175,7 +176,7 @@ const CreateEventModal = () => {
                 <Form.Label>End Time</Form.Label>
                 <DatePicker
                   selected={endTime}
-                  onChange={(endTime: Date) => setEndTime(startTime)}
+                  onChange={(endTime: Date) => setEndTime(endTime)}
                   showTimeSelect
                   showTimeSelectOnly
                   timeIntervals={15}
@@ -185,18 +186,41 @@ const CreateEventModal = () => {
               </Form.Group>
             </div>
           )}
-
           {currentStep === 2 && (
             <div>
               <Form.Group controlId="formLocation">
-                <Form.Label>Location</Form.Label>
-                <Form.Control
-                  ref={autocompleteInputRef}
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
+                <Form.Label>Is Event Located At a Trail?</Form.Label>
+                <Form.Check
+                  disabled={isNotAtTrail}
+                  type="checkbox"
+                  label="Yes"
+                  value="Yes"
+                  onChange={(e) => setIsNotAtTrail(false)}
+                />
+                <Form.Check
+                  type="checkbox"
+                  label="No"
+                  value="No"
+                  onChange={(e) => setIsNotAtTrail(true)}
                 />
               </Form.Group>
+              {/* {isAtTrail && (
+                <Form.Group controlId="formLocation">
+                  <Form.Label>Please enter the Name of the Trail</Form.Label>
+                  <Form.Control type="text" />
+                </Form.Group>
+              )} */}
+              {isNotAtTrail && (
+                <Form.Group controlId="formLocation">
+                  <Form.Label>Please enter the Address of the Event</Form.Label>
+                  <Form.Control
+                    ref={autocompleteInputRef}
+                    type="text"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
+                </Form.Group>
+              )}
             </div>
           )}
         </Modal.Body>
@@ -211,59 +235,6 @@ const CreateEventModal = () => {
       </Modal>
     </div>
   );
-
-  // return (
-  //   <Container className="vh-100 d-flex justify-content-center align-items-center">
-  //     <div className="form">
-  //       <div className="text-center mb-4">
-  //         <h1>Create an Event</h1>
-  //       </div>
-  //       <Form onSubmit={handleSubmit} className="mt-4">
-  //         <Form.Group controlId="formName">
-  //           <Form.Label>Title</Form.Label>
-  //           <Form.Control
-  //             type="text"
-  //             value={title}
-  //             onChange={(e) => setTitle(e.target.value)}
-  //           />
-  //         </Form.Group>
-  //         <Form.Group controlId="formDescription">
-  //           <Form.Label>Description</Form.Label>
-  //           <Form.Control
-  //             as="textarea"
-  //             rows={2}
-  //             maxLength={300}
-  //             value={description}
-  //             onChange={(e) => setDescription(e.target.value)}
-  //           />
-  //         </Form.Group>
-  //         <Form.Group>
-  //           <Form.Label>Location</Form.Label>
-  //           <Form.Control
-  //             ref={autocompleteInputRef}
-  //             type="text"
-  //             value={location}
-  //             onChange={(e) => setLocation(e.target.value)}
-  //           />
-  //         </Form.Group>
-  //         {/* <Form.Group>
-  //           <Form.Label>Invite Users</Form.Label>
-  //           <Form.Control
-  //             as="select"
-  //             value={invitees}
-  //             onChange={(e) => setInvitees(e.target.value)}
-  //           />
-  //         </Form.Group> */}
-  //         <br></br>
-  //         <div className="message">{formMessage}</div>
-  //         <Button variant="primary" type="submit">
-  //           Create Event
-  //         </Button>
-  //       </Form>
-  //     </div>
-  //     <div className="squares-background"></div>
-  //   </Container>
-  // );
 };
 
 export default CreateEventModal;
