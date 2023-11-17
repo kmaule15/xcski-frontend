@@ -1,14 +1,21 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
+import 'bootstrap/dist/css/bootstrap.css';
 
-// Defining an interface for the Trail object
-interface Trail {
+export type Trail = {
+  name: string;
+  description: string;
+  location: string;
   latitude: number;
   longitude: number;
-}
+  difficulty: string;
+  length: number;
+  estimatedTime: number;
+  typesAllowed: string[];
+  [key: string]: any;
+};
 
-// Custom hook to fetch trails data from the server
-const useTrails = () => {
+export const useTrails = () => {
   const [trails, setTrails] = useState<Trail[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -30,14 +37,18 @@ const useTrails = () => {
   return { trails, isLoading, error };
 };
 
-const MapComponent = () => {
+interface MapComponentProps {
+  latitude: number | undefined;
+  longitude: number | undefined;
+  zoom: number;
+  setSelectedTrail: (trail: Trail | null) => void;
+}
+
+const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, zoom, setSelectedTrail }) => {
   const { trails, isLoading, error } = useTrails();
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
-  const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
-  console.log('Rendering MapComponent');
-
-  // Create a ref for the div
   const mapRef = useRef<HTMLDivElement | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   if (!apiKey) {
     throw new Error('API key is missing. Please check your .env file. (or send Chase your IP address)');
@@ -45,15 +56,22 @@ const MapComponent = () => {
 
   const mapContainerStyle = {
     width: '100%',
-    height: '100vh',
+    height: '80vh',
   };
 
-  const center = {
-    lat: 44.5,
-    lng: -89.5,
-  };
+  const center = useMemo(() => ({
+    lat: latitude || 44.5,
+    lng: longitude || -89.5,
+  }), [latitude, longitude]);
 
   useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     const loader = new Loader({
       apiKey,
       version: 'weekly',
@@ -61,11 +79,10 @@ const MapComponent = () => {
     });
 
     loader.load().then((google) => {
-      // Check if mapRef.current is not null
       if (mapRef.current) {
         const map = new google.maps.Map(mapRef.current, {
-          center,
-          zoom: 7
+          center: center,
+          zoom: zoom, // Use the zoom prop here
         });
 
         trails.forEach((trail) => {
@@ -75,6 +92,7 @@ const MapComponent = () => {
           });
 
           marker.addListener('click', () => {
+            console.log(`Marker clicked: ${trail.name}`); // Log the name of the trail when a marker is clicked
             setSelectedTrail(trail);
           });
         });
@@ -84,7 +102,7 @@ const MapComponent = () => {
     }).catch(e => {
       // handle error
     });
-  }, [trails]);
+  }, [trails, latitude, longitude, isMounted, apiKey, center, zoom, setSelectedTrail]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -94,10 +112,15 @@ const MapComponent = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  // Attach the ref to the div
   return (
-    <div ref={mapRef} style={mapContainerStyle}>
-      {/* Your other components here */}
+    <div className="container-fluid">
+      <div className="row">
+        <div className="col">
+          <div ref={mapRef} style={mapContainerStyle}>
+            {/* Other components here */}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

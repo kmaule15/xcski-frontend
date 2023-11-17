@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Comment from "../Comments/Comment";
 import axios from "axios";
 import { useAuth } from "../../../AuthContext";
