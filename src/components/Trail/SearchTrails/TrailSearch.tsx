@@ -3,6 +3,7 @@ import { Container, Row, Col, Card, ButtonGroup, Button } from 'react-bootstrap'
 import MapComponent, { Trail, useTrails } from "../MapComponent";
 import SearchBar from './SearchbarComponent';
 import './TrailSearch.css';
+import SnowQuality from "../../refactor me/Snow";
 
 const TrailSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -53,6 +54,8 @@ const TrailSearch = () => {
                     <div>Location: {trail.location}</div>
                     <div>Difficulty: {trail.difficulty}</div>
                     <div>Length: {trail.length}</div>
+                    // Add the SnowQuality component here
+                    <SnowQuality location={trail.location} date={new Date().toISOString().split('T')[0]} depthWeight={1} densityWeight={1} temperatureWeight={1} timeSinceSnowfall={0} isSnowing={false} />
                   </Card.Text>
                 </Card.Body>
               </Card>
