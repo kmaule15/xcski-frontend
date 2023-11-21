@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 import 'bootstrap/dist/css/bootstrap.css';
-import WeatherWidget from "../Trail/WeatherWidget/WeatherWidget";
+
 
 export type Trail = {
   name: string;
@@ -119,9 +119,6 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, zoom, 
         <div className="col">
           <div ref={mapRef} style={mapContainerStyle}>
             {/* Other components here */}
-          </div>
-          <div style={{ position: 'absolute', bottom: 0, right: 0, margin: '100px'}}>
-            <WeatherWidget lat={latitude || 1} lng={longitude || 2} />
           </div>
         </div>
       </div>

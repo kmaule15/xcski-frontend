@@ -4,6 +4,7 @@ import MapComponent, { Trail, useTrails } from "../MapComponent";
 import SearchBar from './SearchbarComponent';
 import './TrailSearch.css';
 import SnowQuality from "../../refactor me/Snow";
+import WeatherWidget from "../WeatherWidget/WeatherWidget";
 
 function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   var R = 6371; // Radius of the earth in km
@@ -94,15 +95,18 @@ const TrailSearch = () => {
                 setCenter({ lat: trail.latitude, lng: trail.longitude }); 
                 setZoom(12); 
               }}>              
-                <Card.Body>
+                <Card.Body style={{ display: 'flex', flexDirection: 'column' }}>
                   <Card.Title>{trail.name}</Card.Title>
-                  <Card.Text>
+                  <Card.Text style={{ flex: 1 }}>
                     <div>{trail.description}</div>
                     <div>Location: {trail.location}</div>
                     <div>Difficulty: {trail.difficulty}</div>
                     <div>Length: {trail.length}</div>
                     <SnowQuality location={trail.location} date={new Date().toISOString().split('T')[0]} depthWeight={1} densityWeight={1} temperatureWeight={1} timeSinceSnowfall={0} isSnowing={false} />
                   </Card.Text>
+                  <div style={{ alignSelf: 'flex-end' }}>
+                    <WeatherWidget lat={trail.latitude} lng={trail.longitude} />
+                  </div>
                 </Card.Body>
               </Card>
             ))}
@@ -114,6 +118,7 @@ const TrailSearch = () => {
       </Row>
     </Container>
   );
+  
 };
 
 export default TrailSearch;
