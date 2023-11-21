@@ -5,32 +5,68 @@ import { useAuth } from "../../../AuthContext";
 import { Loader } from "@googlemaps/js-api-loader";
 import "./CreateEventModal.css";
 import DatePicker from "react-datepicker";
+import axios from "axios";
+import SearchBar from "../../SearchBar/SearchBar";
 
 const CreateEventModal = () => {
   const { isLoggedIn } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [trails, setTrails] = useState<
+    {
+      name: string;
+      location: string;
+      longitude: number;
+      latitude: number;
+    }[]
+  >();
+  const [trailResults, setTrailResults] = useState<
+    {
+      name: string;
+      location: string;
+      longitude: number;
+      latitude: number;
+    }[]
+  >();
+  const [users, setUsers] = useState<
+    {
+      username: string;
+      email: string;
+    }[]
+  >();
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
+  const [formMessage, setFormMessage] = useState<string>("");
+  const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
+
+  // Form variables
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [date, setDate] = useState(new Date());
   const [startTime, setStartTime] = useState(new Date());
   const [endTime, setEndTime] = useState(new Date());
   const [location, setLocation] = useState<string>("");
-  // const[trail, setTrail] = useState<>();
-  const [isPublic, setIsPublic] = useState<boolean>(false);
   const [invitees, setInvitees] = useState<UserInterface[]>([]);
-  // const[participants, setParticipants] = useState<>();
-  const [formMessage, setFormMessage] = useState<string>("");
-  const [latitude, setLatitude] = useState<number | null>(null);
-  const [longitude, setLongitude] = useState<number | null>(null);
-  const [isNotAtTrail, setIsNotAtTrail] = useState<boolean>(false);
-  const [isAtTrail, setIsAtTrail] = useState<boolean>(false);
-  const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
+  const [isPublic, setIsPublic] = useState<boolean>(true);
+  const [isAtTrail, setIsAtTrail] = useState<boolean>(true);
+  const [trailEvent, setTrailEvent] = useState<{
+    name: string;
+    location: string;
+  }>();
+
+  if (!apiKey) {
+    throw new Error(
+      "API key is missing. Please check your .env file. (or send Chase your IP address)"
+    );
+  }
+
+  // set up autocomplete ref
+  const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleClose = () => {
     setIsOpen(false);
     setCurrentStep(1);
-    // TODO RESET FORM DATA
+    clearForm();
   };
 
   const handleNext = () => {
@@ -41,27 +77,40 @@ const CreateEventModal = () => {
     setCurrentStep((currStep) => currStep - 1);
   };
 
-  // useEffect(() => {
-  //   fetch("http://localhost:3000/users", {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //   })
-  //     .then((response) => response.json())
-  //     .then((data) => setInvitees(data));
-  // });
+  const handleSubmit = async () => {
+    const accessToken = localStorage.getItem("accesstoken");
 
-  //Google AutoComplete code
-  const autocompleteInputRef = useRef<HTMLInputElement | null>(null);
+    if (!isLoggedIn) {
+      console.error("No access token found");
+      return;
+    }
 
-  if (!apiKey) {
-    throw new Error(
-      "API key is missing. Please check your .env file. (or send Chase your IP address)"
-    );
-  }
+    const formData = {
+      title,
+      description,
+      date,
+      startTime,
+      endTime,
+      location,
+      invitees,
+      isPublic,
+      trailEvent,
+    };
+
+    try {
+      await axios.post(`http://localhost:3000/events`, formData, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+    } catch (error) {
+      console.error("An error occured:", error);
+    }
+    handleClose();
+  };
 
   useEffect(() => {
+    onLoad();
     const loader = new Loader({
       apiKey,
       version: "weekly",
@@ -98,27 +147,60 @@ const CreateEventModal = () => {
         };
       }
     });
-  }, [isOpen, isNotAtTrail, apiKey]);
+  }, [isOpen, isAtTrail, apiKey]);
 
-  const clearForm = () => {
-    // setTitle("");
-    // setDescription("");
-    // setDate(undefined);
-    // setLocation("");
-    // setTrail();
-    // setIsPublic(null);
-    // setInvitees();
-    // setParticipants();
-  };
-
-  const handleSubmit = async () => {
-    const formData = {};
+  async function onLoad() {
+    try {
+      const response = await axios.get(`http://localhost:3000/trails`);
+      setTrails(response.data);
+    } catch (error) {
+      console.error("Error fetching trails", error);
+    }
 
     try {
+      const response = await axios.get(`http://localhost:3000/users`);
+      setUsers(response.data);
     } catch (error) {
-      console.error("An error occured:", error);
+      console.error("Error fetching users", error);
     }
-    handleClose();
+  }
+
+  const clearForm = () => {
+    setTitle("");
+    setDescription("");
+    setDate(new Date());
+    setStartTime(new Date());
+    setEndTime(new Date());
+    setLocation("");
+    setInvitees([]);
+    setIsPublic(true);
+    setIsAtTrail(true);
+    setTrailEvent({
+      name: "",
+      location: "",
+    });
+  };
+
+  type changeHandler = React.ChangeEventHandler<HTMLInputElement>;
+
+  const handleTrailChange: changeHandler = (e) => {
+    const { target } = e;
+    if (!target.value.trim()) return setTrailResults([]);
+    //improve filtering later
+    var targetValue = target.value.toLowerCase();
+    const filteredValue =
+      trails &&
+      trails.filter(
+        (trail: { name: string; location: string }) =>
+          trail.name.toLowerCase().includes(targetValue) ||
+          trail.location.toLowerCase().includes(targetValue)
+      );
+    setTrailResults(filteredValue);
+  };
+
+  const handleTrailSelect = (trail: any) => {
+    setTrailEvent(trail);
+    setLocation(trail.location);
   };
 
   return (
@@ -191,26 +273,51 @@ const CreateEventModal = () => {
               <Form.Group controlId="formLocation">
                 <Form.Label>Is Event Located At a Trail?</Form.Label>
                 <Form.Check
-                  disabled={isNotAtTrail}
-                  type="checkbox"
+                  inline
+                  type="radio"
                   label="Yes"
-                  value="Yes"
-                  onChange={(e) => setIsNotAtTrail(false)}
+                  name="trailLocationOptions"
+                  checked={isAtTrail}
+                  onChange={() => {
+                    setIsAtTrail(true);
+                    setTrailEvent(undefined);
+                  }}
                 />
                 <Form.Check
-                  type="checkbox"
+                  inline
+                  type="radio"
                   label="No"
-                  value="No"
-                  onChange={(e) => setIsNotAtTrail(true)}
+                  name="trailLocationOptions"
+                  checked={!isAtTrail}
+                  onChange={() => {
+                    setIsAtTrail(false);
+                    setLocation("");
+                  }}
                 />
               </Form.Group>
-              {/* {isAtTrail && (
+              {isAtTrail && (
                 <Form.Group controlId="formLocation">
+                  <br></br>
                   <Form.Label>Please enter the Name of the Trail</Form.Label>
-                  <Form.Control type="text" />
+                  <SearchBar
+                    results={trailResults}
+                    value={trailEvent?.name}
+                    renderItem={(trail: any) => (
+                      <div>
+                        <p>{trail.name}</p>
+                        <p>{trail.location}</p>
+                      </div>
+                    )}
+                    onChange={handleTrailChange}
+                    onSelect={handleTrailSelect}
+                  />
+                  <br></br>
+                  <div>
+                    <p>{trailEvent?.location}</p>
+                  </div>
                 </Form.Group>
-              )} */}
-              {isNotAtTrail && (
+              )}
+              {!isAtTrail && (
                 <Form.Group controlId="formLocation">
                   <Form.Label>Please enter the Address of the Event</Form.Label>
                   <Form.Control
@@ -221,6 +328,33 @@ const CreateEventModal = () => {
                   />
                 </Form.Group>
               )}
+            </div>
+          )}
+          {currentStep === 3 && (
+            <div>
+              <Form.Group>
+                <Form.Label>What Type of Event?</Form.Label>
+                <Form.Check
+                  inline
+                  type="radio"
+                  label="Public"
+                  name="trailTypeOptions"
+                  checked={isPublic}
+                  onChange={() => {
+                    setIsPublic(true);
+                  }}
+                />
+                <Form.Check
+                  inline
+                  type="radio"
+                  label="Private"
+                  name="trailTypeOptions"
+                  checked={!isPublic}
+                  onChange={() => {
+                    setIsPublic(false);
+                  }}
+                />
+              </Form.Group>
             </div>
           )}
         </Modal.Body>
