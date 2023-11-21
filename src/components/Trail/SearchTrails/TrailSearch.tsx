@@ -78,38 +78,55 @@ const TrailSearch = () => {
   }
 
   return (
-    <Container fluid style={{ height: 'calc(100vh - 60px)', display: 'flex', flexDirection: 'column' }}>
+    <Container fluid className="trail-search-container">
       <SearchBar setCenter={setCenter} setZoom={setZoom} />
-      <ButtonGroup aria-label="Sort trails">
+      <ButtonGroup aria-label="Sort trails" className="sort-trails">
         <Button variant="secondary" onClick={() => handleSortFieldChange('name')}>Sort by Name</Button>
         <Button variant="secondary" onClick={() => handleSortFieldChange('difficulty')}>Sort by Difficulty</Button>
         <Button variant="secondary" onClick={() => handleSortFieldChange('length')}>Sort by Length</Button>
       </ButtonGroup>
-      <Row style={{ flex: 1, display: 'flex' }}>
+      <Row className="trail-search-row">
         <Col md={3} className="trail-search-col">
-          <div className="trail-search-card-container">
-            {sortedTrails.map((trail, index) => (
-              <Card key={index} className={`trail-search-card ${trail.name === selectedTrail?.name ? 'selected' : ''}`} onClick={() => { 
-                console.log(`Card clicked: ${trail.name}`); // Log the name of the trail when a card is clicked
-                setSelectedTrail(trail); 
-                setCenter({ lat: trail.latitude, lng: trail.longitude }); 
-                setZoom(12); 
-              }}>              
-                <Card.Body style={{ display: 'flex', flexDirection: 'column' }}>
-                  <Card.Title>{trail.name}</Card.Title>
-                  <Card.Text style={{ flex: 1 }}>
-                    <div>{trail.description}</div>
-                    <div>Location: {trail.location}</div>
-                    <div>Difficulty: {trail.difficulty}</div>
-                    <div>Length: {trail.length}</div>
-                    <SnowQuality location={trail.location} date={new Date().toISOString().split('T')[0]} depthWeight={1} densityWeight={1} temperatureWeight={1} timeSinceSnowfall={0} isSnowing={false} />
-                  </Card.Text>
-                  <div style={{ alignSelf: 'flex-end' }}>
-                    <WeatherWidget lat={trail.latitude} lng={trail.longitude} />
-                  </div>
-                </Card.Body>
-              </Card>
-            ))}
+          <div className="trail-card-container">
+            <div className="weather-widget">
+              {selectedTrail && <WeatherWidget lat={selectedTrail.latitude} lng={selectedTrail.longitude} display='minimal' />}
+            </div>
+            <div className="trail-search-card-container">
+              {sortedTrails.map((trail, index) => (
+                <div className="trail-card-container" key={index}>
+                  <Card 
+                    className={`trail-search-card ${trail.name === selectedTrail?.name ? 'selected' : ''}`} 
+                    onClick={() => { 
+                      console.log(`Card clicked: ${trail.name}`); // Log the name of the trail when a card is clicked
+                      setSelectedTrail(trail); 
+                      setCenter({ lat: trail.latitude, lng: trail.longitude }); 
+                      setZoom(12); 
+                    }}
+                  >
+                    <Card.Body className="trail-search-card-body d-flex flex-row justify-content-between">
+                      <div>
+                        <Card.Title>{trail.name}</Card.Title>
+                        <Card.Text className="trail-search-card-text">
+                          <div>{trail.description}</div>
+                          <div>Location: {trail.location}</div>
+                          <div>Difficulty: {trail.difficulty}</div>
+                          <div>Length: {trail.length}</div>
+                          <SnowQuality 
+                            location={trail.location} 
+                            date={new Date().toISOString().split('T')[0]} 
+                            depthWeight={1} 
+                            densityWeight={1} 
+                            temperatureWeight={1} 
+                            timeSinceSnowfall={0} 
+                            isSnowing={false} 
+                          />
+                        </Card.Text>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </div>
+              ))}
+            </div>
           </div>
         </Col>
         <Col md={9}>
@@ -119,6 +136,9 @@ const TrailSearch = () => {
     </Container>
   );
   
+  
 };
-
-export default TrailSearch;
+  
+  export default TrailSearch;
+  
+  

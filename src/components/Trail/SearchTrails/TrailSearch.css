@@ -1,17 +1,58 @@
-.trail-search-col {
+.trail-search-container {
+    height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .sort-trails {
+    margin-bottom: 10px;
+  }
+  
+  .trail-search-row {
+    flex: 1;
+    display: flex;
+  }
+  
+  .trail-search-col {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     padding-right: 0;
     max-height: 80vh;
-}
-
-.trail-search-card-container {
-    overflow-y: auto;
-    max-height: 80vh;
+  }
+  
+  .trail-card-container {
+    display: flex;
+    flex-direction: row;
     flex-grow: 1;
-}
-
-.trail-search-card.selected {
+    height: 100vh; /* Set the height to the full viewport height */
+  }
+  
+  .trail-search-card.selected {
     background-color: #d6eaff;
   }
+  
+  .trail-search-card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .trail-search-card-text {
+    flex: 1;
+  }
+  
+  .weather-widget {
+    width: 25%; /* Set the width to 25% of the parent container */
+    height: 100%; /* Set the height to 100% of the parent container */
+    flex-grow: 0; /* Prevent the widget from growing beyond its set width */
+  }
+  
+  .trail-search-card-container {
+    display: flex;
+    flex-direction: column; /* Change this to column */
+    flex-grow: 1;
+    width: 75%; /* Set the width to 75% of the parent container */
+    height: 100%; /* Set the height to 100% of the parent container */
+  }
+  

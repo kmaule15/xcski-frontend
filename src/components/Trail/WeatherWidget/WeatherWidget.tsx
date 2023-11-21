@@ -13,9 +13,10 @@ import {
 interface WeatherWidgetProps {
   lat: number;
   lng: number;
+  display?: 'full' | 'minimal';
 }
 
-const WeatherWidget: React.FC<WeatherWidgetProps> = ({ lat, lng }) => {
+const WeatherWidget: React.FC<WeatherWidgetProps> = ({ lat, lng, display = 'full' }) => {
   const [weatherData, setWeatherData] = useState<any>(null);
 
   useEffect(() => {
@@ -35,50 +36,44 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ lat, lng }) => {
     <MDBContainer>
       <MDBRow className="justify-content-center">
         <MDBCol md="8" lg="6" xl="4">
-          <MDBCard style={{ height: '300px', width: '200px'}}>
+          <MDBCard style={{ height: '100%', width: '100%'}}>
             <MDBCardBody>
               {weatherData && (
                 <>
-                  <div className="d-flex">
-                    <MDBTypography tag="h6" className="flex-grow-1">
-                      {weatherData.name}
-                    </MDBTypography>
-                    <MDBTypography tag="h6">
-                      {new Date(weatherData.dt * 1000).toLocaleTimeString()}
-                    </MDBTypography>
-                  </div>
-
                   <div className="d-flex flex-column text-center mt-5 mb-4">
-                    <MDBTypography tag="h6" className="display-4 mb-0 font-weight-bold">
-                      {Math.round(weatherData.main.temp)*9/5+32}°F
-                    </MDBTypography>
-                    <span className="small">{weatherData.weather[0].description}</span>
+                  <MDBTypography tag="h6" className="display-4 mb-0 font-weight-bold" style={{ fontSize: '1vw' }}>
+                    {Math.round(weatherData.main.temp)*9/5+32}°F
+                  </MDBTypography>
+                    {display === 'full' && <span className="small">{weatherData.weather[0].description}</span>}
                   </div>
 
-                  <div className="d-flex align-items-center">
-                    <div className="flex-grow-1" style={{ fontSize: "1rem" }}>
-                      <div>
-                        <MDBIcon fas icon="wind fa-fw" />{" "}
-                        <span className="ms-1">{weatherData.wind.speed} km/h</span>
-                      </div>
-                      <div>
-                        <MDBIcon fas icon="tint fa-fw" />{" "}
-                        <span className="ms-1">{weatherData.main.humidity}%</span>
-                      </div>
-                      <div>
-                        <MDBIcon fas icon="sun fa-fw" />{" "}
-                        <span className="ms-1">
-                          {new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString()}
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <img
-                        src={`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}.png`}
-                        alt="Weather Icon"
-                      />
-                    </div>
+                  <div className="d-flex justify-content-center">
+                    <img
+                      src={`http://openweathermap.org/img/wn/${weatherData.weather[0].icon}.png`}
+                      alt="Weather Icon"
+                    />
                   </div>
+
+                  {display === 'full' && (
+                    <div className="d-flex align-items-center">
+                      <div className="flex-grow-1" style={{ fontSize: "1rem" }}>
+                        <div>
+                          <MDBIcon fas icon="wind fa-fw" />{" "}
+                          <span className="ms-1">{weatherData.wind.speed} km/h</span>
+                        </div>
+                        <div>
+                          <MDBIcon fas icon="tint fa-fw" />{" "}
+                          <span className="ms-1">{weatherData.main.humidity}%</span>
+                        </div>
+                        <div>
+                          <MDBIcon fas icon="sun fa-fw" />{" "}
+                          <span className="ms-1">
+                            {new Date(weatherData.sys.sunrise * 1000).toLocaleTimeString()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
             </MDBCardBody>
