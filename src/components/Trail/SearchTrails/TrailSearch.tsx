@@ -1,39 +1,72 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Card, ButtonGroup, Button } from 'react-bootstrap';
 import MapComponent, { Trail, useTrails } from "../MapComponent";
 import SearchBar from './SearchbarComponent';
 import './TrailSearch.css';
 import SnowQuality from "../../refactor me/Snow";
 
+function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = deg2rad(lat2-lat1);  // deg2rad below
+  var dLon = deg2rad(lon2-lon1); 
+  var a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2)
+    ; 
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+  var d = R * c; // Distance in km
+  return d;
+}
+
+function deg2rad(deg: number) {
+  return deg * (Math.PI/180)
+}
+
 const TrailSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { trails, isLoading, error } = useTrails();
   const [sortField, setSortField] = useState('name');
-  const [sortOrder, setSortOrder] = useState(1);
+  const [sortOrder, setSortOrder] = useState(1); // 1 for ascending, -1 for descending
   const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
   const [center, setCenter] = useState<{ lat: number, lng: number }>({ lat: 44.5, lng: -89.5 });
   const [zoom, setZoom] = useState(7);
+  const [sortedTrails, setSortedTrails] = useState<Array<Trail>>([]);
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
+  useEffect(() => {
+    const newSortedTrails = [...trails].sort((a, b) => {
+      if (sortField === 'difficulty') {
+        const order = ['Easy', 'Medium', 'Difficult'];
+        return (order.indexOf(a[sortField]) - order.indexOf(b[sortField])) * sortOrder;
+      } else if (sortField === 'distance') {
+        return (a.distance - b.distance) * sortOrder;
+      }
+      return (a[sortField] > b[sortField] ? 1 : -1) * sortOrder;
+    });
+    setSortedTrails(newSortedTrails);
+  }, [trails, sortField, sortOrder]);
+
+  useEffect(() => {
+    if (center) {
+      const newSortedTrails = [...trails];
+      newSortedTrails.forEach(trail => {
+        trail.distance = getDistanceFromLatLonInKm(center.lat, center.lng, trail.latitude, trail.longitude);
+      });
+  
+      newSortedTrails.sort((a, b) => (a.distance - b.distance) * sortOrder);
+      setSortedTrails(newSortedTrails);
+      setSortField('distance');
+    }
+  }, [center, sortOrder]);
 
   const handleSortFieldChange = (field: string) => {
     if (sortField === field) {
-      setSortOrder(sortOrder * -1);
+      setSortOrder(sortOrder * -1); // reverse the sort order
     } else {
       setSortField(field);
-      setSortOrder(1);
+      setSortOrder(1); // reset the sort order to ascending
     }
   };
-
-  const sortedTrails = [...trails].sort((a, b) => {
-    if (sortField === 'difficulty') {
-      const order = ['Easy', 'Medium', 'Difficult'];
-      return (order.indexOf(a[sortField]) - order.indexOf(b[sortField])) * sortOrder;
-    }
-    return (a[sortField] > b[sortField] ? 1 : -1) * sortOrder;
-  });
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -56,7 +89,7 @@ const TrailSearch = () => {
           <div className="trail-search-card-container">
             {sortedTrails.map((trail, index) => (
               <Card key={index} className={`trail-search-card ${trail.name === selectedTrail?.name ? 'selected' : ''}`} onClick={() => { 
-                console.log(`Card clicked: ${trail.name}`);
+                console.log(`Card clicked: ${trail.name}`); // Log the name of the trail when a card is clicked
                 setSelectedTrail(trail); 
                 setCenter({ lat: trail.latitude, lng: trail.longitude }); 
                 setZoom(12); 
