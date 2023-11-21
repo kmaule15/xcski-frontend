@@ -9,6 +9,7 @@ const TrailSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { trails, isLoading, error } = useTrails();
   const [sortField, setSortField] = useState('name');
+  const [sortOrder, setSortOrder] = useState(1);
   const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
   const [center, setCenter] = useState<{ lat: number, lng: number }>({ lat: 44.5, lng: -89.5 });
   const [zoom, setZoom] = useState(7);
@@ -17,8 +18,21 @@ const TrailSearch = () => {
     setSearchTerm(event.target.value);
   };
 
+  const handleSortFieldChange = (field: string) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder * -1);
+    } else {
+      setSortField(field);
+      setSortOrder(1);
+    }
+  };
+
   const sortedTrails = [...trails].sort((a, b) => {
-    return a[sortField] > b[sortField] ? 1 : -1;
+    if (sortField === 'difficulty') {
+      const order = ['Easy', 'Medium', 'Difficult'];
+      return (order.indexOf(a[sortField]) - order.indexOf(b[sortField])) * sortOrder;
+    }
+    return (a[sortField] > b[sortField] ? 1 : -1) * sortOrder;
   });
 
   if (isLoading) {
@@ -33,16 +47,16 @@ const TrailSearch = () => {
     <Container fluid style={{ height: 'calc(100vh - 60px)', display: 'flex', flexDirection: 'column' }}>
       <SearchBar setCenter={setCenter} setZoom={setZoom} />
       <ButtonGroup aria-label="Sort trails">
-        <Button variant="secondary" onClick={() => setSortField('name')}>Sort by Name</Button>
-        <Button variant="secondary" onClick={() => setSortField('difficulty')}>Sort by Difficulty</Button>
-        <Button variant="secondary" onClick={() => setSortField('length')}>Sort by Length</Button>
+        <Button variant="secondary" onClick={() => handleSortFieldChange('name')}>Sort by Name</Button>
+        <Button variant="secondary" onClick={() => handleSortFieldChange('difficulty')}>Sort by Difficulty</Button>
+        <Button variant="secondary" onClick={() => handleSortFieldChange('length')}>Sort by Length</Button>
       </ButtonGroup>
       <Row style={{ flex: 1, display: 'flex' }}>
         <Col md={3} className="trail-search-col">
           <div className="trail-search-card-container">
             {sortedTrails.map((trail, index) => (
               <Card key={index} className={`trail-search-card ${trail.name === selectedTrail?.name ? 'selected' : ''}`} onClick={() => { 
-                console.log(`Card clicked: ${trail.name}`); // Log the name of the trail when a card is clicked
+                console.log(`Card clicked: ${trail.name}`);
                 setSelectedTrail(trail); 
                 setCenter({ lat: trail.latitude, lng: trail.longitude }); 
                 setZoom(12); 
