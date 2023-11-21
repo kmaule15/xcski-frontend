@@ -8,7 +8,11 @@ import DatePicker from "react-datepicker";
 import axios from "axios";
 import SearchBar from "../../SearchBar/SearchBar";
 
-const CreateEventModal = () => {
+interface CreateEventModalProps {
+  onEventCreated?: () => void;
+}
+
+function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
   const { isLoggedIn } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
@@ -34,9 +38,14 @@ const CreateEventModal = () => {
       email: string;
     }[]
   >();
+  const [userResults, setUserResults] = useState<
+    {
+      username: string;
+      email: string;
+    }[]
+  >();
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
-  const [formMessage, setFormMessage] = useState<string>("");
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
 
   // Form variables
@@ -47,6 +56,10 @@ const CreateEventModal = () => {
   const [endTime, setEndTime] = useState(new Date());
   const [location, setLocation] = useState<string>("");
   const [invitees, setInvitees] = useState<UserInterface[]>([]);
+  const [userEvent, setUserEvent] = useState<{
+    username: string;
+    email: string;
+  }>();
   const [isPublic, setIsPublic] = useState<boolean>(true);
   const [isAtTrail, setIsAtTrail] = useState<boolean>(true);
   const [trailEvent, setTrailEvent] = useState<{
@@ -103,6 +116,10 @@ const CreateEventModal = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+
+      if (onEventCreated) {
+        onEventCreated();
+      }
     } catch (error) {
       console.error("An error occured:", error);
     }
@@ -182,6 +199,37 @@ const CreateEventModal = () => {
   };
 
   type changeHandler = React.ChangeEventHandler<HTMLInputElement>;
+
+  const handleUserChange: changeHandler = (e) => {
+    const { target } = e;
+    if (!target.value.trim()) return setUserResults([]);
+    //improve filtering later
+    var targetValue = target.value.toLowerCase();
+    const filteredValue =
+      users &&
+      users.filter(
+        (user: { username: string; email: string }) =>
+          user.username.toLowerCase().includes(targetValue) ||
+          user.email.toLowerCase().includes(targetValue)
+      );
+    setUserResults(filteredValue);
+  };
+
+  const handleUserSelect = (user: any) => {
+    setUserEvent(user);
+
+    const emailOptions = {
+      from: "XCSadm@gmail.com",
+      to: user.email,
+      subject: "You are invited to an event!",
+    };
+
+    try {
+      axios.post(`http://localhost:3000/email/send`, emailOptions);
+    } catch (error) {
+      console.error("An error occured:", error);
+    }
+  };
 
   const handleTrailChange: changeHandler = (e) => {
     const { target } = e;
@@ -280,7 +328,10 @@ const CreateEventModal = () => {
                   checked={isAtTrail}
                   onChange={() => {
                     setIsAtTrail(true);
-                    setTrailEvent(undefined);
+                    setTrailEvent({
+                      name: "",
+                      location: "",
+                    });
                   }}
                 />
                 <Form.Check
@@ -355,6 +406,21 @@ const CreateEventModal = () => {
                   }}
                 />
               </Form.Group>
+              <br></br>
+              <Form.Group>
+                <Form.Label>Invite Users</Form.Label>
+                <SearchBar
+                  results={userResults}
+                  value={userEvent?.username}
+                  renderItem={(user: any) => (
+                    <div>
+                      <p>{user.username}</p>
+                    </div>
+                  )}
+                  onChange={handleUserChange}
+                  onSelect={handleUserSelect}
+                />
+              </Form.Group>
             </div>
           )}
         </Modal.Body>
@@ -369,6 +435,6 @@ const CreateEventModal = () => {
       </Modal>
     </div>
   );
-};
+}
 
 export default CreateEventModal;
