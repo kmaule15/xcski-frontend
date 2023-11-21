@@ -54,7 +54,6 @@ const TrailSearch = () => {
                     <div>Location: {trail.location}</div>
                     <div>Difficulty: {trail.difficulty}</div>
                     <div>Length: {trail.length}</div>
-                    // Add the SnowQuality component here
                     <SnowQuality location={trail.location} date={new Date().toISOString().split('T')[0]} depthWeight={1} densityWeight={1} temperatureWeight={1} timeSinceSnowfall={0} isSnowing={false} />
                   </Card.Text>
                 </Card.Body>

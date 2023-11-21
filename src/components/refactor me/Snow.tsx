@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { parseString } from "xml2js";
+import parser from 'fast-xml-parser';
 
 interface SnowQualityProps {
   /** The name of the location */
@@ -17,6 +17,8 @@ interface SnowQualityProps {
   timeSinceSnowfall: number;
   /** Whether it's currently snowing */
   isSnowing: boolean;
+  // List controller
+  showFullList?: boolean;
 }
 
 // A function that converts millimeters to inches
@@ -71,14 +73,14 @@ const calculateSnowQualityCategory = (
   airTemperature: number,
   isSnowing: boolean
 ) => {
+  // Check for no snow conditions
+  if (snowDepth === 0) {
+    return 'No Snow';
+  }
+
   // Check for melting conditions
   if (airTemperature > 0 && !isSnowing) {
     return 'Melting';
-  }
-
-  // Check for no snow conditions
-  if (airTemperature > 0 && snowDepth === 0) {
-    return 'No Snow';
   }
 
   // Multiply each parameter by its corresponding weight and sum up the results
@@ -106,6 +108,7 @@ const calculateSnowQualityCategory = (
 };
 
 
+
 // The SnowQuality component
 const SnowQuality: React.FC<SnowQualityProps> = ({
   location,
@@ -115,6 +118,7 @@ const SnowQuality: React.FC<SnowQualityProps> = ({
   temperatureWeight,
   timeSinceSnowfall,
   isSnowing,
+  showFullList = false,
 }) => {
   const [weatherData, setWeatherData] = useState<any>(null);
   const [snowDepth, setSnowDepth] = useState<number>(0);
@@ -133,13 +137,10 @@ const SnowQuality: React.FC<SnowQualityProps> = ({
         },
       })
       .then((response) => {
-        parseString(response.data, (err: any, result: any) => {
-          if (err) {
-            console.error(err);
-          } else {
-            setWeatherData(result);
-          }
-        });
+        if (parser.validate(response.data) === true) { //optional (it'll return an object in case it's not valid)
+          var jsonObj = parser.parse(response.data);
+          setWeatherData(jsonObj);
+        }
       })
       .catch((error) => {
         console.error(error);
@@ -184,10 +185,13 @@ const SnowQuality: React.FC<SnowQualityProps> = ({
 
   return (
     <div>
-      <h1>Snow Quality for {location} on {date}</h1>
-      <p>Snow Depth: {snowDepth.toFixed(2)} inches</p>
-      <p>Snow Density: {snowDensity.toFixed(2)} %</p>
-      <p>Snow Temperature: {snowTemperature.toFixed(2)} °C</p>
+      {showFullList && (
+        <>
+          <p>Snow Depth: {snowDepth.toFixed(2)} inches</p>
+          <p>Snow Density: {snowDensity.toFixed(2)} %</p>
+          <p>Snow Temperature: {snowTemperature.toFixed(2)} °C</p>
+        </>
+      )}
       <p>Snow Quality: {calculateSnowQualityCategory(snowDepth, snowDensity, snowTemperature, depthWeight, densityWeight, temperatureWeight, airTemperature, isSnowing)}</p>
     </div>
   );
