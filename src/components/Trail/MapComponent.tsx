@@ -3,6 +3,7 @@ import { Loader } from '@googlemaps/js-api-loader';
 import 'bootstrap/dist/css/bootstrap.css';
 
 export type Trail = {
+  id: number;
   name: string;
   description: string;
   location: string;
@@ -12,6 +13,7 @@ export type Trail = {
   length: number;
   estimatedTime: number;
   typesAllowed: string[];
+  rating: number | null; //for ratings
   [key: string]: any;
 };
 

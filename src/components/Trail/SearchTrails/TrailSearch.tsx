@@ -3,9 +3,12 @@ import { Container, Row, Col, Card, ButtonGroup, Button } from 'react-bootstrap'
 import MapComponent, { Trail, useTrails } from "../MapComponent";
 import SearchBar from './SearchbarComponent';
 import './TrailSearch.css';
+import Rating, { RatingProps } from "@mui/material/Rating";
+import { useAuth } from "../../../AuthContext";
 
 const TrailSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { isLoggedIn, AuthUsername } = useAuth();
   const { trails, isLoading, error } = useTrails();
   const [sortField, setSortField] = useState('name');
   const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
@@ -27,6 +30,36 @@ const TrailSearch = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
+  const handleSubmit = async (trail: any) => {
+    let castTrail:Trail  =  trail;
+    let id = castTrail.id;
+    let rating = castTrail.rating;
+    const formData = {
+      id,
+      rating,
+      AuthUsername,
+    };
+    trail.rating = 0;
+    (document.getElementsByName(trail.id + "")[0] as unknown  as RatingProps).value = 1;
+    //doesn't work
+    console.log(formData);
+    try {
+      const response = await fetch("http://localhost:3000/trailratings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        console.log("Trail successfully rated!");
+        //setIsSuccess(true);
+        //setTimeout(() => setIsSuccess(false), 4000);
+      }
+    } catch (error) {
+    }
+  };
+
 
   return (
     <Container fluid style={{ height: 'calc(100vh - 60px)', display: 'flex', flexDirection: 'column' }}>
@@ -54,6 +87,11 @@ const TrailSearch = () => {
                     <div>Difficulty: {trail.difficulty}</div>
                     <div>Length: {trail.length}</div>
                   </Card.Text>
+                  {isLoggedIn ? <div><Rating name={trail.id+""} value={trail.rating} size="large"
+      onChange={(event, rating) => {trail.rating = rating;}}/> 
+    <button type="submit" className="btn btn-secondary btn-sm mt-0 pt-1 pb-1" onClick={(event) => {handleSubmit(trail);}}>
+      Rate
+    </button></div>: <div></div>}
                 </Card.Body>
               </Card>
             ))}
