@@ -111,11 +111,18 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
     };
 
     try {
-      await axios.post(`http://localhost:3000/events`, formData, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await axios.post(
+        `http://localhost:3000/events`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      const eventId = response.data.id;
+      emailInvitees(eventId);
 
       if (onEventCreated) {
         onEventCreated();
@@ -123,8 +130,29 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
     } catch (error) {
       console.error("An error occured:", error);
     }
+
     handleClose();
   };
+
+  function emailInvitees(eventId: number) {
+    const link = "http://localhost:3001/events/" + eventId;
+
+    const emailOptions = {
+      from: "XCSadm@gmail.com",
+      to: userEvent?.email,
+      subject: "You are invited to an event!",
+      html:
+        "You've been invited to an event - check it out here: <a href=" +
+        link +
+        ">Go To Event</a>",
+    };
+
+    try {
+      axios.post(`http://localhost:3000/email/send`, emailOptions);
+    } catch (error) {
+      console.error("An error occured:", error);
+    }
+  }
 
   useEffect(() => {
     onLoad();
@@ -217,18 +245,7 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
 
   const handleUserSelect = (user: any) => {
     setUserEvent(user);
-
-    const emailOptions = {
-      from: "XCSadm@gmail.com",
-      to: user.email,
-      subject: "You are invited to an event!",
-    };
-
-    try {
-      axios.post(`http://localhost:3000/email/send`, emailOptions);
-    } catch (error) {
-      console.error("An error occured:", error);
-    }
+    setInvitees(user);
   };
 
   const handleTrailChange: changeHandler = (e) => {
