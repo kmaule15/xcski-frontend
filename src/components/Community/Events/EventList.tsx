@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CreateEventModal from "./CreateEventModal";
+import { Link } from "react-router-dom";
 
 interface Event {
   id: number;
@@ -44,6 +45,7 @@ function EventsList() {
     try {
       const response = await axios.get(`http://localhost:3000/events`);
       setEvents(response.data);
+      console.log(events);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -57,7 +59,15 @@ function EventsList() {
     <div>
       <CreateEventModal onEventCreated={handleEventCreated} />
       {events.map((event) => (
-        <h3>{event.title}</h3>
+        <div key={event.id}>
+          <Link to={`/events/${event.id}`}>
+            <h3>{event.title}</h3>
+          </Link>
+          <p>
+            Posted by {event.author?.username} on{" "}
+            {new Date(event.createdAt).toLocaleString()}
+          </p>
+        </div>
       ))}
     </div>
   );
