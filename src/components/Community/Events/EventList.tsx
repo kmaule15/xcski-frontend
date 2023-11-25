@@ -2,40 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import CreateEventModal from "./CreateEventModal";
 import { Link } from "react-router-dom";
-
-interface Event {
-  id: number;
-  author: {
-    username: string;
-    email: string;
-  };
-  title: string;
-  description: string;
-  date: Date;
-  startTime: Date;
-  endTime: Date;
-  location: string;
-  trail?: {
-    name: string;
-    location: string;
-    longitude: number;
-    latitude: number;
-  };
-  isPublic: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  invitees?: {
-    username: string;
-    email: string;
-  }[];
-  participants?: {
-    username: string;
-    email: string;
-  }[];
-}
+import { EventInterface } from "../../../Interfaces/event.types";
 
 function EventsList() {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<EventInterface[]>([]);
 
   useEffect(() => {
     fetchEvents();
@@ -45,7 +15,6 @@ function EventsList() {
     try {
       const response = await axios.get(`http://localhost:3000/events`);
       setEvents(response.data);
-      console.log(events);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }

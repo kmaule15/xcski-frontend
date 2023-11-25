@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Container, Form, Button, Modal } from "react-bootstrap";
 import { UserInterface } from "../../../Interfaces/user.types";
+import { TrailInterface } from "../../../Interfaces/trail.types";
 import { useAuth } from "../../../AuthContext";
 import { Loader } from "@googlemaps/js-api-loader";
 import "./CreateEventModal.css";
@@ -16,34 +17,14 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
   const { isLoggedIn } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
-  const [trails, setTrails] = useState<
-    {
-      name: string;
-      location: string;
-      longitude: number;
-      latitude: number;
-    }[]
-  >();
-  const [trailResults, setTrailResults] = useState<
-    {
-      name: string;
-      location: string;
-      longitude: number;
-      latitude: number;
-    }[]
-  >();
-  const [users, setUsers] = useState<
-    {
-      username: string;
-      email: string;
-    }[]
-  >();
-  const [userResults, setUserResults] = useState<
-    {
-      username: string;
-      email: string;
-    }[]
-  >();
+  const [trails, setTrails] = useState<TrailInterface[]>([]);
+  const [trailResults, setTrailResults] = useState<{ name: string }[]>();
+  const [users, setUsers] = useState<UserInterface[]>([]);
+  const [userResults, setUserResults] = useState<{ username: string }[]>();
+  const [userEvent, setUserEvent] = useState<{
+    username: string;
+    email: string;
+  }>();
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
@@ -56,16 +37,9 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
   const [endTime, setEndTime] = useState(new Date());
   const [location, setLocation] = useState<string>("");
   const [invitees, setInvitees] = useState<UserInterface[]>([]);
-  const [userEvent, setUserEvent] = useState<{
-    username: string;
-    email: string;
-  }>();
   const [isPublic, setIsPublic] = useState<boolean>(true);
   const [isAtTrail, setIsAtTrail] = useState<boolean>(true);
-  const [trailEvent, setTrailEvent] = useState<{
-    name: string;
-    location: string;
-  }>();
+  const [trail, setTrail] = useState<TrailInterface>();
 
   if (!apiKey) {
     throw new Error(
@@ -91,6 +65,19 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
   };
 
   const handleSubmit = async () => {
+    if (
+      !title.trim() ||
+      !description.trim() ||
+      !date ||
+      !startTime ||
+      !endTime ||
+      !location.trim()
+    ) {
+      alert(
+        "Title, description, date, start time, end time and location are required!"
+      );
+      return;
+    }
     const accessToken = localStorage.getItem("accesstoken");
 
     if (!isLoggedIn) {
@@ -105,10 +92,14 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
       startTime,
       endTime,
       location,
+      latitude,
+      longitude,
       invitees,
       isPublic,
-      trailEvent,
+      trail,
     };
+
+    console.log("formData", formData);
 
     try {
       const response = await axios.post(
@@ -171,7 +162,6 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
 
         autocomplete.addListener("place_changed", () => {
           const selectedPlace = autocomplete.getPlace();
-          console.log(selectedPlace);
 
           if (selectedPlace.formatted_address) {
             setLocation(selectedPlace.formatted_address);
@@ -220,10 +210,7 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
     setInvitees([]);
     setIsPublic(true);
     setIsAtTrail(true);
-    setTrailEvent({
-      name: "",
-      location: "",
-    });
+    setTrail(undefined);
   };
 
   type changeHandler = React.ChangeEventHandler<HTMLInputElement>;
@@ -245,7 +232,13 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
 
   const handleUserSelect = (user: any) => {
     setUserEvent(user);
-    setInvitees(user);
+    setInvitees((prevInvitees) => {
+      // Check if user is already in the invitees array
+      if (prevInvitees.some((invitee) => invitee.id === user.id)) {
+        return prevInvitees;
+      }
+      return [...prevInvitees, user];
+    });
   };
 
   const handleTrailChange: changeHandler = (e) => {
@@ -264,7 +257,7 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
   };
 
   const handleTrailSelect = (trail: any) => {
-    setTrailEvent(trail);
+    setTrail(trail);
     setLocation(trail.location);
   };
 
@@ -345,10 +338,7 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
                   checked={isAtTrail}
                   onChange={() => {
                     setIsAtTrail(true);
-                    setTrailEvent({
-                      name: "",
-                      location: "",
-                    });
+                    setTrail(undefined);
                   }}
                 />
                 <Form.Check
@@ -369,7 +359,7 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
                   <Form.Label>Please enter the Name of the Trail</Form.Label>
                   <SearchBar
                     results={trailResults}
-                    value={trailEvent?.name}
+                    value={trail?.name}
                     renderItem={(trail: any) => (
                       <div>
                         <p>{trail.name}</p>
@@ -381,7 +371,7 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
                   />
                   <br></br>
                   <div>
-                    <p>{trailEvent?.location}</p>
+                    <p>{trail?.location}</p>
                   </div>
                 </Form.Group>
               )}
@@ -429,7 +419,7 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
                 <SearchBar
                   results={userResults}
                   value={userEvent?.username}
-                  renderItem={(user: any) => (
+                  renderItem={(user: UserInterface) => (
                     <div>
                       <p>{user.username}</p>
                     </div>

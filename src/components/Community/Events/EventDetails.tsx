@@ -2,71 +2,86 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Params, useParams } from "react-router-dom";
 import PostComments from "../Posts/PostComments";
-
-interface Event {
-  id: number;
-  author: {
-    username: string;
-    email: string;
-  };
-  title: string;
-  description: string;
-  date: Date;
-  startTime: Date;
-  endTime: Date;
-  location: string;
-  trail?: {
-    name: string;
-    location: string;
-    longitude: number;
-    latitude: number;
-  };
-  isPublic: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  invitees?: {
-    username: string;
-    email: string;
-  }[];
-  participants?: {
-    username: string;
-    email: string;
-  }[];
-}
+import MapComponent, { Trail } from "../../Trail/MapComponent";
+import { Col, Row } from "react-bootstrap";
+import { EventInterface } from "../../../Interfaces/event.types";
 
 function EventDetails() {
   const eventId = useParams<Params>();
-  const [event, setEvent] = useState<Event>();
+  const [event, setEvent] = useState<EventInterface>();
+  const [zoom, setZoom] = useState(12);
+  const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
 
   useEffect(() => {
-    console.log(eventId);
-    async function fetchEvent() {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/events/${eventId.eventId}`
-        );
-        setEvent(response.data);
-      } catch (error) {
-        console.error("Error fetching event: ", error);
-      }
-    }
     fetchEvent();
   }, [eventId]);
 
+  async function fetchEvent() {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/events/${eventId.eventId}`
+      );
+      setEvent(response.data);
+    } catch (error) {
+      console.error("Error fetching event: ", error);
+    }
+  }
   if (!event) return <div>Event Loading...</div>;
-
   return (
     <div>
-      <h1>{event.title}</h1>
-      <p>
-        Posted by {event.author?.username} on{" "}
-        {new Date(event.createdAt).toLocaleString()}
-      </p>
-      <p>{event.location}</p>
-      <p>{event.description}</p>
-      <p>Start Time: {new Date(event.startTime).toLocaleString()}</p>
-      <p>End Time: {new Date(event.startTime).toLocaleString()}</p>
-      <PostComments postId={Number(eventId.eventId)} />
+      <div>
+        <Row style={{ flex: 1, display: "flex" }}>
+          <Col md={4}>
+            <h1>{event.title}</h1>
+            <p>
+              Posted by {event.author?.username} on{" "}
+              {new Date(event.createdAt).toLocaleString()}
+            </p>
+            {event.trail && (
+              <div>
+                <h3>{event.trail.name}</h3>
+                <p>{event.location}</p>
+              </div>
+            )}
+            {!event.trail && (
+              <div>
+                <p>{event.location}</p>
+              </div>
+            )}
+            <p>{event.description}</p>
+            <p>Start Time: {new Date(event.startTime).toLocaleString()}</p>
+            <p>End Time: {new Date(event.startTime).toLocaleString()}</p>
+            <h3>Invites</h3>
+            {event.invitees?.map((invitee) => (
+              <div key={invitee.email}>
+                <ul>
+                  <li>{invitee.username}</li>
+                </ul>
+              </div>
+            ))}
+            <h1>Comments</h1>
+            <PostComments postId={Number(eventId.eventId)} />
+          </Col>
+          <Col md={4}>
+            {event.trail && (
+              <MapComponent
+                latitude={event.trail.latitude}
+                longitude={event.trail.longitude}
+                zoom={zoom}
+                setSelectedTrail={setSelectedTrail}
+              />
+            )}
+            {!event.trail && (
+              <MapComponent
+                latitude={event.latitude}
+                longitude={event.longitude}
+                zoom={zoom}
+                eventDetails={event}
+              />
+            )}
+          </Col>
+        </Row>
+      </div>
     </div>
   );
 }
