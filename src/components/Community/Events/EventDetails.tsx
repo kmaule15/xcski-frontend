@@ -2,15 +2,14 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Params, useParams } from "react-router-dom";
 import PostComments from "../Posts/PostComments";
-import MapComponent, { Trail } from "../../Trail/MapComponent";
 import { Col, Row } from "react-bootstrap";
 import { EventInterface } from "../../../Interfaces/event.types";
+import EventMapComponent from "./EventMapComponent";
 
 function EventDetails() {
   const eventId = useParams<Params>();
   const [event, setEvent] = useState<EventInterface>();
   const [zoom, setZoom] = useState(12);
-  const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
 
   useEffect(() => {
     fetchEvent();
@@ -64,20 +63,23 @@ function EventDetails() {
           </Col>
           <Col md={4}>
             {event.trail && (
-              <MapComponent
-                latitude={event.trail.latitude}
-                longitude={event.trail.longitude}
-                zoom={zoom}
-                setSelectedTrail={setSelectedTrail}
-              />
+              <div>
+                <EventMapComponent
+                  latitude={event.trail.latitude}
+                  longitude={event.trail.longitude}
+                  zoom={zoom}
+                  trail={event.trail}
+                />
+              </div>
             )}
             {!event.trail && (
-              <MapComponent
-                latitude={event.latitude}
-                longitude={event.longitude}
-                zoom={zoom}
-                eventDetails={event}
-              />
+              <div>
+                <EventMapComponent
+                  latitude={event.latitude}
+                  longitude={event.longitude}
+                  zoom={zoom}
+                />
+              </div>
             )}
           </Col>
         </Row>

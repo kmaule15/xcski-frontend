@@ -1,3 +1,5 @@
+import { TrailInterface } from "./trail.types";
+
 export interface EventInterface {
   id: number;
   author: {
@@ -12,12 +14,7 @@ export interface EventInterface {
   location: string;
   latitude: number;
   longitude: number;
-  trail?: {
-    name: string;
-    location: string;
-    longitude: number;
-    latitude: number;
-  };
+  trail?: TrailInterface;
   isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;

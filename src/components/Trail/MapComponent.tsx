@@ -43,8 +43,7 @@ interface MapComponentProps {
   latitude: number | undefined;
   longitude: number | undefined;
   zoom: number;
-  setSelectedTrail?: (trail: Trail | null) => void;
-  eventDetails?: EventInterface;
+  setSelectedTrail: (trail: Trail | null) => void;
 }
 
 const MapComponent: React.FC<MapComponentProps> = ({
@@ -52,7 +51,6 @@ const MapComponent: React.FC<MapComponentProps> = ({
   longitude,
   zoom,
   setSelectedTrail,
-  eventDetails,
 }) => {
   const { trails, isLoading, error } = useTrails();
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
@@ -112,16 +110,6 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 console.log(`Marker clicked: ${trail.name}`); // Log the name of the trail when a marker is clicked
                 setSelectedTrail(trail);
               });
-            });
-          }
-
-          if (eventDetails) {
-            const marker = new google.maps.Marker({
-              position: {
-                lat: eventDetails.latitude,
-                lng: eventDetails.longitude,
-              },
-              map,
             });
           }
         } else {
