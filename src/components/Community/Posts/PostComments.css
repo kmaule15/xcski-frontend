@@ -40,6 +40,16 @@
   margin-top: 10px;
 }
 
+.disabledButton {
+  background-color: grey;
+}
+
 .postCommentsButton:hover {
   background-color: #45a049;
+}
+
+.postCommentsButton:disabled,
+.postCommentsButton:disabled:hover {
+  background-color: grey;
+  cursor: not-allowed;
 }

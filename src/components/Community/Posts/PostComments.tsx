@@ -74,7 +74,11 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId }) => {
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Add a comment..."
           />
-          <button className="postCommentsButton" onClick={handleAddComment}>
+          <button
+            disabled={newComment === ""}
+            className="postCommentsButton"
+            onClick={handleAddComment}
+          >
             Submit
           </button>
         </div>
