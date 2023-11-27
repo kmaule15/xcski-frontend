@@ -3,6 +3,7 @@ import { Loader } from "@googlemaps/js-api-loader";
 import "bootstrap/dist/css/bootstrap.css";
 
 import { EventInterface } from "../../Interfaces/event.types";
+import WeatherWidget from "./WeatherWidget/WeatherWidget";
 
 export type Trail = {
   name: string;
