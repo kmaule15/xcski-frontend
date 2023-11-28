@@ -110,16 +110,7 @@ const TrailSearch = () => {
                           <div>{trail.description}</div>
                           <div>Location: {trail.location}</div>
                           <div>Difficulty: {trail.difficulty}</div>
-                          <div>Length: {trail.length}</div>
-                          <SnowQuality 
-                            location={trail.location} 
-                            date={new Date().toISOString().split('T')[0]} 
-                            depthWeight={1} 
-                            densityWeight={1} 
-                            temperatureWeight={1} 
-                            timeSinceSnowfall={0} 
-                            isSnowing={false} 
-                          />
+                          <div>Length: {trail.length}</div> 
                         </Card.Text>
                       </div>
                     </Card.Body>
