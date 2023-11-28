@@ -15,3 +15,11 @@
   font-weight: bold;
   font-style: italic;
 }
+
+input[type="checkbox"] {
+  margin-right: -20px; /* Reduces the space between checkbox and label */
+}
+
+.form-check-input.form-check-input {
+  border: 1px solid black;
+}

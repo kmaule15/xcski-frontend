@@ -1,11 +1,9 @@
 import { TrailInterface } from "./trail.types";
+import { UserInterface } from "./user.types";
 
 export interface EventInterface {
   id: number;
-  author: {
-    username: string;
-    email: string;
-  };
+  author: UserInterface;
   title: string;
   description: string;
   date: Date;
@@ -18,12 +16,6 @@ export interface EventInterface {
   isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
-  invitees?: {
-    username: string;
-    email: string;
-  }[];
-  participants?: {
-    username: string;
-    email: string;
-  }[];
+  invitees?: UserInterface[];
+  participants?: UserInterface[];
 }
