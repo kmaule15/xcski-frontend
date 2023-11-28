@@ -28,6 +28,7 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
   const [latitude, setLatitude] = useState<number | null>(null);
   const [longitude, setLongitude] = useState<number | null>(null);
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
+  const accessToken = localStorage.getItem("accesstoken");
 
   // Form variables
   const [title, setTitle] = useState<string>("");
@@ -78,7 +79,6 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
       );
       return;
     }
-    const accessToken = localStorage.getItem("accesstoken");
 
     if (!isLoggedIn) {
       console.error("No access token found");
@@ -99,8 +99,6 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
       trail,
     };
 
-    console.log("formData", formData);
-
     try {
       const response = await axios.post(
         `http://localhost:3000/events`,
@@ -113,7 +111,9 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
       );
 
       const eventId = response.data.id;
-      emailInvitees(eventId);
+      if (userEvent) {
+        emailInvitees(userEvent.email, eventId);
+      }
 
       if (onEventCreated) {
         onEventCreated();
@@ -125,23 +125,20 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
     handleClose();
   };
 
-  function emailInvitees(eventId: number) {
-    const link = "http://localhost:3001/events/" + eventId;
-
-    const emailOptions = {
-      from: "XCSadm@gmail.com",
-      to: userEvent?.email,
-      subject: "You are invited to an event!",
-      html:
-        "You've been invited to an event - check it out here: <a href=" +
-        link +
-        ">Go To Event</a>",
+  function emailInvitees(email: string, eventId: number) {
+    const data = {
+      email,
+      eventId,
     };
 
     try {
-      axios.post(`http://localhost:3000/email/send`, emailOptions);
+      axios.post(`http://localhost:3000/auth/invite`, data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
     } catch (error) {
-      console.error("An error occured:", error);
+      console.error("Error sending email: ", error);
     }
   }
 

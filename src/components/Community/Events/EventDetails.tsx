@@ -2,14 +2,16 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Params, useParams } from "react-router-dom";
 import PostComments from "../Posts/PostComments";
-import { Col, Row } from "react-bootstrap";
+import { Col, Row, Tab, Tabs } from "react-bootstrap";
 import { EventInterface } from "../../../Interfaces/event.types";
 import EventMapComponent from "./EventMapComponent";
+import "./EventDetails.css";
 
 function EventDetails() {
   const eventId = useParams<Params>();
   const [event, setEvent] = useState<EventInterface>();
   const [zoom, setZoom] = useState(12);
+  const [key, setKey] = useState("comments");
 
   useEffect(() => {
     fetchEvent();
@@ -38,28 +40,62 @@ function EventDetails() {
             </p>
             {event.trail && (
               <div>
-                <h3>{event.trail.name}</h3>
-                <p>{event.location}</p>
+                <h3>Trail Name: {event.trail.name}</h3>
+                <p>Address: {event.location}</p>
               </div>
             )}
             {!event.trail && (
               <div>
-                <p>{event.location}</p>
+                <p>
+                  <strong>Address: </strong>
+                  {event.location}
+                </p>
               </div>
             )}
-            <p>{event.description}</p>
-            <p>Start Time: {new Date(event.startTime).toLocaleString()}</p>
-            <p>End Time: {new Date(event.startTime).toLocaleString()}</p>
-            <h3>Invites</h3>
-            {event.invitees?.map((invitee) => (
-              <div key={invitee.email}>
-                <ul>
-                  <li>{invitee.username}</li>
-                </ul>
-              </div>
-            ))}
-            <h1>Comments</h1>
-            <PostComments postId={Number(eventId.eventId)} />
+            <p>
+              <strong>Description: </strong>
+              {event.description}
+            </p>
+            <p>
+              <strong>Start Time:</strong>{" "}
+              {new Date(event.startTime).toLocaleString()}
+            </p>
+            <p>
+              <strong>End Time:</strong>
+              {new Date(event.startTime).toLocaleString()}
+            </p>
+
+            <Tabs
+              id="controlled-tab-example"
+              activeKey={key}
+              onSelect={(k) => setKey(k as string)}
+              className="mb-3"
+            >
+              <Tab eventKey="comments" title="Comments">
+                <PostComments postId={Number(eventId.eventId)} />
+                ...
+              </Tab>
+              <Tab eventKey="invited" title="Invited">
+                {event.invitees?.map((invitee) => (
+                  <div key={invitee.email}>
+                    <ul>
+                      <li className="no-bullets">{invitee.username}</li>
+                    </ul>
+                  </div>
+                ))}
+                ...
+              </Tab>
+              <Tab eventKey="confirmed" title="Confirmed">
+                {event.participants?.map((participant) => (
+                  <div key={participant.email}>
+                    <ul>
+                      <li className="no-bullets">{participant.username}</li>
+                    </ul>
+                  </div>
+                ))}
+                ...
+              </Tab>
+            </Tabs>
           </Col>
           <Col md={4}>
             {event.trail && (

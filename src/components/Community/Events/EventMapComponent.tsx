@@ -93,9 +93,7 @@ const EventMapComponent: React.FC<EventMapComponentProps> = ({
               right: 0,
               margin: "100px",
             }}
-          >
-            <WeatherWidget lat={latitude || 1} lng={longitude || 2} />
-          </div>
+          ></div>
         </div>
       </div>
     </div>
