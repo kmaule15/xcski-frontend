@@ -41,10 +41,10 @@ const NavBar = () => {
             </NavDropdown>
           ) : (
             <>
-              <Button variant="outline-light" className=" me-3" href="login">
+              <Button variant="outline-light" className=" me-3" href="/login">
                 Log in
               </Button>
-              <Button variant="danger" className="me-3" href="createaccount">
+              <Button variant="danger" className="me-3" href="/createaccount">
                 Create Account
               </Button>
             </>
