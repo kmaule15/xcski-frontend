@@ -13,7 +13,7 @@ const ResetPass = () => {
       email,
     };
 
-    await fetch("${process.env.REACT_APP_BACKEND_URL}/auth/email", {
+    await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth/email`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

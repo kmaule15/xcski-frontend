@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import SearchBar from "../SearchBar/SearchBar";
 import BackgroundSlideshow from "./BGSlideshow";
+import axios from "axios";
 const Home = () => {
   //start searchbar stuff
   const [trailName, setTrailName] = useState<string>("");
@@ -34,11 +35,18 @@ const Home = () => {
     id: number;
   }>();
   const onLoad = async () => {
+    const response = axios.get(
+      `${process.env.REACT_APP_BACKEND_URL}/trails/test`
+    );
+    console.log(response);
     console.log("Trails queried!");
     try {
-      const response = await fetch("http://localhost:3000/trails", {
-        method: "Get",
-      })
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/trails`,
+        {
+          method: "Get",
+        }
+      )
         .then((response) => response.json())
         .then((data) => setTrails(data));
     } catch (error) {

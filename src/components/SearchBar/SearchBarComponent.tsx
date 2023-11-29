@@ -13,7 +13,7 @@ const SearchBarComponent: FC<Props> = (props): JSX.Element => {
   const onLoad = async () => {
     try {
       const response = await fetch(
-        "${process.env.REACT_APP_BACKEND_URL}/trails",
+        `${process.env.REACT_APP_BACKEND_URL}/trails`,
         {
           method: "Get",
         }

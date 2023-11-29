@@ -21,11 +21,14 @@ const CreateAccount = () => {
     const formData = { username, password, email };
 
     try {
-      const response = await fetch("http://localhost:3000/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/users`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (response.ok) {
         console.log("Account created successfully");
@@ -34,7 +37,7 @@ const CreateAccount = () => {
           password,
         };
 
-        await fetch("http://localhost:3000/auth/login", {
+        await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -43,32 +46,32 @@ const CreateAccount = () => {
         })
           .then((response) => {
             if (response.status === 401) {
-              throw new Error("Unauthorized access")
+              throw new Error("Unauthorized access");
             }
 
             if (response.ok) {
-              return response.json()
+              return response.json();
             }
           })
           .then((data) => {
-            const accessToken = data.access_token
+            const accessToken = data.access_token;
 
-            AuthLogin(username, accessToken)
-            setLoginError(false)
+            AuthLogin(username, accessToken);
+            setLoginError(false);
 
-            navigate("/")
+            navigate("/");
           })
           .catch((error) => {
-            setLoginError(true)
+            setLoginError(true);
           });
       } else if (response.status === 409) {
-        const data = await response.json()
-        setError(data.error)
+        const data = await response.json();
+        setError(data.error);
       } else {
-        setError("Failed to create account. Please try again later.")
+        setError("Failed to create account. Please try again later.");
       }
     } catch (error) {
-      setError("An unexpected error occurred. Please try again.")
+      setError("An unexpected error occurred. Please try again.");
     }
   };
 

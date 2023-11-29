@@ -17,7 +17,7 @@ const PWU = () => {
     } else {
       try {
         const response = await fetch(
-          "${process.env.REACT_APP_BACKEND_URL}/auth/resetpassword",
+          `${process.env.REACT_APP_BACKEND_URL}/auth/resetpassword`,
           {
             method: "POST",
             headers: {

@@ -20,7 +20,7 @@ const Login = () => {
       password,
     };
 
-    await fetch("${process.env.REACT_APP_BACKEND_URL}/auth/login", {
+    await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -52,7 +52,7 @@ const Login = () => {
 
   const responseMessage = async (response: any) => {
     console.log(response);
-    await fetch("${process.env.REACT_APP_BACKEND_URL}/auth/google", {
+    await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth/google`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -23,7 +23,7 @@ export const useTrails = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch("${process.env.REACT_APP_BACKEND_URL}/trails")
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/trails`)
       .then((response) => response.json())
       .then((data) => {
         setTrails(data);
