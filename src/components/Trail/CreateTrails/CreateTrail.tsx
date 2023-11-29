@@ -138,7 +138,7 @@ const CreateTrail = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/trails`,
+        `${process.env.REACT_APP_BACKEND_URL}/trails`,
         formData,
         {
           headers: {

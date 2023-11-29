@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Container, Form, Button, Modal } from "react-bootstrap";
+import { Form, Button, Modal } from "react-bootstrap";
 import { UserInterface } from "../../../Interfaces/user.types";
 import { TrailInterface } from "../../../Interfaces/trail.types";
 import { useAuth } from "../../../AuthContext";
@@ -101,7 +101,7 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/events`,
+        `${process.env.REACT_APP_BACKEND_URL}/events`,
         formData,
         {
           headers: {
@@ -132,7 +132,7 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
     };
 
     try {
-      axios.post(`http://localhost:3000/auth/invite`, data, {
+      axios.post(`${process.env.REACT_APP_BACKEND_URL}/auth/invite`, data, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -183,14 +183,18 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
 
   async function onLoad() {
     try {
-      const response = await axios.get(`http://localhost:3000/trails`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/trails`
+      );
       setTrails(response.data);
     } catch (error) {
       console.error("Error fetching trails", error);
     }
 
     try {
-      const response = await axios.get(`http://localhost:3000/users`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/users`
+      );
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users", error);

@@ -1,0 +1,4 @@
+{
+  "appService.defaultWebAppToDeploy": "/subscriptions/0cfb4e5f-719e-49f3-8b26-b4f24e68566e/resourceGroups/xcski-app/providers/Microsoft.Web/sites/xcski-trails",
+  "appService.deploySubpath": "build"
+}

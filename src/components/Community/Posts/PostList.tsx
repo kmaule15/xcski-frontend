@@ -24,7 +24,9 @@ function PostsList() {
 
   async function fetchPosts() {
     try {
-      const response = await axios.get(`http://localhost:3000/posts`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/posts`
+      );
       setPosts(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -36,11 +38,9 @@ function PostsList() {
     fetchPosts();
   }
 
-  
-
   return (
     <div>
-      <CreatePostModal onPostCreated={handlePostCreated} />  
+      <CreatePostModal onPostCreated={handlePostCreated} />
       {posts.map((post) => (
         <div key={post.id}>
           <Link to={`/posts/${post.id}`}>

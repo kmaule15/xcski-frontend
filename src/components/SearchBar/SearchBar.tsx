@@ -26,7 +26,7 @@ const SearchBar = <T extends object>({
     onSelect && onSelect(selectedItem);
     resetSearchComplete();
   };
-  const resultsLimit = 5; //restrict number of results later?
+  // const resultsLimit = 5; restrict number of results later?
 
   const resetSearchComplete = useCallback(() => {
     setFocusedIndex(-1);

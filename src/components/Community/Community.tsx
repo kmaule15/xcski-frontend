@@ -1,7 +1,5 @@
-import React from "react";
 import PostsList from "./Posts/PostList";
 import "./Community.css";
-import WeatherWidget from "../Trail/WeatherWidget/WeatherWidget";
 import EventsList from "./Events/EventList";
 
 const Community = () => {

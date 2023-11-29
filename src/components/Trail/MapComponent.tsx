@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import "bootstrap/dist/css/bootstrap.css";
 import WeatherWidget from "../Trail/WeatherWidget/WeatherWidget";
-import { EventInterface } from "../../Interfaces/event.types";
 
 export type Trail = {
   name: string;
@@ -24,7 +23,7 @@ export const useTrails = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch("http://localhost:3000/trails")
+    fetch("${process.env.REACT_APP_BACKEND_URL}/trails")
       .then((response) => response.json())
       .then((data) => {
         setTrails(data);

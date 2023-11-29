@@ -19,10 +19,10 @@ function EventInvite() {
     async function fetchData() {
       try {
         const eventResponse = await axios.get(
-          `http://localhost:3000/events/${eventId.eventId}`
+          `${process.env.REACT_APP_BACKEND_URL}/events/${eventId.eventId}`
         );
         const userResponse = await axios.get(
-          `http://localhost:3000/users/${userId.userId}`
+          `${process.env.REACT_APP_BACKEND_URL}/users/${userId.userId}`
         );
 
         setEvent(eventResponse.data);
@@ -63,7 +63,7 @@ function EventInvite() {
     const data = { token, eventId, participants };
     try {
       const response = await axios.post(
-        `http://localhost:3000/auth/acceptinvite`,
+        `${process.env.REACT_APP_BACKEND_URL}/auth/acceptinvite`,
         data
       );
       if (response) {

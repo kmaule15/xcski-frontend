@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Navbar, Nav, Button, NavDropdown } from "react-bootstrap";
 import { useAuth } from "../../AuthContext";
 import { Link } from "react-router-dom";

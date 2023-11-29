@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import "bootstrap/dist/css/bootstrap.css";
 import { TrailInterface } from "../../../Interfaces/trail.types";
-import WeatherWidget from "../../Trail/WeatherWidget/WeatherWidget";
 
 interface EventMapComponentProps {
   latitude: number;
@@ -68,11 +67,13 @@ const EventMapComponent: React.FC<EventMapComponentProps> = ({
               position: { lat: trail.latitude, lng: trail.longitude },
               map,
             });
+            console.log(marker);
           } else {
             const marker = new google.maps.Marker({
               position: { lat: latitude, lng: longitude },
               map,
             });
+            console.log(marker);
           }
         }
       })

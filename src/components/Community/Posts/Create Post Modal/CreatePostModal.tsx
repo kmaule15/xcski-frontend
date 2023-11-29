@@ -17,11 +17,11 @@ function CreatePostModal({ onPostCreated }: CreatePostModalProps) {
 
   async function handleSubmit() {
     if (!title.trim() || !content.trim()) {
-      alert('Title and content are required!');
+      alert("Title and content are required!");
       return;
     }
 
-    const accessToken = localStorage.getItem('accesstoken');
+    const accessToken = localStorage.getItem("accesstoken");
 
     if (!accessToken) {
       console.error("No access token found");
@@ -30,7 +30,7 @@ function CreatePostModal({ onPostCreated }: CreatePostModalProps) {
 
     try {
       await axios.post(
-        `http://localhost:3000/posts`,
+        `${process.env.REACT_APP_BACKEND_URL}/posts`,
         { title, content },
         {
           headers: {

@@ -13,7 +13,9 @@ function EventsList() {
 
   async function fetchEvents() {
     try {
-      const response = await axios.get(`http://localhost:3000/events`);
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/events`
+      );
       setEvents(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);

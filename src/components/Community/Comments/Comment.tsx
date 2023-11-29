@@ -13,7 +13,7 @@ const Comment: React.FC<{ comment: CommentInterface }> = ({ comment }) => {
       if (childComments.length === 0) {
         try {
           const response = await fetch(
-            `http://localhost:3000/child-comments/${comment.id}`
+            `${process.env.REACT_APP_BACKEND_URL}/child-comments/${comment.id}`
           );
           const data = await response.json();
           setChildComments(data);

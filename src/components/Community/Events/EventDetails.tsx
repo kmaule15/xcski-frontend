@@ -10,7 +10,7 @@ import "./EventDetails.css";
 function EventDetails() {
   const eventId = useParams<Params>();
   const [event, setEvent] = useState<EventInterface>();
-  const [zoom, setZoom] = useState(12);
+  const [zoom] = useState(12);
   const [key, setKey] = useState("comments");
 
   useEffect(() => {
@@ -20,7 +20,7 @@ function EventDetails() {
   async function fetchEvent() {
     try {
       const response = await axios.get(
-        `http://localhost:3000/events/${eventId.eventId}`
+        `${process.env.REACT_APP_BACKEND_URL}/events/${eventId.eventId}`
       );
       setEvent(response.data);
     } catch (error) {

@@ -10,26 +10,24 @@ const Home = () => {
   useEffect(() => {
     onLoad();
   }, []);
-  const [results, setResults] =
-    useState<
-      {
-        name: string;
-        location: string;
-        id: number;
-        longitude: number;
-        latitude: number;
-      }[]
-    >();
-  const [trails, setTrails] =
-    useState<
-      {
-        name: string;
-        location: string;
-        id: number;
-        longitude: number;
-        latitude: number;
-      }[]
-    >();
+  const [results, setResults] = useState<
+    {
+      name: string;
+      location: string;
+      id: number;
+      longitude: number;
+      latitude: number;
+    }[]
+  >();
+  const [trails, setTrails] = useState<
+    {
+      name: string;
+      location: string;
+      id: number;
+      longitude: number;
+      latitude: number;
+    }[]
+  >();
   const [selectedTrail, setSelectedTrail] = useState<{
     name: string;
     location: string;

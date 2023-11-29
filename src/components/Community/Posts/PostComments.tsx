@@ -16,7 +16,7 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId }) => {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:3000/post/${postId}/comments`)
+      .get(`${process.env.REACT_APP_BACKEND_URL}/post/${postId}/comments`)
       .then((response) => {
         setComments(response.data);
       })
@@ -35,7 +35,7 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId }) => {
 
     try {
       const response = await axios.post(
-        `http://localhost:3000/comments`,
+        `${process.env.REACT_APP_BACKEND_URL}/comments`,
         { content: newComment, postId },
         {
           headers: {
