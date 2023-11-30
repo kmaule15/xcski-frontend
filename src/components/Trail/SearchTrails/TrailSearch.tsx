@@ -39,8 +39,10 @@ const TrailSearch = () => {
         return (order.indexOf(a[sortField]) - order.indexOf(b[sortField])) * sortOrder;
       } else if (sortField === 'distance') {
         return (a.distance - b.distance) * sortOrder;
+      } else if (sortField === 'name') {
+        return (a[sortField].toLowerCase() > b[sortField].toLowerCase() ? 1 : -1) * sortOrder;
       }
-      return (a[sortField] > b[sortField] ? 1 : -1) * sortOrder;
+      return 0;
     });
     setSortedTrails(newSortedTrails);
   }, [trails, sortField, sortOrder]);
