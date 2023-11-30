@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import "bootstrap/dist/css/bootstrap.css";
-import WeatherWidget from "../Trail/WeatherWidget/WeatherWidget";
+
 import { EventInterface } from "../../Interfaces/event.types";
+import WeatherWidget from "./WeatherWidget/WeatherWidget";
 
 export type Trail = {
   name: string;
