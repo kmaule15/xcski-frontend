@@ -3,8 +3,6 @@ import { Container, Row, Col, Card, ButtonGroup, Button } from 'react-bootstrap'
 import MapComponent, { Trail, useTrails } from "../MapComponent";
 import SearchBar from './SearchbarComponent';
 import './TrailSearch.css';
-import SnowQuality from "../../refactor me/Snow";
-import WeatherWidget from "../WeatherWidget/WeatherWidget";
 
 function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   var R = 6371; // Radius of the earth in km
@@ -79,18 +77,23 @@ const TrailSearch = () => {
 
   return (
     <Container fluid className="trail-search-container">
-      <SearchBar setCenter={setCenter} setZoom={setZoom} />
-      <ButtonGroup aria-label="Sort trails" className="sort-trails">
-        <Button variant="secondary" onClick={() => handleSortFieldChange('name')}>Sort by Name</Button>
-        <Button variant="secondary" onClick={() => handleSortFieldChange('difficulty')}>Sort by Difficulty</Button>
-        <Button variant="secondary" onClick={() => handleSortFieldChange('length')}>Sort by Length</Button>
-      </ButtonGroup>
+      <Row className="search-sort-row">
+        <Col md={8}>
+          <div className="search-bar-container">
+            <SearchBar setCenter={setCenter} setZoom={setZoom} />
+          </div>
+        </Col>
+        <Col md={4}>
+          <ButtonGroup aria-label="Sort trails" className="sort-trails">
+            <Button variant="secondary" onClick={() => handleSortFieldChange('name')}>Sort by Name</Button>
+            <Button variant="secondary" onClick={() => handleSortFieldChange('difficulty')}>Sort by Difficulty</Button>
+            <Button variant="secondary" onClick={() => handleSortFieldChange('length')}>Sort by Length</Button>
+          </ButtonGroup>
+        </Col>
+      </Row>
       <Row className="trail-search-row">
         <Col md={3} className="trail-search-col">
           <div className="trail-card-container">
-            <div className="weather-widget">
-              {selectedTrail && <WeatherWidget lat={selectedTrail.latitude} lng={selectedTrail.longitude} display='minimal' />}
-            </div>
             <div className="trail-search-card-container">
               {sortedTrails.map((trail, index) => (
                 <div className="trail-card-container" key={index}>
@@ -127,9 +130,8 @@ const TrailSearch = () => {
     </Container>
   );
   
-  
 };
-  
-  export default TrailSearch;
+
+export default TrailSearch;
   
   
