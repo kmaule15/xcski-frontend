@@ -79,36 +79,6 @@ const TrailSearch = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  const handleSubmit = async (trail: any) => {
-    let castTrail:Trail  =  trail;
-    let id = castTrail.id;
-    let rating = castTrail.rating;
-    const formData = {
-      id,
-      rating,
-      AuthUsername,
-    };
-    trail.rating = 0;
-    (document.getElementsByName(trail.id + "")[0] as unknown  as RatingProps).value = 1;
-    //doesn't work
-    console.log(formData);
-    try {
-      const response = await fetch("http://localhost:3000/trailratings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-      if (response.ok) {
-        console.log("Trail successfully rated!");
-        //setIsSuccess(true);
-        //setTimeout(() => setIsSuccess(false), 4000);
-      }
-    } catch (error) {
-    }
-  };
-
 
   return (
     <Container fluid className="trail-search-container">
@@ -150,6 +120,7 @@ const TrailSearch = () => {
                           <div>Difficulty: {trail.difficulty}</div>
                           <div>Length: {trail.length}</div> 
                         </Card.Text>
+                        <Rating name="read-only" value={trail.rating} size="large"/> 
                       </div>
                     </Card.Body>
                   </Card>

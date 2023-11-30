@@ -58,19 +58,30 @@ const CreateTrailRating = () => {
 //add date time checking
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = {
+    const ratingFormData = {
       trailId,
       trailRating
     };
     try {
-      const response = await fetch("http://localhost:3000/trailratings", {
+      const postRating = await fetch("http://localhost:3000/trailratings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(ratingFormData),
+      });
+      const formData = {
+        postRating,
+      };
+      const updateTrails = await fetch("http://localhost:3000/trails/rate/:"+trailId, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
-      if (response.ok) {
+
+      if (postRating.ok && updateTrails.ok) {
         console.log("Trail successfully rated!");
         setIsSuccess(true);
         clearForm();
