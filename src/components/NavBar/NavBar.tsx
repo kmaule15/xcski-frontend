@@ -23,7 +23,7 @@ const NavBar = () => {
     const fetchTrails = async () => {
       try {
         const response = await axios.get<Trail[]>(
-          "http://localhost:3000/trails/grooming-data"
+          `${process.env.REACT_APP_FRONTEND_URL}/trails/grooming-data`
         );
         setTrails(response.data);
       } catch (error) {
