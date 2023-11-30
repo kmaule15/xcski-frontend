@@ -3,8 +3,10 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SearchBar from "../../SearchBar/SearchBar";
 import Rating from "@mui/material/Rating";
+import { useAuth } from "../../../AuthContext";
 
 const CreateTrailRating = () => {
+  const { isLoggedIn } = useAuth();
   const [trailName, setTrailName] = useState<string>("");
   const [trailRating, setTrailRating] = useState<number| null>(null);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -34,7 +36,6 @@ const CreateTrailRating = () => {
   const handleChange: changeHandler = (e) => {
     const { target } = e;
     if (!target.value.trim()) return setResults([]);
-    //improve filtering later
     var targetValue = target.value.toLowerCase()
     const filteredValue = trails && trails.filter((trail: { name: string; location: string; id: number;}) =>
       trail.name.toLowerCase().includes(targetValue) || trail.location.toLowerCase().includes(targetValue)
@@ -51,27 +52,16 @@ const CreateTrailRating = () => {
 
 //use references to get trail name from component, add required keyword to inputs i require
   const clearForm = () => {
-    setTrailName("");
-    setSelectedTrail(undefined);
     setResults(undefined);
-    setTrailId(-1);
-    const output = document.querySelector("input[name='login']") as HTMLInputElement;
-    const input = document.getElementById("searchbar") as HTMLInputElement;
-    input!.value = '';
-    output!.value = '';
-    console.log(input!.value)
   };
 
 //add date time checking
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = {
-      trailName,
       trailId,
       trailRating
     };
-    //console.log(formData.trailName);
-    //console.log(formData.trailId);
     try {
       const response = await fetch("http://localhost:3000/trailratings", {
         method: "POST",
@@ -94,7 +84,8 @@ const CreateTrailRating = () => {
     <>
       <div className="form">
       <h1 className="text-center mb-4">Rate a Trail</h1>
-      <div className="container">
+      {isLoggedIn ? (
+        <div className="container">
         <div className="row justify-content-center">
           <div className="col-md-6">
             <form onSubmit={handleSubmit}>
@@ -134,6 +125,9 @@ const CreateTrailRating = () => {
           </div>
         </div>
       </div>
+      ) : (
+          <p>Users must be logged in to create a trail update</p>
+      )}
       </div>
       <div className="squares-background"></div>
     </>
