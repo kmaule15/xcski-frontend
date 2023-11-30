@@ -1,0 +1,26 @@
+.search-bar input {
+    font-size: 20px; /* Larger font size */
+    padding: 10px 15px; /* More padding for larger appearance */
+    width: 100%; /* Adjust width as needed */
+    box-sizing: border-box; /* Ensures padding doesn't affect overall width */
+  }
+  
+  .results-container {
+    position: relative;
+    /* margin-top: 1rem; */
+    padding: 0.5rem;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 5px 5px;
+    max-height: 14rem; /* Equivalent to 56px x 4 */
+    overflow-y: auto;
+  }
+  
+  .result-item {
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+  
+  .result-item:hover {
+    background-color: #e1ecff;
+  }

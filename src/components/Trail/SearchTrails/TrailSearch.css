@@ -1,17 +1,28 @@
+.search-bar-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.search-sort-row {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
 .trail-search-col {
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    padding-right: 0;
-    max-height: 80vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding-right: 0;
+  max-height: 80vh;
 }
 
 .trail-search-card-container {
-    overflow-y: auto;
-    max-height: 80vh;
-    flex-grow: 1;
+  overflow-y: auto;
+  max-height: 80vh;
+  flex-grow: 1;
 }
 
 .trail-search-card.selected {
-    background-color: #d6eaff;
-  }
+  background-color: #d6eaff;
+}

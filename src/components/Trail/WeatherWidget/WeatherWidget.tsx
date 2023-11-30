@@ -35,7 +35,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = ({ lat, lng }) => {
     <MDBContainer>
       <MDBRow className="justify-content-center">
         <MDBCol md="8" lg="6" xl="4">
-          <MDBCard>
+          <MDBCard style={{ height: '300px', width: '200px'}}>
             <MDBCardBody>
               {weatherData && (
                 <>

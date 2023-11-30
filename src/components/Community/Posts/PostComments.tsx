@@ -3,17 +3,7 @@ import Comment from "../Comments/Comment";
 import axios from "axios";
 import { useAuth } from "../../../AuthContext";
 import "./PostComments.css";
-
-interface CommentInterface {
-  id: number;
-  content: string;
-  userId: number;
-  postId?: number | null;
-  trailId?: number | null;
-  createdAt: string;
-  updatedAt: string;
-  childComments?: CommentInterface[];
-}
+import { CommentInterface } from "../../../Interfaces/comment.types";
 
 interface PostCommentsProps {
   postId: number;
@@ -74,7 +64,11 @@ const PostComments: React.FC<PostCommentsProps> = ({ postId }) => {
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Add a comment..."
           />
-          <button className="postCommentsButton" onClick={handleAddComment}>
+          <button
+            disabled={newComment === ""}
+            className="postCommentsButton"
+            onClick={handleAddComment}
+          >
             Submit
           </button>
         </div>

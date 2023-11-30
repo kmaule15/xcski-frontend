@@ -1,6 +1,9 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react';
-import { Loader } from '@googlemaps/js-api-loader';
-import 'bootstrap/dist/css/bootstrap.css';
+import React, { useEffect, useState, useRef, useMemo } from "react";
+import { Loader } from "@googlemaps/js-api-loader";
+import "bootstrap/dist/css/bootstrap.css";
+
+import { EventInterface } from "../../Interfaces/event.types";
+import WeatherWidget from "./WeatherWidget/WeatherWidget";
 
 export type Trail = {
   id: number;
@@ -13,7 +16,7 @@ export type Trail = {
   length: number;
   estimatedTime: number;
   typesAllowed: string[];
-  rating: number | null; //for ratings
+  Nodes: { id: number; coordinates: [number, number] }[];
   [key: string]: any;
 };
 
@@ -24,13 +27,13 @@ export const useTrails = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    fetch('http://localhost:3000/trails')
-      .then(response => response.json())
-      .then(data => {
+    fetch("http://localhost:3000/trails")
+      .then((response) => response.json())
+      .then((data) => {
         setTrails(data);
         setIsLoading(false);
       })
-      .catch(error => {
+      .catch((error) => {
         setError(error);
         setIsLoading(false);
       });
@@ -46,25 +49,35 @@ interface MapComponentProps {
   setSelectedTrail: (trail: Trail | null) => void;
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, zoom, setSelectedTrail }) => {
+const MapComponent: React.FC<MapComponentProps> = ({
+  latitude,
+  longitude,
+  zoom,
+  setSelectedTrail,
+}) => {
   const { trails, isLoading, error } = useTrails();
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
   const mapRef = useRef<HTMLDivElement | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
   if (!apiKey) {
-    throw new Error('API key is missing. Please check your .env file. (or send Chase your IP address)');
+    throw new Error(
+      "API key is missing. Please check your .env file. (or send Chase your IP address)"
+    );
   }
 
   const mapContainerStyle = {
-    width: '100%',
-    height: '80vh',
+    width: "100%",
+    height: "80vh",
   };
 
-  const center = useMemo(() => ({
-    lat: latitude || 44.5,
-    lng: longitude || -89.5,
-  }), [latitude, longitude]);
+  const center = useMemo(
+    () => ({
+      lat: latitude || 44.5,
+      lng: longitude || -89.5,
+    }),
+    [latitude, longitude]
+  );
 
   useEffect(() => {
     setIsMounted(true);
@@ -76,34 +89,56 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, zoom, 
 
     const loader = new Loader({
       apiKey,
-      version: 'weekly',
-      libraries: ['places']
+      version: "weekly",
+      libraries: ["places"],
     });
 
-    loader.load().then((google) => {
-      if (mapRef.current) {
-        const map = new google.maps.Map(mapRef.current, {
-          center: center,
-          zoom: zoom, // Use the zoom prop here
-        });
-
-        trails.forEach((trail) => {
-          const marker = new google.maps.Marker({
-            position: { lat: trail.latitude, lng: trail.longitude },
-            map,
+    loader
+      .load()
+      .then((google) => {
+        if (mapRef.current) {
+          const map = new google.maps.Map(mapRef.current, {
+            center: center,
+            zoom: zoom,
           });
 
-          marker.addListener('click', () => {
-            console.log(`Marker clicked: ${trail.name}`); // Log the name of the trail when a marker is clicked
-            setSelectedTrail(trail);
-          });
-        });
-      } else {
-        console.error('Could not find element with ref "mapRef"');
-      }
-    }).catch(e => {
-      // handle error
-    });
+          if (setSelectedTrail) {
+            trails.forEach((trail) => {
+              const pathCoordinates = trail.Nodes.map((node) => ({
+                lat: node.coordinates[0],
+                lng: node.coordinates[1],
+              }));
+
+              // Create Polyline for the trail path
+              const trailPath = new google.maps.Polyline({
+                path: pathCoordinates,
+                geodesic: true,
+                strokeColor: "#FF0000",
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+              });
+              trailPath.setMap(map);
+
+              // Create a single Marker for the trail
+              const trailMarker = new google.maps.Marker({
+                position: pathCoordinates[pathCoordinates.length - 1], // Use the last node's position as the marker position
+                map,
+                title: trail.name,
+              });
+
+              trailMarker.addListener("click", () => {
+                console.log(`Marker clicked: ${trail.name}`);
+                setSelectedTrail(trail);
+              });
+            });
+          }
+        } else {
+          console.error('Could not find element with ref "mapRef"');
+        }
+      })
+      .catch((e) => {
+        // handle error
+      });
   }, [trails, latitude, longitude, isMounted, apiKey, center, zoom, setSelectedTrail]);
 
   if (isLoading) {
@@ -120,6 +155,16 @@ const MapComponent: React.FC<MapComponentProps> = ({ latitude, longitude, zoom, 
         <div className="col">
           <div ref={mapRef} style={mapContainerStyle}>
             {/* Other components here */}
+          </div>
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              margin: "100px",
+            }}
+          >
+            <WeatherWidget lat={latitude || 1} lng={longitude || 2} />
           </div>
         </div>
       </div>
