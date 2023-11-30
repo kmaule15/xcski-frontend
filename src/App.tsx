@@ -19,6 +19,7 @@ import PostDetails from "./components/Community/Posts/PostDetails";
 import MapComponent, { Trail } from "./components/Trail/MapComponent";
 import EventDetails from "./components/Community/Events/EventDetails";
 import EventInvite from "./components/Community/Events/EventInvite";
+import TrailDetailPage from "./components/Trail/TrailDetailPage/TrailDetailPage";
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
           <Route path="PWU/:token" element={<PWU />} />
           <Route path="/posts/:postId" element={<PostDetails />} />
           <Route path="/events/:eventId" element={<EventDetails />} />
+          <Route path="/trails/:trailId" element={<TrailDetailPage />} />
           <Route
             path="/eventinvite/:eventId/:userId/:token"
             element={<EventInvite />}
