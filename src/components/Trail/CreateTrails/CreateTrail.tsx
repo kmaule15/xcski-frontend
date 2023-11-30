@@ -259,6 +259,7 @@ const CreateTrail = () => {
                 type="checkbox"
                 label="Classic"
                 value="Classic"
+                className="custom-check"
                 checked={typesAllowed.includes("Classic")}
                 onChange={handleTypesAllowedChange}
               />
@@ -266,6 +267,7 @@ const CreateTrail = () => {
                 type="checkbox"
                 label="Skate"
                 value="Skate"
+                className="custom-check"
                 checked={typesAllowed.includes("Skate")}
                 onChange={handleTypesAllowedChange}
               />
