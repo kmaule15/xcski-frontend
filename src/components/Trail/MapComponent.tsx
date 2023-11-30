@@ -15,6 +15,7 @@ export type Trail = {
   length: number;
   estimatedTime: number;
   typesAllowed: string[];
+  Nodes: { id: number; coordinates: [number, number] }[];
   [key: string]: any;
 };
 
@@ -97,18 +98,35 @@ const MapComponent: React.FC<MapComponentProps> = ({
         if (mapRef.current) {
           const map = new google.maps.Map(mapRef.current, {
             center: center,
-            zoom: zoom, // Use the zoom prop here
+            zoom: zoom,
           });
 
           if (setSelectedTrail) {
             trails.forEach((trail) => {
-              const marker = new google.maps.Marker({
-                position: { lat: trail.latitude, lng: trail.longitude },
+              const pathCoordinates = trail.Nodes.map((node) => ({
+                lat: node.coordinates[0],
+                lng: node.coordinates[1],
+              }));
+
+              // Create Polyline for the trail path
+              const trailPath = new google.maps.Polyline({
+                path: pathCoordinates,
+                geodesic: true,
+                strokeColor: "#FF0000",
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+              });
+              trailPath.setMap(map);
+
+              // Create a single Marker for the trail
+              const trailMarker = new google.maps.Marker({
+                position: pathCoordinates[pathCoordinates.length - 1], // Use the last node's position as the marker position
                 map,
+                title: trail.name,
               });
 
-              marker.addListener("click", () => {
-                console.log(`Marker clicked: ${trail.name}`); // Log the name of the trail when a marker is clicked
+              trailMarker.addListener("click", () => {
+                console.log(`Marker clicked: ${trail.name}`);
                 setSelectedTrail(trail);
               });
             });
@@ -120,16 +138,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
       .catch((e) => {
         // handle error
       });
-  }, [
-    trails,
-    latitude,
-    longitude,
-    isMounted,
-    apiKey,
-    center,
-    zoom,
-    setSelectedTrail,
-  ]);
+  }, [trails, latitude, longitude, isMounted, apiKey, center, zoom, setSelectedTrail]);
 
   if (isLoading) {
     return <div>Loading...</div>;
