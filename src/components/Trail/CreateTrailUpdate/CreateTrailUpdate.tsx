@@ -3,8 +3,10 @@ import DatePicker from "react-datepicker";
 import { Container, Form, Button } from "react-bootstrap";
 import "react-datepicker/dist/react-datepicker.css";
 import SearchBar from "../../SearchBar/SearchBar";
+import { useAuth } from "../../../AuthContext";
 
 const CreateTrailUpdate = () => {
+  const { isLoggedIn } = useAuth();
   const [trailName, setTrailName] = useState<string>("");
   const [startDate, setStartDate] = useState(new Date());
   const [description, setDescription] = useState<string>("");
@@ -105,7 +107,7 @@ const CreateTrailUpdate = () => {
     <>
       <div className="form">
       <h1 className="text-center mb-4">Create a Trail Update</h1>
-      <div className="container">
+      {isLoggedIn ? (<div className="container">
         <div className="row justify-content-center">
           <div className="col-md-6">
             <form onSubmit={handleSubmit}>
@@ -166,7 +168,9 @@ const CreateTrailUpdate = () => {
             <br/>
           </div>
         </div>
-      </div>
+      </div>) : (
+          <p>Users must be logged in to create a trail update</p>
+      )}
       </div>
       <div className="squares-background"></div>
     </>
