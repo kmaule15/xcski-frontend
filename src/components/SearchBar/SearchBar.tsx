@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import "./SearchBar.css"
 
 interface Props<T> {
   results?: T[];
@@ -8,7 +9,7 @@ interface Props<T> {
   value?: string;
 }
 
-const SearchBar = <T extends object>({
+const SearchBar = <T extends Object>({
   results = [],
   renderItem,
   value,
@@ -19,7 +20,7 @@ const SearchBar = <T extends object>({
   const resultContainer = useRef<HTMLDivElement>(null);
   const [showResults, setShowResults] = useState(false);
   const [defaultValue, setDefaultValue] = useState("");
-
+  
   const handleSelection = (selectedIndex: number) => {
     const selectedItem = results[selectedIndex];
     if (!selectedItem) return resetSearchComplete();
@@ -106,7 +107,7 @@ const SearchBar = <T extends object>({
                   style={{
                     backgroundColor: index === focusedIndex ? "#e1ecff" : "",
                   }}
-                  className="text-left cursor-pointer hover:bg-black hover:bg-opacity-10 p-"
+                  className="cursor-pointer hover-highlight p-2"
                 >
                   {renderItem(item)}
                 </div>

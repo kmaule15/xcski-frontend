@@ -26,3 +26,11 @@
 .trail-search-card.selected {
   background-color: #d6eaff;
 }
+
+.snow-icon {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  max-width: 33%;
+  max-height: 33%;
+}
