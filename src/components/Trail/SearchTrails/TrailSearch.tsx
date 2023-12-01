@@ -3,6 +3,8 @@ import { Container, Row, Col, Card, ButtonGroup, Button } from 'react-bootstrap'
 import MapComponent, { Trail, useTrails } from "../MapComponent";
 import SearchBar from './SearchbarComponent';
 import './TrailSearch.css';
+import SnowIndicator from "../../Snow/isSnow";
+import { Link } from 'react-router-dom';
 
 function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   var R = 6371; // Radius of the earth in km
@@ -110,13 +112,18 @@ const TrailSearch = () => {
                   >
                     <Card.Body className="trail-search-card-body d-flex flex-row justify-content-between">
                       <div>
-                        <Card.Title>{trail.name}</Card.Title>
+                        <Card.Title>
+                          <Link to={`/trails/${trail.id}`}>{trail.name}</Link>
+                        </Card.Title>
                         <Card.Text className="trail-search-card-text">
                           <div>{trail.description}</div>
                           <div>Location: {trail.location}</div>
                           <div>Difficulty: {trail.difficulty}</div>
                           <div>Length: {trail.length}</div> 
                         </Card.Text>
+                      </div>
+                      <div className="snow-indicator">
+                        <SnowIndicator lat={trail.latitude} lng={trail.longitude} />
                       </div>
                     </Card.Body>
                   </Card>
