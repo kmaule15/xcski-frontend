@@ -111,6 +111,7 @@ const CreateTrailRating = () => {
     <>
       <div className="form">
       <h1 className="text-center mb-4">Rate a Trail</h1>
+      {isLoggedIn ? (
         <div className="container">
         <div className="row justify-content-center">
           <div className="col-md-6">
@@ -150,7 +151,9 @@ const CreateTrailRating = () => {
             <br/>
           </div>
         </div>
-      </div>
+      </div>) : (
+          <p>Users must be logged in to create a trail update</p>
+      )}
       </div>
       <div className="squares-background"></div>
     </>
