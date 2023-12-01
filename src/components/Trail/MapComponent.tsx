@@ -16,6 +16,7 @@ export type Trail = {
   length: number;
   estimatedTime: number;
   typesAllowed: string[];
+  rating: number | null;
   Nodes: { id: number; coordinates: [number, number] }[];
   [key: string]: any;
 };
