@@ -10,7 +10,6 @@ const CreateTrailRating = () => {
   const { isLoggedIn } = useAuth();
   const [trailName, setTrailName] = useState<string>("");
   const [trailRating, setTrailRating] = useState<number| null>(null);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [trailId, setTrailId] = useState<number>(-1);
   useEffect(()=>{onLoad();}, []);
   //from searchbar
@@ -138,12 +137,6 @@ const CreateTrailRating = () => {
                 <Rating name="simple-controlled" value={trailRating} size="large"
                     onChange={(event, newValue) => {setTrailRating(newValue); }}/> 
               </div>
-
-              {isSuccess && (
-                <div className="alert alert-success">
-                  Trail successfully rated!
-                </div>
-              )}
               <button type="submit" className="btn btn-primary mt-3">
                 Submit
               </button>
