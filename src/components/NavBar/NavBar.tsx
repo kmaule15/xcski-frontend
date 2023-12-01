@@ -81,13 +81,13 @@ const NavBar = () => {
             </NavDropdown>
           ) : (
             <>
-              <Button
+              {/* <Button
                 variant="outline-light"
                 className="me-3"
                 onClick={handleButtonClick}
               >
                 Fetch Trails
-              </Button>
+              </Button> */}
               <Button variant="outline-light" className=" me-3" href="login">
                 Log in
               </Button>
