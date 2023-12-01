@@ -3,7 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
     "@mapbox/search-js-react": "^1.0.0-beta.18",
+    "@mui/material": "^5.14.18",
     "@react-google-maps/api": "^2.19.2",
     "@react-oauth/google": "^0.11.1",
     "@testing-library/jest-dom": "^5.17.0",

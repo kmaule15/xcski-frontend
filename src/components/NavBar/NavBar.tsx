@@ -61,6 +61,12 @@ const handleButtonClick = () => {
           <Link className="nav-link" to="/createtrail">
             Create a Trail
           </Link>
+          <Link className="nav-link" to="/createtrailupdate">
+            Create a Trail Update
+          </Link>
+          <Link className="nav-link" to="/ratetrail">
+            Rate a Trail
+          </Link>
           <Link className="nav-link" to="/mytrails">
             My Trails
           </Link>

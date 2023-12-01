@@ -16,7 +16,8 @@ import PWU from "./components/ResetPass/PWU";
 import { AuthProvider } from "./AuthContext";
 import CreateTrailUpdate from "./components/Trail/CreateTrailUpdate/CreateTrailUpdate";
 import PostDetails from "./components/Community/Posts/PostDetails";
-import MapComponent, { Trail } from "./components/Trail/MapComponent";
+import MapComponent, { Trail } from './components/Trail/MapComponent'
+import CreateTrailRating from "./components/Trail/CreateTrailRating/CreateTrailRating";
 import EventDetails from "./components/Community/Events/EventDetails";
 import EventInvite from "./components/Community/Events/EventInvite";
 import TrailDetailPage from "./components/Trail/TrailDetailPage/TrailDetailPage";
@@ -24,6 +25,8 @@ import TrailDetailPage from "./components/Trail/TrailDetailPage/TrailDetailPage"
 function App() {
   return (
     <AuthProvider>
+    <Routes>
+    </Routes>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
@@ -32,6 +35,7 @@ function App() {
           <Route path="createtrailupdate" element={<CreateTrailUpdate />} />
           <Route path="mytrails" element={<MyTrails />} />
           <Route path="community" element={<Community />} />
+          <Route path="ratetrail" element={<CreateTrailRating />} />
           <Route path="login" element={<Login />} />
           <Route path="createaccount" element={<CreateAccount />} />
           <Route path="signup" element={<CreateAccount />} />

@@ -6,6 +6,7 @@ import { EventInterface } from "../../Interfaces/event.types";
 import WeatherWidget from "./WeatherWidget/WeatherWidget";
 
 export type Trail = {
+  id: number;
   name: string;
   description: string;
   location: string;
@@ -15,6 +16,7 @@ export type Trail = {
   length: number;
   estimatedTime: number;
   typesAllowed: string[];
+  rating: number | null;
   Nodes: { id: number; coordinates: [number, number] }[];
   [key: string]: any;
 };

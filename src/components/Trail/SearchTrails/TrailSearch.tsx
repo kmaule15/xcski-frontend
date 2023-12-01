@@ -3,8 +3,11 @@ import { Container, Row, Col, Card, ButtonGroup, Button } from 'react-bootstrap'
 import MapComponent, { Trail, useTrails } from "../MapComponent";
 import SearchBar from './SearchbarComponent';
 import './TrailSearch.css';
+import Rating, { RatingProps } from "@mui/material/Rating";
+import { useAuth } from "../../../AuthContext";
 import SnowIndicator from "../../Snow/isSnow";
 import { Link } from 'react-router-dom';
+
 
 function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   var R = 6371; // Radius of the earth in km
@@ -26,6 +29,7 @@ function deg2rad(deg: number) {
 
 const TrailSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
+  const { isLoggedIn, AuthUsername } = useAuth();
   const { trails, isLoading, error } = useTrails();
   const [sortField, setSortField] = useState('name');
   const [sortOrder, setSortOrder] = useState(1); // 1 for ascending, -1 for descending
@@ -121,6 +125,7 @@ const TrailSearch = () => {
                           <div>Difficulty: {trail.difficulty}</div>
                           <div>Length: {trail.length}</div> 
                         </Card.Text>
+                        <Rating name="read-only" value={trail.rating} size="large" readOnly/> 
                       </div>
                       <div className="snow-indicator">
                         <SnowIndicator lat={trail.latitude} lng={trail.longitude} />
