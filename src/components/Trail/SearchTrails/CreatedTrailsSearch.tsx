@@ -17,7 +17,9 @@ const CreatedTrailsSearch = () => {
   const fetchTrails = async () => {
     try {
       // Adjust the URL as per your server configuration
-      const response = await fetch("http://localhost:3000/trails");
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/trails`
+      );
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -84,7 +86,6 @@ const CreatedTrailsSearch = () => {
       )}
     </div>
   );
-  
 };
 
 export default CreatedTrailsSearch;
