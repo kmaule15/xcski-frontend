@@ -4,6 +4,7 @@ import MapComponent, { Trail, useTrails } from "../MapComponent";
 import SearchBar from './SearchbarComponent';
 import './TrailSearch.css';
 import SnowIndicator from "../../Snow/isSnow";
+import { Link } from 'react-router-dom';
 
 function getDistanceFromLatLonInKm(lat1: number, lon1: number, lat2: number, lon2: number) {
   var R = 6371; // Radius of the earth in km
@@ -108,10 +109,12 @@ const TrailSearch = () => {
                       setCenter({ lat: trail.latitude, lng: trail.longitude }); 
                       setZoom(12); 
                     }}
->
+                  >
                     <Card.Body className="trail-search-card-body d-flex flex-row justify-content-between">
                       <div>
-                        <Card.Title>{trail.name}</Card.Title>
+                        <Card.Title>
+                          <Link to={`/trails/${trail.id}`}>{trail.name}</Link>
+                        </Card.Title>
                         <Card.Text className="trail-search-card-text">
                           <div>{trail.description}</div>
                           <div>Location: {trail.location}</div>
