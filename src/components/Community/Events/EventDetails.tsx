@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Params, useParams } from "react-router-dom";
 import PostComments from "../Posts/PostComments";
-import { Col, Row, Tab, Tabs } from "react-bootstrap";
+import { Col, Row, Tab, Tabs, Button } from "react-bootstrap";
 import { EventInterface } from "../../../Interfaces/event.types";
 import EventMapComponent from "./EventMapComponent";
 import "./EventDetails.css";
@@ -25,6 +25,14 @@ function EventDetails() {
       setEvent(response.data);
     } catch (error) {
       console.error("Error fetching event: ", error);
+    }
+  }
+
+  function deleteEvent() {
+    try {
+      axios.delete(`http://localhost:3000/events/${eventId.eventId}`);
+    } catch (error) {
+      console.error("Error deleting event: ", error);
     }
   }
   if (!event) return <div>Event Loading...</div>;
@@ -64,7 +72,7 @@ function EventDetails() {
               <strong>End Time:</strong>
               {new Date(event.startTime).toLocaleString()}
             </p>
-
+            <Button onClick={deleteEvent}>Delete Event</Button>
             <Tabs
               id="controlled-tab-example"
               activeKey={key}
