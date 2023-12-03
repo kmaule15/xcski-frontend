@@ -24,7 +24,6 @@ function PostDetails() {
       }
     }
     fetchPost();
-    console.log(post);
   }, [postId]);
 
   function deletePost() {

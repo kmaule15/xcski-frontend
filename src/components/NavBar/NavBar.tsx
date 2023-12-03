@@ -14,35 +14,36 @@ interface Trail {
   nodes: Node[];
 }
 
-
 const NavBar = () => {
-//-------------------------------------------------------------------
-const [trails, setTrails] = useState<Trail[]>([]);
-const [buttonClicked, setButtonClicked] = useState(false);
+  //-------------------------------------------------------------------
+  const [trails, setTrails] = useState<Trail[]>([]);
+  const [buttonClicked, setButtonClicked] = useState(false);
 
-useEffect(() => {
-  const fetchTrails = async () => {
-    try {
-      const response = await axios.get<Trail[]>('http://localhost:3000/trails/grooming-data');
-      setTrails(response.data);
-    } catch (error) {
-      console.error(`Error fetching trail data: `, error);
+  useEffect(() => {
+    const fetchTrails = async () => {
+      try {
+        const response = await axios.get<Trail[]>(
+          "http://localhost:3000/trails/grooming-data"
+        );
+        setTrails(response.data);
+      } catch (error) {
+        console.error(`Error fetching trail data: `, error);
+      }
+    };
+
+    // Check if the button is clicked before fetching trails
+    if (buttonClicked) {
+      fetchTrails();
+      // Reset the buttonClicked state to false
+      setButtonClicked(false);
     }
+  }, [buttonClicked]);
+
+  const handleButtonClick = () => {
+    // Set the buttonClicked state to true when the button is clicked
+    setButtonClicked(true);
   };
-
-  // Check if the button is clicked before fetching trails
-  if (buttonClicked) {
-    fetchTrails();
-    // Reset the buttonClicked state to false
-    setButtonClicked(false);
-  }
-}, [buttonClicked]);
-
-const handleButtonClick = () => {
-  // Set the buttonClicked state to true when the button is clicked
-  setButtonClicked(true);
-};
-//--------------------------------------------------------------------
+  //--------------------------------------------------------------------
   const { logout, AuthUsername, isLoggedIn } = useAuth();
 
   return (
@@ -86,10 +87,10 @@ const handleButtonClick = () => {
             </NavDropdown>
           ) : (
             <>
-              <Button variant="outline-light" className="me-3" onClick={handleButtonClick}>
+              {/* <Button variant="outline-light" className="me-3" onClick={handleButtonClick}>
                 Fetch Trails
-              </Button>
-              <Button variant="outline-light" className=" me-3" href="login">
+              </Button> */}
+              <Button variant="outline-light" className=" me-3" href="/login">
                 Log in
               </Button>
               <Button variant="danger" className="me-3" href="/createaccount">
