@@ -1,17 +1,20 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Params, useParams } from "react-router-dom";
+import { Params, useNavigate, useParams } from "react-router-dom";
 import PostComments from "../Posts/PostComments";
-import { Col, Row, Tab, Tabs } from "react-bootstrap";
+import { Col, Row, Tab, Tabs, Button } from "react-bootstrap";
 import { EventInterface } from "../../../Interfaces/event.types";
 import EventMapComponent from "./EventMapComponent";
 import "./EventDetails.css";
+import { useAuth } from "../../../AuthContext";
 
 function EventDetails() {
   const eventId = useParams<Params>();
   const [event, setEvent] = useState<EventInterface>();
   const [zoom, setZoom] = useState(12);
   const [key, setKey] = useState("comments");
+  const navigate = useNavigate();
+  const { AuthUsername } = useAuth();
 
   useEffect(() => {
     fetchEvent();
@@ -27,6 +30,17 @@ function EventDetails() {
       console.error("Error fetching event: ", error);
     }
   }
+
+  function deleteEvent() {
+    try {
+      axios.delete(`http://localhost:3000/events/${eventId.eventId}`);
+      alert("Event has been deleted");
+      navigate(`/community`);
+    } catch (error) {
+      console.error("Error deleting event: ", error);
+    }
+  }
+
   if (!event) return <div>Event Loading...</div>;
   return (
     <div>
@@ -64,6 +78,9 @@ function EventDetails() {
               <strong>End Time:</strong>
               {new Date(event.startTime).toLocaleString()}
             </p>
+            {AuthUsername === event.author.username && (
+              <Button onClick={deleteEvent}>Delete Event</Button>
+            )}
 
             <Tabs
               id="controlled-tab-example"
