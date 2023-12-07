@@ -147,7 +147,7 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
     const loader = new Loader({
       apiKey,
       version: "weekly",
-      libraries: ["places"],
+      libraries: ["places", "drawing"],
     });
 
     loader.load().then(() => {

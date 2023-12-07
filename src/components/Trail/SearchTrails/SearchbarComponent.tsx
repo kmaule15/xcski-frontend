@@ -20,7 +20,7 @@ const SearchBar = ({ setCenter, setZoom }: { setCenter: (center: { lat: number, 
     const loader = new Loader({
       apiKey,
       version: "weekly",
-      libraries: ["places"],
+      libraries: ["places", "drawing"],
     });
 
     loader.load().then(() => {
