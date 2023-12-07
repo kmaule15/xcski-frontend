@@ -4,6 +4,7 @@ import { Loader } from "@googlemaps/js-api-loader";
 import "./CreateTrail.css";
 import "../../Login/BackgroundSquares.css";
 import { useAuth } from "../../../AuthContext";
+import DrawMapComponent from "./DrawMapComponent";
 import axios from "axios";
 
 const CreateTrail = () => {
@@ -20,6 +21,7 @@ const CreateTrail = () => {
   const [estimatedHours, setEstimatedHours] = useState<number>(0);
   const [estimatedMinutes, setEstimatedMinutes] = useState<number>(0);
   const [typesAllowed, setTypesAllowed] = useState<string[]>([]);
+  const [Nodes, setDrawnPath] = useState<{ id: number; coordinates: [number, number] }[]>([]);
   const [formMessage, setFormMessage] = useState<string>("");
 
   //Google AutoComplete code
@@ -35,7 +37,7 @@ const CreateTrail = () => {
     const loader = new Loader({
       apiKey,
       version: "weekly",
-      libraries: ["places"],
+      libraries: ["places", "drawing"],
     });
 
     loader.load().then(() => {
@@ -101,6 +103,9 @@ const CreateTrail = () => {
       );
     }
   };
+  const handlePathSave = (pathArray: { id: number; coordinates: [number, number] }[]) => {
+    setDrawnPath(pathArray);
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -111,7 +116,8 @@ const CreateTrail = () => {
       !difficulty ||
       !length ||
       estimatedTime === 0 ||
-      typesAllowed.length === 0
+      typesAllowed.length === 0 ||
+      Nodes.length === 0
     ) {
       alert("All form fields are required!");
       return;
@@ -134,6 +140,7 @@ const CreateTrail = () => {
       length,
       estimatedTime,
       typesAllowed,
+      Nodes
     };
 
     try {
@@ -158,6 +165,7 @@ const CreateTrail = () => {
 
   return (
     <Container className="vh-100 d-flex justify-content-center align-items-center">
+      
       <div className="squares-background"></div>
 
       <div className="form">
@@ -282,6 +290,7 @@ const CreateTrail = () => {
           <p>Users must be logged in to create trails</p>
         )}
       </div>
+      <DrawMapComponent incomingAddress={location} onPathSave={handlePathSave} />
     </Container>
   );
 };

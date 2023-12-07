@@ -91,7 +91,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
     const loader = new Loader({
       apiKey,
       version: "weekly",
-      libraries: ["places"],
+      libraries: ["places", "drawing"],
     });
 
     loader
