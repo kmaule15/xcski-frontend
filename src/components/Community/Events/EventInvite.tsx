@@ -12,6 +12,7 @@ function EventInvite() {
   const [event, setEvent] = useState<EventInterface>();
   const [user, setUser] = useState<UserInterface>();
   const [participants, setParticipants] = useState<UserInterface[]>([]);
+  const [invitees, setInvitees] = useState<UserInterface[]>([]);
   const [hasAcceptedInvite, setHasAcceptedInvite] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -22,7 +23,7 @@ function EventInvite() {
           `http://localhost:3000/events/${eventId.eventId}`
         );
         const userResponse = await axios.get(
-          `http://localhost:3000/users/${userId.userId}`
+          `http://localhost:3000/users/id/${userId.userId}`
         );
 
         setEvent(eventResponse.data);
@@ -52,15 +53,31 @@ function EventInvite() {
       return;
     }
 
+    if (event?.invitees) {
+      for (let invitee of event.invitees) {
+        console.log("invitee", invitee);
+      }
+    }
+
     const updatedParticipants = [...participants, user];
+    const updatedInvitees = event.invitees.filter(
+      (invitee) => invitee.id !== user.id
+    );
+
     setParticipants(updatedParticipants);
-    sendAcceptInviteRequest(updatedParticipants);
+    setInvitees(updatedInvitees);
+
+    sendAcceptInviteRequest(updatedParticipants, updatedInvitees);
     setHasAcceptedInvite(true);
   }
 
-  async function sendAcceptInviteRequest(participants: UserInterface[]) {
+  async function sendAcceptInviteRequest(
+    participants: UserInterface[],
+    invitees: UserInterface[]
+  ) {
     const eventId = event?.id;
-    const data = { token, eventId, participants };
+    console.log(invitees);
+    const data = { token, eventId, participants, invitees };
     try {
       const response = await axios.post(
         `http://localhost:3000/auth/acceptinvite`,

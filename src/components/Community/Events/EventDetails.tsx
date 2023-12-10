@@ -4,7 +4,7 @@ import { Params, useNavigate, useParams } from "react-router-dom";
 import PostComments from "../Posts/PostComments";
 import { Col, Row, Tab, Tabs, Button } from "react-bootstrap";
 import { EventInterface } from "../../../Interfaces/event.types";
-import EventMapComponent from "./EventMapComponent";
+import SimpleMapComponent from "./SimpleMapComponent";
 import "./EventDetails.css";
 import { useAuth } from "../../../AuthContext";
 
@@ -117,7 +117,7 @@ function EventDetails() {
           <Col md={4}>
             {event.trail && (
               <div>
-                <EventMapComponent
+                <SimpleMapComponent
                   latitude={event.trail.latitude}
                   longitude={event.trail.longitude}
                   zoom={zoom}
@@ -127,7 +127,7 @@ function EventDetails() {
             )}
             {!event.trail && (
               <div>
-                <EventMapComponent
+                <SimpleMapComponent
                   latitude={event.latitude}
                   longitude={event.longitude}
                   zoom={zoom}
