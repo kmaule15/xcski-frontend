@@ -93,6 +93,8 @@ const MapComponent: React.FC<MapComponentProps> = ({
       libraries: ["places", "drawing"],
     });
 
+    let currentMarker: google.maps.Marker | null = null; // Keep a reference to the current marker
+
     loader
       .load()
       .then((google) => {
@@ -100,6 +102,27 @@ const MapComponent: React.FC<MapComponentProps> = ({
           const map = new google.maps.Map(mapRef.current, {
             center: center,
             zoom: zoom,
+          });
+
+          // Add a click event listener to the map
+          map.addListener("click", (event: { latLng: any; }) => {
+            // Remove the current marker from the map
+            if (currentMarker) {
+              currentMarker.setMap(null);
+            }
+
+            // Create a new marker at the clicked location
+            currentMarker = new google.maps.Marker({
+              position: event.latLng,
+              map,
+              icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 10,
+                fillColor: "#FFFF00",
+                fillOpacity: 1,
+                strokeWeight: 1
+              }
+            });
           });
 
           if (setSelectedTrail) {
