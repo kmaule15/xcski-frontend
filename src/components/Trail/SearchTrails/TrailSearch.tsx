@@ -39,6 +39,23 @@ const TrailSearch = () => {
   const [sortedTrails, setSortedTrails] = useState<Array<Trail>>([]);
 
   useEffect(() => {
+    if (selectedTrail) {
+      const newSortedTrails = [...trails];
+      newSortedTrails.forEach(trail => {
+        trail.distance = getDistanceFromLatLonInKm(
+          selectedTrail.latitude, 
+          selectedTrail.longitude, 
+          trail.latitude, 
+          trail.longitude
+        );
+      });
+  
+      newSortedTrails.sort((a, b) => (a.distance - b.distance));
+      setSortedTrails(newSortedTrails);
+    }
+  }, [selectedTrail]);
+
+  useEffect(() => {
     const newSortedTrails = [...trails].sort((a, b) => {
       if (sortField === 'difficulty') {
         const order = ['Easy', 'Medium', 'Difficult'];

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import "bootstrap/dist/css/bootstrap.css";
-
 import { EventInterface } from "../../Interfaces/event.types";
 import WeatherWidget from "./WeatherWidget/WeatherWidget";
 
@@ -63,7 +62,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
   if (!apiKey) {
     throw new Error(
-      "API key is missing. Please check your .env file. (or send Chase your IP address)"
+      "API key is missing. Please check your .env file."
     );
   }
 
