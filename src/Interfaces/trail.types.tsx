@@ -1,5 +1,8 @@
+import { UserInterface } from "./user.types";
+
 export interface TrailInterface {
   id: number;
+  author: UserInterface;
   name: string;
   description: string;
   location: string;

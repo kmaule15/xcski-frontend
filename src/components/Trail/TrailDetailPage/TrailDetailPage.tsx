@@ -1,57 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, Params } from "react-router-dom";
 import "./TrailDetailPage.css";
 import SimpleMapComponent from "../../Community/Events/SimpleMapComponent";
 import { Col, Row, Tab, Tabs, Button } from "react-bootstrap";
-
-type TrailParams = {
-  trailId: number;
-};
-
-type Trail = {
-  id: number;
-  name: string;
-  description: string;
-  location: string;
-  latitude: number;
-  longitude: number;
-  difficulty: string;
-  length: number;
-  estimatedTime: number;
-  typesAllowed: string[];
-};
+import { useAuth } from "../../../AuthContext";
+import axios from "axios";
+import { TrailInterface } from "../../../Interfaces/trail.types";
 
 const TrailDetailPage = () => {
-  const { trailId } = useParams();
-  const [trail, setTrail] = useState<Trail | null>(null);
+  const trailId = useParams<Params>();
+  const [trail, setTrail] = useState<TrailInterface>();
   const [zoom, setZoom] = useState(12);
-
-  const fetchTrail = async (trailId: number) => {
-    try {
-      const response = await fetch(`http://localhost:3000/trails/${trailId}`);
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const trail = await response.json();
-      return trail;
-    } catch (error) {
-      console.error("Failed to fetch the trail:", error);
-      return null;
-    }
-  };
+  const { AuthUsername } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const loadTrail = async () => {
-      if (trailId !== undefined) {
-        const id = parseInt(trailId, 10);
-        if (!isNaN(id)) {
-          const fetchedTrail = await fetchTrail(id);
-          setTrail(fetchedTrail);
-        }
-      }
-    };
-    loadTrail();
+    fetchTrail();
   }, [trailId]);
+
+  async function fetchTrail() {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/trails/${trailId.trailId}`
+      );
+      setTrail(response.data);
+    } catch (error) {
+      console.error("Failed to fetch the trail:", error);
+    }
+  }
+
+  function deleteTrail() {
+    try {
+      axios.delete(`http://localhost:3000/trails/${trailId.trailId}`);
+      alert("Trail has been deleted");
+      navigate(`/`);
+    } catch (error) {
+      console.error("Error deleting event: ", error);
+    }
+  }
 
   if (!trail) {
     return <div>Loading...</div>;
@@ -81,6 +67,7 @@ const TrailDetailPage = () => {
             <p>
               <strong>Length:</strong> {trail.length} km
             </p>
+            <h2>{AuthUsername}</h2>
             <p>
               <strong>Estimated Time:</strong> {trail.estimatedTime} hours
             </p>
@@ -88,6 +75,9 @@ const TrailDetailPage = () => {
               <strong>Types Allowed:</strong> {trail.typesAllowed.join(", ")}
             </p>
           </div>
+          {trail.author && AuthUsername === trail.author.username && (
+            <Button onClick={deleteTrail}>Delete Trail</Button>
+          )}
         </Col>
         <Col md={4}>
           <div>
