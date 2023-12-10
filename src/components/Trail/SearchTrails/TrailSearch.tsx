@@ -134,11 +134,17 @@ const TrailSearch = () => {
                     className={`trail-search-card ${trail.name === selectedTrail?.name ? 'selected' : ''}`} 
                     onClick={() => { 
                       console.log(`Card clicked: ${trail.name}`); // Log the name of the trail when a card is clicked
-                      setSelectedTrail(trail); 
-                      setCenter({ lat: trail.latitude, lng: trail.longitude }); 
-                      setZoom(12); 
+                      if (trail === selectedTrail) {
+                        setSelectedTrail(null); // Deselect the trail if it's already selected
+                        setCenter({ lat: 44.5, lng: -89.5 }); // Reset the center
+                        setZoom(7); // Reset the zoom
+                      } else {
+                        setSelectedTrail(trail); 
+                        setCenter({ lat: trail.latitude, lng: trail.longitude }); 
+                        setZoom(12); 
+                      }
                     }}
-                  >
+                    >
                     <Card.Body className="trail-search-card-body d-flex flex-row justify-content-between">
                       <div>
                         <Card.Title>
