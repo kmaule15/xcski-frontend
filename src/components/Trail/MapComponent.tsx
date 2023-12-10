@@ -59,6 +59,9 @@ const MapComponent: React.FC<MapComponentProps> = ({
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
   const mapRef = useRef<HTMLDivElement | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [center, setCenter] = useState({ lat: 44.5, lng: -89.5 });
+  const [currentZoom, setCurrentZoom] = useState(zoom); // Store the current zoom level
+
 
   if (!apiKey) {
     throw new Error(
@@ -70,14 +73,6 @@ const MapComponent: React.FC<MapComponentProps> = ({
     width: "100%",
     height: "80vh",
   };
-
-  const center = useMemo(
-    () => ({
-      lat: latitude || 44.5,
-      lng: longitude || -89.5,
-    }),
-    [latitude, longitude]
-  );
 
   useEffect(() => {
     setIsMounted(true);
@@ -96,21 +91,30 @@ const MapComponent: React.FC<MapComponentProps> = ({
     let currentMarker: google.maps.Marker | null = null; // Keep a reference to the current marker
 
     loader
-      .load()
-      .then((google) => {
-        if (mapRef.current) {
-          const map = new google.maps.Map(mapRef.current, {
-            center: center,
-            zoom: zoom,
-          });
+    .load()
+    .then((google) => {
+      if (mapRef.current) {
+        const map = new google.maps.Map(mapRef.current, {
+          center: center,
+          zoom: currentZoom,
+        });
 
-          // Add a click event listener to the map
-          map.addListener("click", (event: { latLng: any; }) => {
+        // Add a zoom_changed event listener to the map
+        map.addListener("zoom_changed", () => {
+          const zoomLevel = map.getZoom();
+          if (zoomLevel !== undefined) {
+            setCurrentZoom(zoomLevel);
+          }
+        });
+
+        // Add a click event listener to the map
+        map.addListener("click", (event: google.maps.MapMouseEvent) => {
+          if (event.latLng) {
             // Remove the current marker from the map
             if (currentMarker) {
               currentMarker.setMap(null);
             }
-
+        
             // Create a new marker at the clicked location
             currentMarker = new google.maps.Marker({
               position: event.latLng,
@@ -123,7 +127,17 @@ const MapComponent: React.FC<MapComponentProps> = ({
                 strokeWeight: 1
               }
             });
-          });
+        
+            // Update the center to be the clicked location
+            setCenter({
+              lat: event.latLng.lat(),
+              lng: event.latLng.lng(),
+            });
+
+            // Set the zoom level back to the stored value
+            map.setZoom(currentZoom);
+          }
+        });
 
           if (setSelectedTrail) {
             trails.forEach((trail) => {
@@ -162,7 +176,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
       .catch((e) => {
         // handle error
       });
-  }, [trails, latitude, longitude, isMounted, apiKey, center, zoom, setSelectedTrail]);
+    }, [trails, latitude, longitude, isMounted, apiKey, center, zoom, setSelectedTrail, currentZoom]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -177,7 +191,6 @@ const MapComponent: React.FC<MapComponentProps> = ({
       <div className="row">
         <div className="col">
           <div ref={mapRef} style={mapContainerStyle}>
-            {/* Other components here */}
           </div>
           <div
             style={{
