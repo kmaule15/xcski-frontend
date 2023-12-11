@@ -120,7 +120,7 @@ const TrailSearch = () => {
                           <div>Difficulty: {trail.difficulty}</div>
                           <div>Length: {trail.length}</div> 
                         </Card.Text>
-                        <Rating name="read-only" value={trail.rating} size="large" readOnly/> 
+                        <Rating name="read-only" value={trail.rating} size="large" precision={0.1} readOnly/> 
                       </div>
                     </Card.Body>
                   </Card>

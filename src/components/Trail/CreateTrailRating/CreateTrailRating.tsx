@@ -69,7 +69,6 @@ const CreateTrailRating = () => {
       trailId,
       rating
     };
-    console.log(ratingFormData);
     try {
       const postRating = await axios.post(
         `http://localhost:3000/trailratings`,
@@ -80,6 +79,8 @@ const CreateTrailRating = () => {
           },
         }
       );
+
+      let aaa: number = -99;
       const rating = await axios.get(
         `http://localhost:3000/trailratings/:`+trailId,
         {
@@ -87,11 +88,10 @@ const CreateTrailRating = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      );
+      ).then(function(response) { aaa = response.data});
       const formData = {
-        rating
+        aaa
       };
-      console.log(formData);
       const updateTrails = await axios.put(
         `http://localhost:3000/trails/:`+trailId,
         formData,
