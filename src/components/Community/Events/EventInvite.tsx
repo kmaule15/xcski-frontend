@@ -53,12 +53,6 @@ function EventInvite() {
       return;
     }
 
-    if (event?.invitees) {
-      for (let invitee of event.invitees) {
-        console.log("invitee", invitee);
-      }
-    }
-
     const updatedParticipants = [...participants, user];
     const updatedInvitees = event.invitees.filter(
       (invitee) => invitee.id !== user.id

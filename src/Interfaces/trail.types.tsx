@@ -1,3 +1,4 @@
+import { EventInterface } from "./event.types";
 import { UserInterface } from "./user.types";
 
 export interface TrailInterface {
@@ -12,5 +13,6 @@ export interface TrailInterface {
   length: number;
   estimatedTime: number;
   typesAllowed: string[];
-  events?: Event[];
+  events?: EventInterface[];
+  usersMyTrails: UserInterface[];
 }
