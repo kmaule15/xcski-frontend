@@ -7,6 +7,7 @@ import { useAuth } from "../../../AuthContext";
 import axios from "axios";
 import { TrailInterface } from "../../../Interfaces/trail.types";
 import { UserInterface } from "../../../Interfaces/user.types";
+import { Trail } from "../MapComponent";
 
 const TrailDetailPage = () => {
   const trailId = useParams<Params>();
@@ -18,11 +19,17 @@ const TrailDetailPage = () => {
   const { isLoggedIn } = useAuth();
   const [hours, setHours] = useState<number>();
   const [minutes, setMinutes] = useState<number>();
+  const [canAdd, setCanAdd] = useState<boolean>(true);
 
   useEffect(() => {
     fetchTrail();
-    fetchUser();
   }, [trailId]);
+
+  useEffect(() => {
+    if (trail) {
+      fetchUser();
+    }
+  }, [trail]);
 
   async function fetchUser() {
     try {
@@ -30,6 +37,13 @@ const TrailDetailPage = () => {
         `http://localhost:3000/users/username/${AuthUsername}`
       );
       setUser(response.data);
+      if (
+        response.data.myTrails.some(
+          (myTrail: Trail) => myTrail.id === trail?.id
+        )
+      ) {
+        setCanAdd(false);
+      }
     } catch (error) {
       console.error("Error fetching user: ", error);
     }
@@ -66,8 +80,25 @@ const TrailDetailPage = () => {
 
     try {
       await axios.put(`http://localhost:3000/users/mytrails/${id}`, data);
+      setCanAdd(false);
     } catch (error) {
       console.error("Error adding this trail: ", error);
+    }
+  }
+
+  async function removeMyTrails() {
+    if (!user) return;
+    const myTrails = user.myTrails.filter(
+      (myTrails) => myTrails.id !== trail?.id
+    );
+    const id = user.id;
+    const data = { myTrails };
+
+    try {
+      await axios.put(`http://localhost:3000/users/mytrails/${id}`, data);
+      setCanAdd(true);
+    } catch (error) {
+      console.error("Error removing this trail: ", error);
     }
   }
 
@@ -105,19 +136,25 @@ const TrailDetailPage = () => {
             <p>
               <strong>Types Allowed:</strong> {trail.typesAllowed.join(", ")}
             </p>
+            {isLoggedIn ? (
+              <>
+                {trail.author && AuthUsername === trail.author.username && (
+                  <Button style={{ marginRight: "5px" }} onClick={deleteTrail}>
+                    Delete Trail
+                  </Button>
+                )}
+                {canAdd ? (
+                  <Button onClick={addMyTrails}>Add To My Trails</Button>
+                ) : (
+                  <Button onClick={removeMyTrails}>
+                    Remove From My Trails
+                  </Button>
+                )}
+              </>
+            ) : (
+              <p>You must be logged in to modify trails</p>
+            )}
           </div>
-          {trail.author &&
-          AuthUsername === trail.author.username &&
-          isLoggedIn ? (
-            <Button onClick={deleteTrail}>Delete Trail</Button>
-          ) : (
-            <p>You must be logged in to delete a trail</p>
-          )}
-          {isLoggedIn ? (
-            <Button onClick={addMyTrails}>Add To My Trails</Button>
-          ) : (
-            <p>You must be logged in to delete a trail</p>
-          )}
         </Col>
         <Col md={4}>
           <div>
