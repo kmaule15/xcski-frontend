@@ -68,8 +68,10 @@ const TrailSearch = () => {
             return a.name.localeCompare(b.name) * sortOrder;
           } else if (sortField === 'difficulty') {
             return a.difficulty.localeCompare(b.difficulty) * sortOrder;
+          } else if (sortField === 'length') {
+            return (a.length - b.length) * sortOrder;
           } else {
-            return 0;
+            return 0; // default return value
           }
         }
       });
