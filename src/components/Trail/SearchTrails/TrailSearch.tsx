@@ -31,7 +31,7 @@ const TrailSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { isLoggedIn, AuthUsername } = useAuth();
   const { trails, isLoading, error } = useTrails();
-  const [sortField, setSortField] = useState('name');
+  const [sortField, setSortField] = useState('distance');
   const [sortOrder, setSortOrder] = useState(1); // 1 for ascending, -1 for descending
   const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
   const [center, setCenter] = useState<{ lat: number, lng: number }>({ lat: 44.5, lng: -89.5 });
@@ -39,64 +39,74 @@ const TrailSearch = () => {
   const [sortedTrails, setSortedTrails] = useState<Array<Trail>>([]);
 
   useEffect(() => {
-    if (selectedTrail) {
+    if (trails.length > 0) { // check if trails data is available
       const newSortedTrails = [...trails];
       newSortedTrails.forEach(trail => {
-        trail.distance = getDistanceFromLatLonInKm(
-          selectedTrail.latitude, 
-          selectedTrail.longitude, 
-          trail.latitude, 
-          trail.longitude
-        );
+        if (selectedTrail) {
+          trail.distance = getDistanceFromLatLonInKm(
+            selectedTrail.latitude, 
+            selectedTrail.longitude, 
+            trail.latitude, 
+            trail.longitude
+          );
+        } else {
+          trail.distance = getDistanceFromLatLonInKm(
+            center.lat, 
+            center.lng, 
+            trail.latitude, 
+            trail.longitude
+          );
+        }
       });
-      setSortedTrails(newSortedTrails);
-    }
-  }, [selectedTrail]);
-
-  useEffect(() => {
-    if (center) {
-      const newSortedTrails = [...trails];
-      newSortedTrails.forEach(trail => {
-        trail.distance = getDistanceFromLatLonInKm(center.lat, center.lng, trail.latitude, trail.longitude);
-      });
-      setSortedTrails(newSortedTrails);
-    }
-  }, [center]);
-
-  // New function to handle sorting by distance
-  const handleSortByDistance = () => {
-    const newSortedTrails = [...trails];
-    newSortedTrails.forEach(trail => {
-      if (selectedTrail) {
-        // If a trail is selected, calculate distance from the selected trail
-        trail.distance = getDistanceFromLatLonInKm(
-          selectedTrail.latitude, 
-          selectedTrail.longitude, 
-          trail.latitude, 
-          trail.longitude
-        );
-      } else {
-        // If no trail is selected, calculate distance from the center
-        trail.distance = getDistanceFromLatLonInKm(
-          center.lat, 
-          center.lng, 
-          trail.latitude, 
-          trail.longitude
-        );
-      }
-    });
   
-    newSortedTrails.sort((a, b) => (a.distance - b.distance));
-    setSortedTrails(newSortedTrails);
-  };
-
-  const handleSortFieldChange = (field: string) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder * -1); // reverse the sort order
-    } else {
-      setSortField(field);
-      setSortOrder(1); // reset the sort order to ascending
+      newSortedTrails.sort((a, b) => {
+        if (sortField === 'distance') {
+          return (a.distance - b.distance) * sortOrder;
+        } else {
+          // Sorting logic for other fields
+          if (sortField === 'name') {
+            return a.name.localeCompare(b.name) * sortOrder;
+          } else if (sortField === 'difficulty') {
+            return a.difficulty.localeCompare(b.difficulty) * sortOrder;
+          } else {
+            return 0;
+          }
+        }
+      });
+  
+      setSortedTrails(newSortedTrails);
     }
+  }, [sortField, sortOrder, selectedTrail, center, trails]); // add trails to the dependency array
+
+  const [nameClick, setNameClick] = useState(0);
+  const [difficultyClick, setDifficultyClick] = useState(0);
+  const [lengthClick, setLengthClick] = useState(0);
+  const [distanceClick, setDistanceClick] = useState(0);
+  
+  const handleSortFieldChange = (field: string) => {
+    if (field === 'name') {
+      setNameClick(nameClick + 1);
+      setDifficultyClick(0);
+      setLengthClick(0);
+      setDistanceClick(0);
+    } else if (field === 'difficulty') {
+      setDifficultyClick(difficultyClick + 1);
+      setNameClick(0);
+      setLengthClick(0);
+      setDistanceClick(0);
+    } else if (field === 'length') {
+      setLengthClick(lengthClick + 1);
+      setNameClick(0);
+      setDifficultyClick(0);
+      setDistanceClick(0);
+    } else if (field === 'distance') {
+      setDistanceClick(distanceClick + 1);
+      setNameClick(0);
+      setDifficultyClick(0);
+      setLengthClick(0);
+    }
+    setSortField(field);
+    setSortOrder(sortOrder * -1); // reverse the sort order
   };
 
   if (isLoading) {
@@ -116,12 +126,36 @@ const TrailSearch = () => {
           </div>
         </Col>
         <Col md={4}>
-          <ButtonGroup aria-label="Sort trails" className="sort-trails">
-            <Button variant="secondary" onClick={() => handleSortFieldChange('name')}>Sort by Name</Button>
-            <Button variant="secondary" onClick={() => handleSortFieldChange('difficulty')}>Sort by Difficulty</Button>
-            <Button variant="secondary" onClick={() => handleSortFieldChange('length')}>Sort by Length</Button>
-            <Button variant="secondary" onClick={handleSortByDistance}>Sort by Distance</Button>
-          </ButtonGroup>
+        <ButtonGroup aria-label="Sort trails" className="sort-trails">
+          <Button 
+            variant="secondary" 
+            onClick={() => handleSortFieldChange('name')}
+            style={{backgroundColor: nameClick === 1 ? 'lightgrey' : nameClick > 1 ? 'darkgrey' : 'grey'}}
+          >
+            Sort by Name
+          </Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => handleSortFieldChange('difficulty')}
+            style={{backgroundColor: difficultyClick === 1 ? 'lightgrey' : difficultyClick > 1 ? 'darkgrey' : 'grey'}}
+          >
+            Sort by Difficulty
+          </Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => handleSortFieldChange('length')}
+            style={{backgroundColor: lengthClick === 1 ? 'lightgrey' : lengthClick > 1 ? 'darkgrey' : 'grey'}}
+          >
+            Sort by Length
+          </Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => handleSortFieldChange('distance')}
+            style={{backgroundColor: distanceClick === 1 ? 'lightgrey' : distanceClick > 1 ? 'darkgrey' : 'grey'}}
+          >
+            Sort by Distance
+          </Button>
+        </ButtonGroup>
         </Col>
       </Row>
       <Row className="trail-search-row">
