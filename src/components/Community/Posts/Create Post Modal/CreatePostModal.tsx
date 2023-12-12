@@ -1,6 +1,6 @@
 // src/components/CreatePostModal.js
 import React, { useState } from "react";
-import Modal from "react-modal";
+import { Modal, Button } from "react-bootstrap";
 import axios from "axios";
 import "./CreatePostModal.css";
 import { useAuth } from "../../../../AuthContext";
@@ -17,11 +17,11 @@ function CreatePostModal({ onPostCreated }: CreatePostModalProps) {
 
   async function handleSubmit() {
     if (!title.trim() || !content.trim()) {
-      alert('Title and content are required!');
+      alert("Title and content are required!");
       return;
     }
 
-    const accessToken = localStorage.getItem('accesstoken');
+    const accessToken = localStorage.getItem("accesstoken");
 
     if (!accessToken) {
       console.error("No access token found");
@@ -52,23 +52,21 @@ function CreatePostModal({ onPostCreated }: CreatePostModalProps) {
   return (
     <div>
       {isLoggedIn ? (
-        <button onClick={() => setIsOpen(true)}>Create Post</button>
+        <Button onClick={() => setIsOpen(true)}>Create Post</Button>
       ) : (
         <p>Users must be logged in to create posts.</p>
       )}
 
       <Modal
-        isOpen={isOpen}
-        onRequestClose={() => setIsOpen(false)}
-        contentLabel="Create Post"
-        className="modal-content"
-        overlayClassName="modal-overlay"
+        show={isOpen}
+        onHide={() => setIsOpen(false)}
+        // onRequestClose={() => setIsOpen(false)}
+        // contentLabel="Create Post"
+        // className="modal-content"
+        // overlayClassName="modal-overlay"
       >
-        <div>
-          <button className="close-button" onClick={() => setIsOpen(false)}>
-            X
-          </button>
-          <h2>Create Post</h2>
+        <Modal.Header>Post Details</Modal.Header>
+        <Modal.Body>
           <input
             className="title-input"
             value={title}
@@ -81,10 +79,10 @@ function CreatePostModal({ onPostCreated }: CreatePostModalProps) {
             onChange={(e) => setContent(e.target.value)}
             placeholder="Content"
           />
-          <button className="submit-button" onClick={handleSubmit}>
+          <Button className="submit-button" onClick={handleSubmit}>
             Submit
-          </button>
-        </div>
+          </Button>
+        </Modal.Body>
       </Modal>
     </div>
   );

@@ -2,16 +2,15 @@ import React, { useEffect, useState, useRef, useMemo } from "react";
 import { Loader } from "@googlemaps/js-api-loader";
 import "bootstrap/dist/css/bootstrap.css";
 import { TrailInterface } from "../../../Interfaces/trail.types";
-import WeatherWidget from "../../Trail/WeatherWidget/WeatherWidget";
 
-interface EventMapComponentProps {
+interface SimpleMapComponentProps {
   latitude: number;
   longitude: number;
   zoom: number;
   trail?: TrailInterface;
 }
 
-const EventMapComponent: React.FC<EventMapComponentProps> = ({
+const SimpleMapComponent: React.FC<SimpleMapComponentProps> = ({
   latitude,
   longitude,
   zoom,
@@ -51,7 +50,7 @@ const EventMapComponent: React.FC<EventMapComponentProps> = ({
     const loader = new Loader({
       apiKey,
       version: "weekly",
-      libraries: ["places"],
+      libraries: ["places", "drawing"],
     });
 
     loader
@@ -100,4 +99,4 @@ const EventMapComponent: React.FC<EventMapComponentProps> = ({
   );
 };
 
-export default EventMapComponent;
+export default SimpleMapComponent;

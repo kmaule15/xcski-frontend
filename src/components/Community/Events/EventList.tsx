@@ -3,6 +3,7 @@ import axios from "axios";
 import CreateEventModal from "./CreateEventModal";
 import { Link } from "react-router-dom";
 import { EventInterface } from "../../../Interfaces/event.types";
+import { Card } from "react-bootstrap";
 
 function EventsList() {
   const [events, setEvents] = useState<EventInterface[]>([]);
@@ -27,16 +28,23 @@ function EventsList() {
   return (
     <div>
       <CreateEventModal onEventCreated={handleEventCreated} />
+
       {events.map((event) => (
-        <div key={event.id}>
-          <Link to={`/events/${event.id}`}>
-            <h3>{event.title}</h3>
-          </Link>
-          <p>
-            Posted by {event.author?.username} on{" "}
-            {new Date(event.createdAt).toLocaleString()}
-          </p>
-        </div>
+        <Card style={{ marginBottom: "15px" }}>
+          <div key={event.id}>
+            <Card.Header className="bg-secondary">
+              <Link style={{ color: "white" }} to={`/events/${event.id}`}>
+                <Card.Title className="text-light center">
+                  {event.title}
+                </Card.Title>
+              </Link>
+            </Card.Header>
+            <p>
+              Posted by {event.author?.username} on{" "}
+              {new Date(event.createdAt).toLocaleString()}
+            </p>
+          </div>
+        </Card>
       ))}
     </div>
   );

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import CreatePostModal from "./Create Post Modal/CreatePostModal";
+import { Card } from "react-bootstrap";
 
 interface Post {
   id: number;
@@ -36,21 +37,23 @@ function PostsList() {
     fetchPosts();
   }
 
-  
-
   return (
     <div>
-      <CreatePostModal onPostCreated={handlePostCreated} />  
+      <CreatePostModal onPostCreated={handlePostCreated} />
       {posts.map((post) => (
-        <div key={post.id}>
-          <Link to={`/posts/${post.id}`}>
-            <h3>{post.title}</h3>
-          </Link>
-          <p>
-            Posted by {post.author?.username} on{" "}
-            {new Date(post.createdAt).toLocaleString()}
-          </p>
-        </div>
+        <Card>
+          <div key={post.id}>
+            <Card.Body>
+              <Link to={`/posts/${post.id}`}>
+                <Card.Title>{post.title}</Card.Title>
+              </Link>
+              <p>
+                Posted by {post.author?.username} on{" "}
+                {new Date(post.createdAt).toLocaleString()}
+              </p>
+            </Card.Body>
+          </div>
+        </Card>
       ))}
     </div>
   );

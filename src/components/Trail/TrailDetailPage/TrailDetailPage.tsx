@@ -1,71 +1,172 @@
-import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import "./TrailDetailPage.css"
-type TrailParams = {
-    trailId: number
-}
-
-type Trail = {
-    id: number
-    name: string
-    description: string
-    location: string
-    latitude: number
-    longitude: number
-    difficulty: string
-    length: number
-    estimatedTime: number
-    typesAllowed: string[]    
-  }
-
-  
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate, Params } from "react-router-dom";
+import "./TrailDetailPage.css";
+import SimpleMapComponent from "../../Community/Events/SimpleMapComponent";
+import { Col, Row, Tab, Tabs, Button } from "react-bootstrap";
+import { useAuth } from "../../../AuthContext";
+import axios from "axios";
+import { TrailInterface } from "../../../Interfaces/trail.types";
+import { UserInterface } from "../../../Interfaces/user.types";
+import { Trail } from "../MapComponent";
 
 const TrailDetailPage = () => {
-  const { trailId } = useParams()
-  const [trail, setTrail] = useState<Trail | null>(null)
-
-  const fetchTrail = async (trailId: number) => {
-    try {
-      const response = await fetch(`http://localhost:3000/trails/${trailId}`);
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const trail = await response.json();
-      return trail;
-    } catch (error) {
-      console.error('Failed to fetch the trail:', error);
-      return null;
-    }
-  };
+  const trailId = useParams<Params>();
+  const [trail, setTrail] = useState<TrailInterface>();
+  const [zoom, setZoom] = useState(12);
+  const { AuthUsername } = useAuth();
+  const navigate = useNavigate();
+  const [user, setUser] = useState<UserInterface>();
+  const { isLoggedIn } = useAuth();
+  const [hours, setHours] = useState<number>();
+  const [minutes, setMinutes] = useState<number>();
+  const [canAdd, setCanAdd] = useState<boolean>(true);
 
   useEffect(() => {
-    const loadTrail = async () => {
-        if (trailId !== undefined) {
-          const id = parseInt(trailId, 10)
-          if (!isNaN(id)) {
-            const fetchedTrail = await fetchTrail(id)
-            setTrail(fetchedTrail)
-          }
-        }
-      };
-    loadTrail();
+    fetchTrail();
   }, [trailId]);
+
+  useEffect(() => {
+    if (trail) {
+      fetchUser();
+    }
+  }, [trail]);
+
+  async function fetchUser() {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/users/username/${AuthUsername}`
+      );
+      setUser(response.data);
+      if (
+        response.data.myTrails.some(
+          (myTrail: Trail) => myTrail.id === trail?.id
+        )
+      ) {
+        setCanAdd(false);
+      }
+    } catch (error) {
+      console.error("Error fetching user: ", error);
+    }
+  }
+
+  async function fetchTrail() {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/trails/${trailId.trailId}`
+      );
+      setTrail(response.data);
+      setHours(Math.floor(response.data.estimatedTime / 60));
+      setMinutes(response.data.estimatedTime % 60);
+    } catch (error) {
+      console.error("Failed to fetch the trail:", error);
+    }
+  }
+
+  function deleteTrail() {
+    try {
+      axios.delete(`http://localhost:3000/trails/${trailId.trailId}`);
+      alert("Trail has been deleted");
+      navigate(`/`);
+    } catch (error) {
+      console.error("Error deleting event: ", error);
+    }
+  }
+
+  async function addMyTrails() {
+    if (!user) return;
+    const myTrails = [...user.myTrails, trail];
+    const id = user.id;
+    const data = { myTrails };
+
+    try {
+      await axios.put(`http://localhost:3000/users/mytrails/${id}`, data);
+      setCanAdd(false);
+    } catch (error) {
+      console.error("Error adding this trail: ", error);
+    }
+  }
+
+  async function removeMyTrails() {
+    if (!user) return;
+    const myTrails = user.myTrails.filter(
+      (myTrails) => myTrails.id !== trail?.id
+    );
+    const id = user.id;
+    const data = { myTrails };
+
+    try {
+      await axios.put(`http://localhost:3000/users/mytrails/${id}`, data);
+      setCanAdd(true);
+    } catch (error) {
+      console.error("Error removing this trail: ", error);
+    }
+  }
 
   if (!trail) {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="trail-details">
-      <h1>{trail.name}</h1>
-      <p><strong>Location:</strong> {trail.location}</p>
-      <p><strong>Description:</strong> {trail.description}</p>
-      <p><strong>Latitude:</strong> {trail.latitude}</p>
-      <p><strong>Longitude:</strong> {trail.longitude}</p>
-      <p><strong>Difficulty:</strong> {trail.difficulty}</p>
-      <p><strong>Length:</strong> {trail.length} km</p>
-      <p><strong>Estimated Time:</strong> {trail.estimatedTime} hours</p>
-      <p><strong>Types Allowed:</strong> {trail.typesAllowed.join(', ')}</p>
+    <div>
+      <Row style={{ flex: 1, display: "flex" }}>
+        <Col md={4}>
+          <div className="trail-details">
+            <h1>{trail.name}</h1>
+            <p>
+              <strong>Location:</strong> {trail.location}
+            </p>
+            <p>
+              <strong>Description:</strong> {trail.description}
+            </p>
+            <p>
+              <strong>Latitude:</strong> {trail.latitude}
+            </p>
+            <p>
+              <strong>Longitude:</strong> {trail.longitude}
+            </p>
+            <p>
+              <strong>Difficulty:</strong> {trail.difficulty}
+            </p>
+            <p>
+              <strong>Length:</strong> {trail.length} km
+            </p>
+            <p>
+              <strong>Estimated Time:</strong> {hours} hours {minutes} minutes
+            </p>
+            <p>
+              <strong>Types Allowed:</strong> {trail.typesAllowed.join(", ")}
+            </p>
+            {isLoggedIn ? (
+              <>
+                {trail.author && AuthUsername === trail.author.username && (
+                  <Button style={{ marginRight: "5px" }} onClick={deleteTrail}>
+                    Delete Trail
+                  </Button>
+                )}
+                {canAdd ? (
+                  <Button onClick={addMyTrails}>Add To My Trails</Button>
+                ) : (
+                  <Button onClick={removeMyTrails}>
+                    Remove From My Trails
+                  </Button>
+                )}
+              </>
+            ) : (
+              <p>You must be logged in to modify trails</p>
+            )}
+          </div>
+        </Col>
+        <Col md={4}>
+          <div>
+            <SimpleMapComponent
+              latitude={trail.latitude}
+              longitude={trail.longitude}
+              zoom={zoom}
+              trail={trail}
+            />
+          </div>
+        </Col>
+      </Row>
     </div>
   );
 };
