@@ -78,36 +78,20 @@ const TrailSearch = () => {
     }
   }, [sortField, sortOrder, selectedTrail, center, trails]); // add trails to the dependency array
 
-  const [nameClick, setNameClick] = useState(0);
-  const [difficultyClick, setDifficultyClick] = useState(0);
-  const [lengthClick, setLengthClick] = useState(0);
-  const [distanceClick, setDistanceClick] = useState(0);
-  
+  const [sortState, setSortState] = useState({ field: '', count: 0 });
+
   const handleSortFieldChange = (field: string) => {
-    if (field === 'name') {
-      setNameClick(nameClick + 1);
-      setDifficultyClick(0);
-      setLengthClick(0);
-      setDistanceClick(0);
-    } else if (field === 'difficulty') {
-      setDifficultyClick(difficultyClick + 1);
-      setNameClick(0);
-      setLengthClick(0);
-      setDistanceClick(0);
-    } else if (field === 'length') {
-      setLengthClick(lengthClick + 1);
-      setNameClick(0);
-      setDifficultyClick(0);
-      setDistanceClick(0);
-    } else if (field === 'distance') {
-      setDistanceClick(distanceClick + 1);
-      setNameClick(0);
-      setDifficultyClick(0);
-      setLengthClick(0);
-    }
+    setSortState(prevState => {
+      if (prevState.field === field) {
+        return { field, count: prevState.count + 1 };
+      } else {
+        return { field, count: 1 };
+      }
+    });
     setSortField(field);
-    setSortOrder(sortOrder * -1); // reverse the sort order
+    setSortOrder(prevOrder => prevOrder * -1); // reverse the sort order
   };
+
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -130,28 +114,28 @@ const TrailSearch = () => {
           <Button 
             variant="secondary" 
             onClick={() => handleSortFieldChange('name')}
-            style={{backgroundColor: nameClick === 1 ? 'lightgrey' : nameClick > 1 ? 'darkgrey' : 'grey'}}
+            style={{backgroundColor: sortState.field === 'name' ? (sortState.count % 2 !== 0 ? 'lightgrey' : 'darkgrey') : 'grey'}}
           >
             Sort by Name
           </Button>
           <Button 
             variant="secondary" 
             onClick={() => handleSortFieldChange('difficulty')}
-            style={{backgroundColor: difficultyClick === 1 ? 'lightgrey' : difficultyClick > 1 ? 'darkgrey' : 'grey'}}
+            style={{backgroundColor: sortState.field === 'difficulty' ? (sortState.count % 2 !== 0 ? 'lightgrey' : 'darkgrey') : 'grey'}}
           >
             Sort by Difficulty
           </Button>
           <Button 
             variant="secondary" 
             onClick={() => handleSortFieldChange('length')}
-            style={{backgroundColor: lengthClick === 1 ? 'lightgrey' : lengthClick > 1 ? 'darkgrey' : 'grey'}}
+            style={{backgroundColor: sortState.field === 'length' ? (sortState.count % 2 !== 0 ? 'lightgrey' : 'darkgrey') : 'grey'}}
           >
             Sort by Length
           </Button>
           <Button 
             variant="secondary" 
             onClick={() => handleSortFieldChange('distance')}
-            style={{backgroundColor: distanceClick === 1 ? 'lightgrey' : distanceClick > 1 ? 'darkgrey' : 'grey'}}
+            style={{backgroundColor: sortState.field === 'distance' ? (sortState.count % 2 !== 0 ? 'lightgrey' : 'darkgrey') : 'grey'}}
           >
             Sort by Distance
           </Button>
