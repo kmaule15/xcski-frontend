@@ -1,45 +1,48 @@
 /* ThreeBlocksLayout.css */
 
 .rounded-left {
-    border-radius: 10px 0 0 10px;
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
-    min-height: 200px;
-    margin: 10px;
-  }
-  
-  .rounded-middle {
-    border-radius: 0;
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
-    min-height: 200px;
-    margin: 10px;
-  }
-  
-  .rounded-right {
-    border-radius: 0 10px 10px 0;
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
-    min-height: 200px;
-    margin: 10px;
-  }
+  border-radius: 10px 0 0 10px;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+  min-height: 200px;
+  margin: 10px;
+  background-color: white;
+}
 
-  /* Make left column stick to the left side of the browser */
-  .col-sm-2 {
-    position: sticky;
-    top: 0;
-    height: 100%;
-  }
+.rounded-middle {
+  border-radius: 0;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+  min-height: 200px;
+  margin: 10px;
+  background-color: white;
+}
 
-  /* Make right column stick to the right side of the browser */
-  .right-column {
-    position: sticky;
-    top: 0;
-    height: 100%;
-    right: 0;
-  }
-  .postCommentsLoginMessage {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #e1e1e1;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-    text-align: center;
-  }
+.rounded-right {
+  border-radius: 0 10px 10px 0;
+  box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+  min-height: 200px;
+  margin: 10px;
+  background-color: white;
+}
+
+/* Make left column stick to the left side of the browser */
+.col-sm-2 {
+  position: sticky;
+  top: 0;
+  height: 100%;
+}
+
+/* Make right column stick to the right side of the browser */
+.right-column {
+  position: sticky;
+  top: 0;
+  height: 100%;
+  right: 0;
+}
+.postCommentsLoginMessage {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #e1e1e1;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
