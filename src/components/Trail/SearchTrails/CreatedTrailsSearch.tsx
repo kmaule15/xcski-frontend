@@ -16,7 +16,6 @@ const CreatedTrailsSearch = () => {
 
   const fetchTrails = async () => {
     try {
-      // Adjust the URL as per your server configuration
       const response = await fetch("http://localhost:3000/trails");
       if (!response.ok) {
         throw new Error("Network response was not ok");
@@ -36,13 +35,11 @@ const CreatedTrailsSearch = () => {
     setSearchTerm(e.target.value.toLowerCase());
   };
 
-  const handleSelection = (index: number) => {
-    const selectedTrail = results[index];
-    navigate(`/trails/${selectedTrail.id}`);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    // Your key down logic here
+  const handleSelection = (trailId: number) => {
+    const selectedTrail = results.find((trail) => trail.id === trailId);
+    if (selectedTrail) {
+      navigate(`/trails/${selectedTrail.id}`);
+    }
   };
 
   useEffect(() => {
@@ -63,7 +60,6 @@ const CreatedTrailsSearch = () => {
         type="text"
         value={searchTerm}
         onChange={handleSearchChange}
-        onKeyDown={handleKeyDown}
         placeholder="Search for a trail"
       />
       {searchTerm && filteredResults.length > 0 && (
@@ -71,7 +67,7 @@ const CreatedTrailsSearch = () => {
           {filteredResults.map((trail, index) => (
             <div
               key={trail.id}
-              onMouseDown={() => handleSelection(index)}
+              onMouseDown={() => handleSelection(trail.id)}
               style={{
                 backgroundColor: index === focusedIndex ? "#e1ecff" : "",
               }}
@@ -84,7 +80,6 @@ const CreatedTrailsSearch = () => {
       )}
     </div>
   );
-  
 };
 
 export default CreatedTrailsSearch;
