@@ -20,6 +20,7 @@ const TrailDetailPage = () => {
   const [hours, setHours] = useState<number>();
   const [minutes, setMinutes] = useState<number>();
   const [canAdd, setCanAdd] = useState<boolean>(true);
+  const accessToken = localStorage.getItem("accesstoken");
 
   useEffect(() => {
     fetchTrail();
@@ -64,7 +65,11 @@ const TrailDetailPage = () => {
 
   function deleteTrail() {
     try {
-      axios.delete(`http://localhost:3000/trails/${trailId.trailId}`);
+      axios.delete(`http://localhost:3000/trails/${trailId.trailId}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       alert("Trail has been deleted");
       navigate(`/`);
     } catch (error) {
@@ -79,7 +84,11 @@ const TrailDetailPage = () => {
     const data = { myTrails };
 
     try {
-      await axios.put(`http://localhost:3000/users/mytrails/${id}`, data);
+      await axios.put(`http://localhost:3000/users/mytrails/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       setCanAdd(false);
     } catch (error) {
       console.error("Error adding this trail: ", error);
@@ -95,7 +104,11 @@ const TrailDetailPage = () => {
     const data = { myTrails };
 
     try {
-      await axios.put(`http://localhost:3000/users/mytrails/${id}`, data);
+      await axios.put(`http://localhost:3000/users/mytrails/${id}`, data, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       setCanAdd(true);
     } catch (error) {
       console.error("Error removing this trail: ", error);
