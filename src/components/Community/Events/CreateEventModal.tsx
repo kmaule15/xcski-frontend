@@ -147,7 +147,7 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
     const loader = new Loader({
       apiKey,
       version: "weekly",
-      libraries: ["places"],
+      libraries: ["places", "drawing"],
     });
 
     loader.load().then(() => {
@@ -261,7 +261,12 @@ function CreateEventModal({ onEventCreated }: CreateEventModalProps) {
   return (
     <div>
       {isLoggedIn ? (
-        <Button onClick={() => setIsOpen(true)}>Create Event</Button>
+        <Button
+          style={{ margin: "10px 0 10px 0" }}
+          onClick={() => setIsOpen(true)}
+        >
+          Create Event
+        </Button>
       ) : (
         <p>Users must be logged in to create events</p>
       )}

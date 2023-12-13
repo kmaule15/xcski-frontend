@@ -63,7 +63,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
 
   if (!apiKey) {
     throw new Error(
-      "API key is missing. Please check your .env file. (or send Chase your IP address)"
+      "API key is missing. Please check your .env file."
     );
   }
 
@@ -91,7 +91,7 @@ const MapComponent: React.FC<MapComponentProps> = ({
     const loader = new Loader({
       apiKey,
       version: "weekly",
-      libraries: ["places"],
+      libraries: ["places", "drawing"],
     });
 
     loader

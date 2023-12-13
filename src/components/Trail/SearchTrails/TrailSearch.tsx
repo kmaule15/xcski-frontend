@@ -31,7 +31,7 @@ const TrailSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const { isLoggedIn, AuthUsername } = useAuth();
   const { trails, isLoading, error } = useTrails();
-  const [sortField, setSortField] = useState('name');
+  const [sortField, setSortField] = useState('distance');
   const [sortOrder, setSortOrder] = useState(1); // 1 for ascending, -1 for descending
   const [selectedTrail, setSelectedTrail] = useState<Trail | null>(null);
   const [center, setCenter] = useState<{ lat: number, lng: number }>({ lat: 44.5, lng: -89.5 });
@@ -39,41 +39,61 @@ const TrailSearch = () => {
   const [sortedTrails, setSortedTrails] = useState<Array<Trail>>([]);
 
   useEffect(() => {
-    const newSortedTrails = [...trails].sort((a, b) => {
-      if (sortField === 'difficulty') {
-        const order = ['Easy', 'Medium', 'Difficult'];
-        return (order.indexOf(a[sortField]) - order.indexOf(b[sortField])) * sortOrder;
-      } else if (sortField === 'distance') {
-        return (a.distance - b.distance) * sortOrder;
-      } else if (sortField === 'name') {
-        return (a[sortField].toLowerCase() > b[sortField].toLowerCase() ? 1 : -1) * sortOrder;
-      }
-      return 0;
-    });
-    setSortedTrails(newSortedTrails);
-  }, [trails, sortField, sortOrder]);
-
-  useEffect(() => {
-    if (center) {
+    if (trails.length > 0) { // check if trails data is available
       const newSortedTrails = [...trails];
       newSortedTrails.forEach(trail => {
-        trail.distance = getDistanceFromLatLonInKm(center.lat, center.lng, trail.latitude, trail.longitude);
+        if (selectedTrail) {
+          trail.distance = getDistanceFromLatLonInKm(
+            selectedTrail.latitude, 
+            selectedTrail.longitude, 
+            trail.latitude, 
+            trail.longitude
+          );
+        } else {
+          trail.distance = getDistanceFromLatLonInKm(
+            center.lat, 
+            center.lng, 
+            trail.latitude, 
+            trail.longitude
+          );
+        }
       });
   
-      newSortedTrails.sort((a, b) => (a.distance - b.distance) * sortOrder);
+      newSortedTrails.sort((a, b) => {
+        if (sortField === 'distance') {
+          return (a.distance - b.distance) * sortOrder;
+        } else {
+          // Sorting logic for other fields
+          if (sortField === 'name') {
+            return a.name.localeCompare(b.name) * sortOrder;
+          } else if (sortField === 'difficulty') {
+            return a.difficulty.localeCompare(b.difficulty) * sortOrder;
+          } else if (sortField === 'length') {
+            return (a.length - b.length) * sortOrder;
+          } else {
+            return 0; // default return value
+          }
+        }
+      });
+  
       setSortedTrails(newSortedTrails);
-      setSortField('distance');
     }
-  }, [center, sortOrder]);
+  }, [sortField, sortOrder, selectedTrail, center, trails]); // add trails to the dependency array
+
+  const [sortState, setSortState] = useState({ field: '', count: 0 });
 
   const handleSortFieldChange = (field: string) => {
-    if (sortField === field) {
-      setSortOrder(sortOrder * -1); // reverse the sort order
-    } else {
-      setSortField(field);
-      setSortOrder(1); // reset the sort order to ascending
-    }
+    setSortState(prevState => {
+      if (prevState.field === field) {
+        return { field, count: prevState.count + 1 };
+      } else {
+        return { field, count: 1 };
+      }
+    });
+    setSortField(field);
+    setSortOrder(prevOrder => prevOrder * -1); // reverse the sort order
   };
+
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -92,11 +112,36 @@ const TrailSearch = () => {
           </div>
         </Col>
         <Col md={4}>
-          <ButtonGroup aria-label="Sort trails" className="sort-trails">
-            <Button variant="secondary" onClick={() => handleSortFieldChange('name')}>Sort by Name</Button>
-            <Button variant="secondary" onClick={() => handleSortFieldChange('difficulty')}>Sort by Difficulty</Button>
-            <Button variant="secondary" onClick={() => handleSortFieldChange('length')}>Sort by Length</Button>
-          </ButtonGroup>
+        <ButtonGroup aria-label="Sort trails" className="sort-trails">
+          <Button 
+            variant="secondary" 
+            onClick={() => handleSortFieldChange('name')}
+            style={{backgroundColor: sortState.field === 'name' ? (sortState.count % 2 !== 0 ? 'lightgrey' : 'darkgrey') : 'grey'}}
+          >
+            Sort by Name
+          </Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => handleSortFieldChange('difficulty')}
+            style={{backgroundColor: sortState.field === 'difficulty' ? (sortState.count % 2 !== 0 ? 'lightgrey' : 'darkgrey') : 'grey'}}
+          >
+            Sort by Difficulty
+          </Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => handleSortFieldChange('length')}
+            style={{backgroundColor: sortState.field === 'length' ? (sortState.count % 2 !== 0 ? 'lightgrey' : 'darkgrey') : 'grey'}}
+          >
+            Sort by Length
+          </Button>
+          <Button 
+            variant="secondary" 
+            onClick={() => handleSortFieldChange('distance')}
+            style={{backgroundColor: sortState.field === 'distance' ? (sortState.count % 2 !== 0 ? 'lightgrey' : 'darkgrey') : 'grey'}}
+          >
+            Sort by Distance
+          </Button>
+        </ButtonGroup>
         </Col>
       </Row>
       <Row className="trail-search-row">
@@ -109,11 +154,17 @@ const TrailSearch = () => {
                     className={`trail-search-card ${trail.name === selectedTrail?.name ? 'selected' : ''}`} 
                     onClick={() => { 
                       console.log(`Card clicked: ${trail.name}`); // Log the name of the trail when a card is clicked
-                      setSelectedTrail(trail); 
-                      setCenter({ lat: trail.latitude, lng: trail.longitude }); 
-                      setZoom(12); 
+                      if (trail === selectedTrail) {
+                        setSelectedTrail(null); // Deselect the trail if it's already selected
+                        setCenter({ lat: 44.5, lng: -89.5 }); // Reset the center
+                        setZoom(7); // Reset the zoom
+                      } else {
+                        setSelectedTrail(trail); 
+                        setCenter({ lat: trail.latitude, lng: trail.longitude }); 
+                        setZoom(12); 
+                      }
                     }}
-                  >
+                    >
                     <Card.Body className="trail-search-card-body d-flex flex-row justify-content-between">
                       <div>
                         <Card.Title>
