@@ -60,6 +60,9 @@ const MapComponent: React.FC<MapComponentProps> = ({
   const apiKey = process.env.REACT_APP_Google_Maps_API_KEY;
   const mapRef = useRef<HTMLDivElement | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const [selectedMarkerCoords, setSelectedMarkerCoords] = useState<
+  [number, number] | null
+>(null);
 
   if (!apiKey) {
     throw new Error(
@@ -128,8 +131,13 @@ const MapComponent: React.FC<MapComponentProps> = ({
               });
 
               trailMarker.addListener("click", () => {
-                console.log(`Marker clicked: ${trail.name}`);
+                console.log(`Marker clicked: ${trail.latitude}`);
                 setSelectedTrail(trail);
+                setSelectedMarkerCoords([
+                  trail.latitude || 0, // Use the trail's coordinates
+                  trail.longitude || 0,
+                ]);
+                
               });
             });
           }
@@ -165,7 +173,10 @@ const MapComponent: React.FC<MapComponentProps> = ({
               margin: "100px",
             }}
           >
-            <WeatherWidget lat={latitude || 1} lng={longitude || 2} />
+              <WeatherWidget
+              lat={selectedMarkerCoords ? selectedMarkerCoords[0] : latitude || 1}
+              lng={selectedMarkerCoords ? selectedMarkerCoords[1] : longitude || 2}
+            />
           </div>
         </div>
       </div>
