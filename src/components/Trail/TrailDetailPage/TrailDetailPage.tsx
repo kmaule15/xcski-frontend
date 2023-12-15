@@ -8,6 +8,8 @@ import axios from "axios";
 import { TrailInterface } from "../../../Interfaces/trail.types";
 import { UserInterface } from "../../../Interfaces/user.types";
 import { Trail } from "../MapComponent";
+import { UpdateInterface } from "../../../Interfaces/update.types";
+import { Card } from "react-bootstrap";
 
 const TrailDetailPage = () => {
   const trailId = useParams<Params>();
@@ -20,10 +22,13 @@ const TrailDetailPage = () => {
   const [hours, setHours] = useState<number>();
   const [minutes, setMinutes] = useState<number>();
   const [canAdd, setCanAdd] = useState<boolean>(true);
+  const [trailUpdates, setTrailUpdates] = useState<UpdateInterface[] | undefined>();
   const accessToken = localStorage.getItem("accesstoken");
+
 
   useEffect(() => {
     fetchTrail();
+    fetchTrailUpdates();
   }, [trailId]);
 
   useEffect(() => {
@@ -58,6 +63,26 @@ const TrailDetailPage = () => {
       setTrail(response.data);
       setHours(Math.floor(response.data.estimatedTime / 60));
       setMinutes(response.data.estimatedTime % 60);
+    } catch (error) {
+      console.error("Failed to fetch the trail:", error);
+    }
+  }
+
+  async function fetchTrailUpdates() {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/trailupdates/trail/:${trailId.trailId}`
+      );
+      let sortedList = response.data as UpdateInterface[];
+      let id: number = trailId.trailId ? -1 : 0;
+      if(trailId.trailId){
+        id = +trailId.trailId;
+      }
+      var list = sortedList.filter((trail) => trail.trailId === id);
+      setTrailUpdates(list);
+      console.log(list);
+      console.log(id);
+      console.log(response.data);
     } catch (error) {
       console.error("Failed to fetch the trail:", error);
     }
@@ -149,6 +174,8 @@ const TrailDetailPage = () => {
             <p>
               <strong>Types Allowed:</strong> {trail.typesAllowed.join(", ")}
             </p>
+      
+            
             {isLoggedIn ? (
               <>
                 {trail.author && AuthUsername === trail.author.username && (
@@ -167,6 +194,23 @@ const TrailDetailPage = () => {
             ) : (
               <p>You must be logged in to modify trails</p>
             )}
+            <br></br><br></br>
+
+            {
+              trailUpdates?.map((update) => (
+                <Card style={{ marginBottom: "15px" }}>
+                  <div>
+                    {(new Date(update.startDateTime)).toString()}
+                    <p>
+                      {update.description}
+                    </p>
+                    <p>
+                      Trail Open Percentage: {update.trailOpenPercentage}%
+                    </p>
+                  </div>
+                </Card>
+              ))
+            }
           </div>
         </Col>
         <Col md={4}>
