@@ -5,6 +5,8 @@ import SearchBar from "../../SearchBar/SearchBar";
 import Rating from "@mui/material/Rating";
 import { useAuth } from "../../../AuthContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 const CreateTrailRating = () => {
   const { isLoggedIn } = useAuth();
@@ -20,6 +22,7 @@ const CreateTrailRating = () => {
     location: string;
     id: number;
   }>();
+  const navigate = useNavigate();
   const onLoad = async () => {
     console.log("Trails queried!");
     try {
@@ -102,7 +105,7 @@ const CreateTrailRating = () => {
         }
       );
       clearForm();
- 
+      navigate("/trailsearch");
     } catch (error) {
     }
   };
