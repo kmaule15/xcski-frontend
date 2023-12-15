@@ -52,7 +52,7 @@ const CreateTrailRating = () => {
 
 //use references to get trail name from component, add required keyword to inputs i require
   const clearForm = () => {
-    setResults(undefined);
+    setTrailRating(null);
   };
 
 //add date time checking
@@ -101,6 +101,7 @@ const CreateTrailRating = () => {
           },
         }
       );
+      clearForm();
  
     } catch (error) {
     }
