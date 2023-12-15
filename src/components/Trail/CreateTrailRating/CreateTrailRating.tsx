@@ -5,6 +5,8 @@ import SearchBar from "../../SearchBar/SearchBar";
 import Rating from "@mui/material/Rating";
 import { useAuth } from "../../../AuthContext";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 
 const CreateTrailRating = () => {
   const { isLoggedIn } = useAuth();
@@ -20,6 +22,7 @@ const CreateTrailRating = () => {
     location: string;
     id: number;
   }>();
+  const navigate = useNavigate();
   const onLoad = async () => {
     console.log("Trails queried!");
     try {
@@ -52,7 +55,7 @@ const CreateTrailRating = () => {
 
 //use references to get trail name from component, add required keyword to inputs i require
   const clearForm = () => {
-    setResults(undefined);
+    setTrailRating(null);
   };
 
 //add date time checking
@@ -69,7 +72,6 @@ const CreateTrailRating = () => {
       trailId,
       rating
     };
-    console.log(ratingFormData);
     try {
       const postRating = await axios.post(
         `http://localhost:3000/trailratings`,
@@ -80,6 +82,8 @@ const CreateTrailRating = () => {
           },
         }
       );
+
+      let aaa: number = -99;
       const rating = await axios.get(
         `http://localhost:3000/trailratings/:`+trailId,
         {
@@ -87,11 +91,10 @@ const CreateTrailRating = () => {
             Authorization: `Bearer ${accessToken}`,
           },
         }
-      );
+      ).then(function(response) { aaa = response.data});
       const formData = {
-        rating
+        aaa
       };
-      console.log(formData);
       const updateTrails = await axios.put(
         `http://localhost:3000/trails/:`+trailId,
         formData,
@@ -101,7 +104,8 @@ const CreateTrailRating = () => {
           },
         }
       );
- 
+      clearForm();
+      navigate("/trailsearch");
     } catch (error) {
     }
   };
